@@ -129,11 +129,8 @@ header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400
 /* Days table */
 .days { margin: 8px 0 0; }
 .day-row {
-  display: grid;
-  grid-template-columns: 36px 1fr 140px 70px;
-  gap: 0;
-  padding: 10px 20px 10px 66px;
-  align-items: center;
+  display: block;
+  padding: 10px 20px;
   border-bottom: 1px solid #F0F0F0;
   font-size: 14px;
   cursor: pointer;
@@ -141,20 +138,24 @@ header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400
 }
 .day-row:last-child { border-bottom: none; }
 .day-row:hover { background: #FAFBFC; }
-.day-row .day { font-weight: 600; color: var(--gray); font-size: 13px; }
+.day-row .day { font-weight: 600; color: var(--gray); font-size: 13px; min-width: 28px; display: inline-block; }
 .day-row .topic { font-weight: 500; }
-.day-row .topic .tag {
+.day-row .links { margin: 4px 0 0 36px; display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; pointer-events: none; }
+.day-row .links a { pointer-events: auto; color: #2563EB; text-decoration: none; font-weight: 500; }
+.day-row .links a:hover { text-decoration: underline; }
+.day-row .links .badge {
   display: inline-block;
   font-size: 11px; font-weight: 600;
-  padding: 1px 8px; border-radius: 4px;
-  margin-left: 6px;
+  padding: 1px 7px; border-radius: 4px;
+  margin-right: 4px;
 }
-.tag-video { background: #E8F5E9; color: #2E7D32; }
-.tag-read { background: #E3F2FD; color: #1565C0; }
-.tag-quiz { background: #F3E5F5; color: #7B1FA2; }
-.day-row .time { text-align: right; color: var(--gray); font-size: 13px; }
+.badge-video { background: #E8F5E9; color: #2E7D32; }
+.badge-read { background: #E3F2FD; color: #1565C0; }
+.badge-quiz { background: #F3E5F5; color: #7B1FA2; }
+.day-row .time { float: right; color: var(--gray); font-size: 12px; margin-top: 2px; }
 .day-row.done .day,
-.day-row.done .topic { color: #B0B0B0; text-decoration: line-through; }
+.day-row.done .topic,
+.day-row.done .links { opacity: 0.4; }
 .day-row.done .time { color: var(--green); }
 
 /* Resource links */
@@ -190,8 +191,9 @@ footer {
 /* Responsive */
 @media (max-width: 600px) {
   header h1 { font-size: 26px; }
-  .day-row { grid-template-columns: 30px 1fr 50px; padding: 10px 14px 10px 50px; }
-  .day-row .time { display: none; }
+  .day-row { padding: 10px 14px; }
+  .day-row .links { margin-left: 0; flex-direction: column; gap: 6px; }
+  .day-row .time { float: none; display: inline; margin-left: 8px; }
   .stats-bar { flex-direction: column; text-align: center; }
   .progress-bar { width: 100%; }
 }
@@ -260,38 +262,65 @@ footer {
         <div class="days">
           <div class="day-row" data-id="w1d1">
             <div class="day">D1</div>
-            <div class="topic">What is a stock? Equity, share, IPO, public vs private <span class="tag tag-video">7m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">What is a stock? Equity, share, IPO, public vs private</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=p7HKvq2_Bnc&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=4" target="_blank"><span class="badge badge-video">▶ 7m</span> Plain Bagel: Stocks — How Equity Earns You Money</a>
+              <a href="https://www.investopedia.com/articles/basics/07/getting-started-stocks.asp" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Beginner's Guide to Stocks</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d2">
             <div class="day">D2</div>
-            <div class="topic">How stock markets work — exchange, bid/ask, order types <span class="tag tag-video">8m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">How stock markets work — exchange, bid/ask, order types</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/playlist?list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel Basics (pick any video)</a>
+              <a href="https://zerodha.com/varsity/module/introduction-to-stock-markets/" target="_blank"><span class="badge badge-read">📄 20m</span> Zerodha Varsity: Intro to Stock Markets (Ch. 1-4)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d3">
             <div class="day">D3</div>
-            <div class="topic">Bonds 101 — coupon, maturity, yield, price-yield relationship <span class="tag tag-video">8m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Bonds 101 — coupon, maturity, yield, price-yield relationship</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=IuyejHOGCwk&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=3" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: Bonds — Using Debt to Invest</a>
+              <a href="https://www.investopedia.com/ask/answers/051215/what-difference-between-bonds-yield-rate-and-its-coupon-rate.asp" target="_blank"><span class="badge badge-read">📄 8m</span> Investopedia: Bond Coupon Rate vs Yield</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d4">
             <div class="day">D4</div>
-            <div class="topic">Mutual Funds & ETFs — active vs passive, expense ratio, NAV <span class="tag tag-video">12m</span></div>
-            <div class="time">45 min</div>
+            <span class="topic">Mutual Funds & ETFs — active vs passive, expense ratio, NAV</span>
+            <span class="time">45 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=qn0hE1wLhr4&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=6" target="_blank"><span class="badge badge-video">▶ 12m</span> Plain Bagel: Managed Solutions — Mutual Funds & ETFs</a>
+              <a href="https://zerodha.com/varsity/module/personal-finance/" target="_blank"><span class="badge badge-read">📄 15m</span> Zerodha Varsity: Personal Finance Module (Ch. 1-3)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d5">
             <div class="day">D5</div>
-            <div class="topic">Key financial statements — income, balance sheet, cash flow <span class="tag tag-video">18m</span></div>
-            <div class="time">45 min</div>
+            <span class="topic">Key financial statements — income, balance sheet, cash flow</span>
+            <span class="time">45 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=kXYvRR7gV2E" target="_blank"><span class="badge badge-video">▶ 18m</span> Plain Bagel: How I Research Stocks (Step-by-Step FA)</a>
+              <a href="https://zerodha.com/varsity/module/fundamental-analysis/" target="_blank"><span class="badge badge-read">📄 20m</span> Zerodha Varsity: Fundamental Analysis (Ch. 1-4)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d6">
             <div class="day">D6</div>
-            <div class="topic">Valuation basics — market cap, P/E ratio, P/B ratio, dividend yield <span class="tag tag-read">12m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Valuation basics — market cap, P/E ratio, P/B ratio, dividend yield</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.investopedia.com/terms/p/price-earningsratio.asp" target="_blank"><span class="badge badge-read">📄 6m</span> Investopedia: P/E Ratio</a>
+              <a href="https://www.investopedia.com/terms/p/price-to-bookratio.asp" target="_blank"><span class="badge badge-read">📄 6m</span> Investopedia: P/B Ratio</a>
+            </div>
           </div>
           <div class="day-row" data-id="w1d7">
             <div class="day">D7</div>
-            <div class="topic">Week 1 review — flashcards + match terms to definitions <span class="tag tag-quiz">quiz</span></div>
-            <div class="time">30 min</div>
+            <span class="topic">Week 1 review — flashcards + match terms to definitions</span>
+            <span class="time">30 min</span>
+            <div class="links">
+              <a href="https://zerodha.com/varsity/module/introduction-to-stock-markets/" target="_blank"><span class="badge badge-quiz">✍️ 15m</span> Zerodha Varsity: Module 1 quiz at bottom of chapters</a>
+            </div>
           </div>
         </div>
       </div>
@@ -310,38 +339,64 @@ footer {
         <div class="days">
           <div class="day-row" data-id="w2d1">
             <div class="day">D1</div>
-            <div class="topic">Market indices — S&P 500, Dow Jones, NASDAQ, Nifty 50 <span class="tag tag-video">6m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Market indices — S&P 500, Dow Jones, NASDAQ, Nifty 50</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=H3wfmF1-SHk" target="_blank"><span class="badge badge-video">▶ 6m</span> Plain Bagel: What is an Index?</a>
+              <a href="https://www.investopedia.com/terms/m/marketindex.asp" target="_blank"><span class="badge badge-read">📄 8m</span> Investopedia: Market Index</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d2">
             <div class="day">D2</div>
-            <div class="topic">Bull vs Bear markets — cycles, corrections, historical context <span class="tag tag-video">15m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Bull vs Bear markets — cycles, corrections, historical context</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=bSVyodxbfOo" target="_blank"><span class="badge badge-video">▶ 15m</span> Plain Bagel: Is a Bear Market Coming?</a>
+              <a href="https://www.investopedia.com/insights/digging-deeper-bull-and-bear-markets/" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Bull vs Bear Market</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d3">
             <div class="day">D3</div>
-            <div class="topic">Derivatives intro — futures & options, call/put, leverage <span class="tag tag-video">8m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Derivatives intro — futures & options, call/put, leverage</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=QGD7FS5UWLE" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: Derivatives Explained</a>
+              <a href="https://zerodha.com/varsity/module/futures-trading/" target="_blank"><span class="badge badge-read">📄 15m</span> Zerodha Varsity: Futures Trading (Ch. 1-3)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d4">
             <div class="day">D4</div>
-            <div class="topic">IPOs & FPOs — book building, price band, listing day <span class="tag tag-video">8m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">IPOs & FPOs — book building, price band, listing day</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=QJZJ52JX_Yg" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: The IPO Process</a>
+              <a href="https://zerodha.com/varsity/chapter/the-ipo-markets-part-1/" target="_blank"><span class="badge badge-read">📄 12m</span> Zerodha Varsity: IPO Markets (Part 1)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d5">
             <div class="day">D5</div>
-            <div class="topic">Dividends & Buybacks — record date, ex-date, yield <span class="tag tag-video">7m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Dividends & Buybacks — record date, ex-date, yield</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=0Uks0N66Qds" target="_blank"><span class="badge badge-video">▶ 7m</span> Plain Bagel: Dividends Explained</a>
+              <a href="https://www.investopedia.com/terms/e/ex-date.asp" target="_blank"><span class="badge badge-read">📄 8m</span> Investopedia: Ex-Dividend Date</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d6">
             <div class="day">D6</div>
-            <div class="topic">Sectors & Industries — cyclical vs defensive, growth vs value <span class="tag tag-read">10m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Sectors & Industries — cyclical vs defensive, growth vs value</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.britannica.com/money/cyclical-stocks-defensive-investing" target="_blank"><span class="badge badge-read">📄 10m</span> Britannica: Defensive and Cyclical Stocks</a>
+            </div>
           </div>
           <div class="day-row" data-id="w2d7">
             <div class="day">D7</div>
-            <div class="topic">Week 2 review — market instruments & sector classification <span class="tag tag-quiz">quiz</span></div>
-            <div class="time">30 min</div>
+            <span class="topic">Week 2 review — market instruments & sector classification</span>
+            <span class="time">30 min</span>
+            <div class="links">
+              <span class="badge badge-quiz">✍️ 20m</span> Skim Week 2 notes + flashcards
+            </div>
           </div>
         </div>
       </div>
@@ -360,38 +415,64 @@ footer {
         <div class="days">
           <div class="day-row" data-id="w3d1">
             <div class="day">D1</div>
-            <div class="topic">Fundamental analysis — top-down, moat, competitive advantage <span class="tag tag-video">18m</span></div>
-            <div class="time">45 min</div>
+            <span class="topic">Fundamental analysis — top-down, moat, competitive advantage</span>
+            <span class="time">45 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=kXYvRR7gV2E" target="_blank"><span class="badge badge-video">▶ 18m</span> Plain Bagel: How I Research Stocks (re-watch, focus on moat)</a>
+              <a href="https://zerodha.com/varsity/module/fundamental-analysis/" target="_blank"><span class="badge badge-read">📄 20m</span> Zerodha Varsity: FA Module (Ch. 5-8)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d2">
             <div class="day">D2</div>
-            <div class="topic">Technical analysis intro — trends, S/R, moving averages, RSI <span class="tag tag-video">10m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Technical analysis intro — trends, S/R, moving averages, RSI</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://zerodha.com/varsity/module/technical-analysis-video-series/" target="_blank"><span class="badge badge-video">▶ 10m</span> Zerodha Varsity: TA Video Series (pick 1 chapter)</a>
+              <a href="https://zerodha.com/varsity/module/technical-analysis/" target="_blank"><span class="badge badge-read">📄 15m</span> Zerodha Varsity: Technical Analysis (Ch. 1-4)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d3">
             <div class="day">D3</div>
-            <div class="topic">Reading an annual report — MD&A, notes, red flags <span class="tag tag-video">12m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Reading an annual report — MD&A, notes, red flags</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=5QE2ul0v_Oc" target="_blank"><span class="badge badge-video">▶ 12m</span> Plain Bagel: How to Read a 10-K</a>
+              <a href="https://www.investopedia.com/articles/basics/06/readannualreport.asp" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Reading Annual Reports</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d4">
             <div class="day">D4</div>
-            <div class="topic">Risk & Return — risk-free rate, beta, Sharpe ratio, volatility <span class="tag tag-video">10m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Risk & Return — risk-free rate, beta, Sharpe ratio, volatility</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=AeDvqNMCx3A&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=11" target="_blank"><span class="badge badge-video">▶ 10m</span> Plain Bagel: Risk — Understanding Investment Uncertainty</a>
+              <a href="https://www.investopedia.com/terms/r/riskreturntradeoff.asp" target="_blank"><span class="badge badge-read">📄 8m</span> Investopedia: Risk-Return Tradeoff</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d5">
             <div class="day">D5</div>
-            <div class="topic">Dollar-cost averaging — lump sum vs SIP, rupee-cost averaging <span class="tag tag-read">10m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Dollar-cost averaging — lump sum vs SIP, rupee-cost averaging</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.britannica.com/money/dollar-cost-averaging" target="_blank"><span class="badge badge-read">📄 10m</span> Britannica: Dollar Cost Averaging (has embedded video)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d6">
             <div class="day">D6</div>
-            <div class="topic">Common biases — confirmation, loss aversion, recency, FOMO <span class="tag tag-video">8m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Common biases — confirmation, loss aversion, recency, FOMO</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=7jI-zXZP1-U&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=12" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: Behavioral Finance</a>
+              <a href="https://www.investopedia.com/terms/b/behavioralfinance.asp" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Behavioral Finance</a>
+            </div>
           </div>
           <div class="day-row" data-id="w3d7">
             <div class="day">D7</div>
-            <div class="topic">Week 3 review — analyze one real company's stats (P/E, market cap) <span class="tag tag-quiz">quiz</span></div>
-            <div class="time">30 min</div>
+            <span class="topic">Week 3 review — analyze one real company's stats (P/E, market cap)</span>
+            <span class="time">30 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=HFfXvfzrnOc" target="_blank"><span class="badge badge-video">▶ 12m</span> Plain Bagel: Active vs Passive Investing</a>
+            </div>
           </div>
         </div>
       </div>
@@ -410,38 +491,64 @@ footer {
         <div class="days">
           <div class="day-row" data-id="w4d1">
             <div class="day">D1</div>
-            <div class="topic">Portfolio construction — asset allocation, correlation, rebalancing <span class="tag tag-video">10m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Portfolio construction — asset allocation, correlation, rebalancing</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=8ZPStcG_EVg" target="_blank"><span class="badge badge-video">▶ 10m</span> Plain Bagel: Portfolio Diversification</a>
+              <a href="https://www.investopedia.com/terms/a/assetallocation.asp" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Asset Allocation</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d2">
             <div class="day">D2</div>
-            <div class="topic">Tax implications — STCG vs LTCG, dividend tax, tax-loss harvesting <span class="tag tag-video">8m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Tax implications — STCG vs LTCG, dividend tax, tax-loss harvesting</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=NpZQk3QJh7s&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=10" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: Taxes — Registered Accounts & Tax Efficiency</a>
+              <a href="https://www.nerdwallet.com/taxes/learn/capital-gains-tax-rates" target="_blank"><span class="badge badge-read">📄 10m</span> NerdWallet: Capital Gains Tax Rates</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d3">
             <div class="day">D3</div>
-            <div class="topic">Brokers & platforms — discount vs full-service, demat, order types <span class="tag tag-read">15m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Brokers & platforms — discount vs full-service, demat, order types</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://zerodha.com/varsity/chapter/getting-started/" target="_blank"><span class="badge badge-read">📄 15m</span> Zerodha Varsity: Getting Started (has video embed)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d4">
             <div class="day">D4</div>
-            <div class="topic">Reading financial news — decode headlines, Fed, earnings, yield curve <span class="tag tag-video">10m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Reading financial news — decode headlines, Fed, earnings, yield curve</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=2mJfz5xRsF8" target="_blank"><span class="badge badge-video">▶ 10m</span> Plain Bagel: What Rising Rates ACTUALLY Mean</a>
+              <a href="https://www.investopedia.com/articles/economics/08/fed-rate-hikes.asp" target="_blank"><span class="badge badge-read">📄 10m</span> Investopedia: Understanding Fed Rate Hikes</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d5">
             <div class="day">D5</div>
-            <div class="topic">Scams & red flags — pump-and-dump, Ponzi, guaranteed returns <span class="tag tag-video">12m</span></div>
-            <div class="time">35 min</div>
+            <span class="topic">Scams & red flags — pump-and-dump, Ponzi, guaranteed returns</span>
+            <span class="time">35 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=AqZbO8Ojhmw" target="_blank"><span class="badge badge-video">▶ 12m</span> Plain Bagel: The Passive Income Scam</a>
+              <a href="https://www.sebi.gov.in/investor-alerts.html" target="_blank"><span class="badge badge-read">📄 10m</span> SEBI Investor Alerts (or your local regulator)</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d6">
             <div class="day">D6</div>
-            <div class="topic">Build your first watchlist — 3-5 companies you understand <span class="tag tag-video">8m</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Build your first watchlist — 3-5 companies you understand</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=HXGSTtGClUY&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=13" target="_blank"><span class="badge badge-video">▶ 8m</span> Plain Bagel: 5 Steps for Getting Started</a>
+              <a href="https://www.screener.in" target="_blank"><span class="badge badge-read">📄 20m</span> Use Screener.in to pick 3-5 companies</a>
+            </div>
           </div>
           <div class="day-row" data-id="w4d7">
             <div class="day">D7</div>
-            <div class="topic">Capstone — write a 1-paragraph investment thesis for one company <span class="tag tag-quiz">quiz</span></div>
-            <div class="time">40 min</div>
+            <span class="topic">Capstone — write a 1-paragraph investment thesis for one company</span>
+            <span class="time">40 min</span>
+            <div class="links">
+              <a href="https://www.youtube.com/watch?v=1T4vB4jq_3s" target="_blank"><span class="badge badge-video">▶ 10m</span> Plain Bagel: Investing Won't Make You Rich (Probably)</a>
+            </div>
           </div>
         </div>
       </div>
