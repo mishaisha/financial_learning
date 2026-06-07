@@ -36,10 +36,6 @@ header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400
 .section h2 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
 .section h2 .emoji { font-size: 24px; }
 
-.topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-.topic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; }
-.topic-card .w { font-size: 13px; font-weight: 700; color: var(--gold); }
-
 .week { margin-bottom: 12px; }
 .week-header {
   background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
@@ -101,6 +97,32 @@ header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400
 
 footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
 
+/* Sidebar layout */
+.page-layout { display: flex; gap: 28px; align-items: flex-start; }
+.main-content { flex: 1; min-width: 0; }
+.sidebar {
+  position: sticky; top: 16px; width: 195px; min-width: 195px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+  max-height: calc(100vh - 32px); overflow-y: auto;
+}
+.sidebar h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px; }
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.sidebar li { margin-bottom: 2px; }
+.sidebar a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  color: var(--dark); text-decoration: none; transition: background 0.15s; line-height: 1.3;
+}
+.sidebar a:hover { background: #FFF8E7; }
+.sidebar a .w { font-size: 11px; color: var(--gold); font-weight: 700; margin-left: 6px; white-space: nowrap; }
+.sidebar a.active { background: #FFF0D0; }
+
+@media (max-width: 800px) {
+  .page-layout { flex-direction: column; }
+  .sidebar { position: static; width: 100%; min-width: unset; max-height: none; }
+}
+
 @media (max-width: 600px) {
   header h1 { font-size: 26px; }
   .day-card .day-header { padding: 10px 14px; }
@@ -125,7 +147,30 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
   </div>
 </header>
 
-<main class="container">
+<main>
+  <div class="container page-layout">
+
+  <nav class="sidebar">
+    <h3>📋 Topics</h3>
+    <ul>
+      <li><a href="#week-1">Stocks & Equity <span class="w">W1</span></a></li>
+      <li><a href="#week-1">Bonds & Fixed Income <span class="w">W1</span></a></li>
+      <li><a href="#week-1">Mutual Funds & ETFs <span class="w">W1</span></a></li>
+      <li><a href="#week-1">Valuation Ratios <span class="w">W1</span></a></li>
+      <li><a href="#week-2">Market Indices <span class="w">W2</span></a></li>
+      <li><a href="#week-2">Derivatives (F&O) <span class="w">W2</span></a></li>
+      <li><a href="#week-2">IPOs & Dividends <span class="w">W2</span></a></li>
+      <li><a href="#week-3">Fundamental Analysis <span class="w">W3</span></a></li>
+      <li><a href="#week-3">Technical Analysis <span class="w">W3</span></a></li>
+      <li><a href="#week-3">Risk & Return <span class="w">W3</span></a></li>
+      <li><a href="#week-3">Behavioral Finance <span class="w">W3</span></a></li>
+      <li><a href="#week-4">Portfolio Construction <span class="w">W4</span></a></li>
+      <li><a href="#week-4">Tax & Brokers <span class="w">W4</span></a></li>
+      <li><a href="#week-4">Scams & Red Flags <span class="w">W4</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
 
   <div class="stats-bar" id="statsBar">
     <div class="stat-item"><div class="num" id="doneCount">0</div><div class="label">Done</div></div>
@@ -135,30 +180,10 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
   </div>
 
   <div class="section">
-    <h2><span class="emoji">🗺️</span> What You'll Learn</h2>
-    <div class="topics">
-      <div class="topic-card">Stocks & Equity <span class="w">W1</span></div>
-      <div class="topic-card">Bonds & Fixed Income <span class="w">W1</span></div>
-      <div class="topic-card">Mutual Funds & ETFs <span class="w">W1</span></div>
-      <div class="topic-card">Valuation Ratios <span class="w">W1</span></div>
-      <div class="topic-card">Market Indices <span class="w">W2</span></div>
-      <div class="topic-card">Derivatives (F&O) <span class="w">W2</span></div>
-      <div class="topic-card">IPOs & Dividends <span class="w">W2</span></div>
-      <div class="topic-card">Fundamental Analysis <span class="w">W3</span></div>
-      <div class="topic-card">Technical Analysis <span class="w">W3</span></div>
-      <div class="topic-card">Risk & Return <span class="w">W3</span></div>
-      <div class="topic-card">Behavioral Finance <span class="w">W3</span></div>
-      <div class="topic-card">Portfolio Construction <span class="w">W4</span></div>
-      <div class="topic-card">Tax & Brokers <span class="w">W4</span></div>
-      <div class="topic-card">Scams & Red Flags <span class="w">W4</span></div>
-    </div>
-  </div>
-
-  <div class="section">
     <h2><span class="emoji">📅</span> 4-Week Schedule</h2>
 
     <!-- ======== WEEK 1 ======== -->
-    <div class="week" data-week="1">
+    <div class="week" id="week-1" data-week="1">
       <div class="week-header">
         <div class="left">
           <div class="num">1</div>
@@ -427,7 +452,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
     </div>
 
     <!-- ======== WEEK 2 ======== -->
-    <div class="week" data-week="2">
+    <div class="week" id="week-2" data-week="2">
       <div class="week-header">
         <div class="left">
           <div class="num">2</div>
@@ -652,7 +677,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
     </div>
 
     <!-- ======== WEEK 3 ======== -->
-    <div class="week" data-week="3">
+    <div class="week" id="week-3" data-week="3">
       <div class="week-header">
         <div class="left">
           <div class="num">3</div>
@@ -882,7 +907,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
     </div>
 
     <!-- ======== WEEK 4 ======== -->
-    <div class="week" data-week="4">
+    <div class="week" id="week-4" data-week="4">
       <div class="week-header">
         <div class="left">
           <div class="num">4</div>
@@ -1189,17 +1214,8 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
     </div>
   </div>
 
-  <!-- Tips -->
-  <div class="section">
-    <h2><span class="emoji">💡</span> How to Use This Plan</h2>
-    <div style="background: #FFF8E7; border: 1px solid #FFE0A0; border-radius: 10px; padding: 20px 24px; font-size: 14px; line-height: 1.8;">
-      <p>✅ <strong>Click any day</strong> to expand the lesson and read the content directly on this page.</p>
-      <p>✅ <strong>Click the day header</strong> again to mark it ✅ complete — progress saves in your browser.</p>
-      <p>✅ <strong>Links at the bottom</strong> of each lesson are optional extras if you want to dive deeper.</p>
-      <p>✅ <strong>Day 2 rule:</strong> Next morning, spend 5 min recalling 3 concepts from memory. If blank, re-skim.</p>
-      <p>📌 <strong>After week 4:</strong> Paper trade 2-4 weeks. Read <em>The Intelligent Investor</em> or <em>A Random Walk Down Wall Street</em>.</p>
-    </div>
-  </div>
+
+</div></div>
 
 </main>
 
@@ -1260,6 +1276,19 @@ document.querySelectorAll('.day-card .day-header').forEach(hdr => {
   });
 });
 
+
+// Sidebar nav — scroll to week + open accordion
+document.querySelectorAll('.sidebar a').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const id = this.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('open');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
 
 render();
 document.querySelector('.week').classList.add('open');
