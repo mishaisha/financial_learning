@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Literacy — 4-Week Study Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #F0B429;
+  --dark: #1A2A3A;
+  --light: #F5F5F5;
+  --gray: #6B7A8D;
+  --green: #2ECC71;
+  --border: #E0E0E0;
+  --card-bg: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #FAFAFA;
+  color: #1A1A2E;
+  line-height: 1.6;
+}
+.container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #0F2B3D 0%, #1A3A4A 100%);
+  color: #fff;
+  padding: 48px 0 40px;
+  border-bottom: 4px solid var(--gold);
+}
+header h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+header h1 span { color: var(--gold); }
+header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400; }
+.header-meta {
+  display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap;
+}
+.header-meta .badge {
+  background: rgba(255,255,255,0.1);
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+}
+
+/* Stats bar */
+.stats-bar {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 24px; font-weight: 700; color: var(--dark); }
+.stat-item .label { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.progress-bar {
+  flex: 1; min-width: 120px; height: 8px;
+  background: var(--border); border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--gold);
+  width: 0%; transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+/* Section */
+.section { margin: 40px 0; }
+.section h2 {
+  font-size: 22px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px;
+}
+.section h2 .emoji { font-size: 24px; }
+
+/* Domain cards */
+.topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.topic-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+.topic-card .w { font-size: 13px; font-weight: 700; color: var(--gold); }
+
+/* Week accordion */
+.week { margin-bottom: 12px; }
+.week-header {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  user-select: none;
+}
+.week-header:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+.week-header .left { display: flex; align-items: center; gap: 14px; }
+.week-header .left .num {
+  background: var(--gold);
+  color: #fff;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px;
+}
+.week-header .left .title { font-weight: 600; font-size: 15px; }
+.week-header .left .theme { font-size: 13px; color: var(--gray); }
+.week-header .check { font-size: 18px; color: var(--gray); transition: transform 0.2s; }
+.week.open .week-header .check { transform: rotate(180deg); }
+
+.week-body { display: none; }
+.week.open .week-body { display: block; }
+
+/* Days table */
+.days { margin: 8px 0 0; }
+.day-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 140px 70px;
+  gap: 0;
+  padding: 10px 20px 10px 66px;
+  align-items: center;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.day-row:last-child { border-bottom: none; }
+.day-row:hover { background: #FAFBFC; }
+.day-row .day { font-weight: 600; color: var(--gray); font-size: 13px; }
+.day-row .topic { font-weight: 500; }
+.day-row .topic .tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 1px 8px; border-radius: 4px;
+  margin-left: 6px;
+}
+.tag-video { background: #E8F5E9; color: #2E7D32; }
+.tag-read { background: #E3F2FD; color: #1565C0; }
+.tag-quiz { background: #F3E5F5; color: #7B1FA2; }
+.day-row .time { text-align: right; color: var(--gray); font-size: 13px; }
+.day-row.done .day,
+.day-row.done .topic { color: #B0B0B0; text-decoration: line-through; }
+.day-row.done .time { color: var(--green); }
+
+/* Resource links */
+.resources { margin-top: 8px; }
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.resource-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: box-shadow 0.2s;
+}
+.resource-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.resource-card .r-title { font-weight: 600; font-size: 14px; }
+.resource-card .r-desc { font-size: 12px; color: var(--gray); margin-top: 4px; }
+.resource-card a { color: #2563EB; text-decoration: none; font-weight: 500; font-size: 13px; }
+.resource-card a:hover { text-decoration: underline; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--gray);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  header h1 { font-size: 26px; }
+  .day-row { grid-template-columns: 30px 1fr 50px; padding: 10px 14px 10px 50px; }
+  .day-row .time { display: none; }
+  .stats-bar { flex-direction: column; text-align: center; }
+  .progress-bar { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Financial Literacy <span>Study Plan</span></h1>
+    <p class="sub">From zero to functional — 4 weeks, ~1hr/day</p>
+    <div class="header-meta">
+      <span class="badge">4 Weeks</span>
+      <span class="badge">28 Sessions</span>
+      <span class="badge">~1 hr/day</span>
+      <span class="badge">Free resources</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Progress -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="num" id="doneCount">0</div><div class="label">Done</div></div>
+    <div class="stat-item"><div class="num" id="totalCount">28</div><div class="label">Total</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stat-item"><div class="num" id="pctDisplay">0%</div><div class="label">Complete</div></div>
+  </div>
+
+  <!-- Overview -->
+  <div class="section">
+    <h2><span class="emoji">🗺️</span> What You'll Learn</h2>
+    <div class="topics">
+      <div class="topic-card">Stocks & Equity <span class="w">W1</span></div>
+      <div class="topic-card">Bonds & Fixed Income <span class="w">W1</span></div>
+      <div class="topic-card">Mutual Funds & ETFs <span class="w">W1</span></div>
+      <div class="topic-card">Valuation Ratios <span class="w">W1</span></div>
+      <div class="topic-card">Market Indices <span class="w">W2</span></div>
+      <div class="topic-card">Derivatives (F&O) <span class="w">W2</span></div>
+      <div class="topic-card">IPOs & Dividends <span class="w">W2</span></div>
+      <div class="topic-card">Fundamental Analysis <span class="w">W3</span></div>
+      <div class="topic-card">Technical Analysis <span class="w">W3</span></div>
+      <div class="topic-card">Risk & Return <span class="w">W3</span></div>
+      <div class="topic-card">Behavioral Finance <span class="w">W3</span></div>
+      <div class="topic-card">Portfolio Construction <span class="w">W4</span></div>
+      <div class="topic-card">Tax & Brokers <span class="w">W4</span></div>
+      <div class="topic-card">Scams & Red Flags <span class="w">W4</span></div>
+    </div>
+  </div>
+
+  <!-- Weeks -->
+  <div class="section">
+    <h2><span class="emoji">📅</span> 4-Week Schedule</h2>
+
+    <!-- Week 1 -->
+    <div class="week" data-week="1">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">1</div>
+          <div><div class="title">Foundations & Terminology</div><div class="theme">Stocks, Bonds, ETFs, Valuation, Financial Statements</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+        <div class="days">
+          <div class="day-row" data-id="w1d1">
+            <div class="day">D1</div>
+            <div class="topic">What is a stock? Equity, share, IPO, public vs private <span class="tag tag-video">7m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w1d2">
+            <div class="day">D2</div>
+            <div class="topic">How stock markets work — exchange, bid/ask, order types <span class="tag tag-video">8m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w1d3">
+            <div class="day">D3</div>
+            <div class="topic">Bonds 101 — coupon, maturity, yield, price-yield relationship <span class="tag tag-video">8m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w1d4">
+            <div class="day">D4</div>
+            <div class="topic">Mutual Funds & ETFs — active vs passive, expense ratio, NAV <span class="tag tag-video">12m</span></div>
+            <div class="time">45 min</div>
+          </div>
+          <div class="day-row" data-id="w1d5">
+            <div class="day">D5</div>
+            <div class="topic">Key financial statements — income, balance sheet, cash flow <span class="tag tag-video">18m</span></div>
+            <div class="time">45 min</div>
+          </div>
+          <div class="day-row" data-id="w1d6">
+            <div class="day">D6</div>
+            <div class="topic">Valuation basics — market cap, P/E ratio, P/B ratio, dividend yield <span class="tag tag-read">12m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w1d7">
+            <div class="day">D7</div>
+            <div class="topic">Week 1 review — flashcards + match terms to definitions <span class="tag tag-quiz">quiz</span></div>
+            <div class="time">30 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week" data-week="2">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">2</div>
+          <div><div class="title">Markets & Instruments</div><div class="theme">Indices, Bull/Bear, Derivatives, IPOs, Dividends, Sectors</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+        <div class="days">
+          <div class="day-row" data-id="w2d1">
+            <div class="day">D1</div>
+            <div class="topic">Market indices — S&P 500, Dow Jones, NASDAQ, Nifty 50 <span class="tag tag-video">6m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w2d2">
+            <div class="day">D2</div>
+            <div class="topic">Bull vs Bear markets — cycles, corrections, historical context <span class="tag tag-video">15m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w2d3">
+            <div class="day">D3</div>
+            <div class="topic">Derivatives intro — futures & options, call/put, leverage <span class="tag tag-video">8m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w2d4">
+            <div class="day">D4</div>
+            <div class="topic">IPOs & FPOs — book building, price band, listing day <span class="tag tag-video">8m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w2d5">
+            <div class="day">D5</div>
+            <div class="topic">Dividends & Buybacks — record date, ex-date, yield <span class="tag tag-video">7m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w2d6">
+            <div class="day">D6</div>
+            <div class="topic">Sectors & Industries — cyclical vs defensive, growth vs value <span class="tag tag-read">10m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w2d7">
+            <div class="day">D7</div>
+            <div class="topic">Week 2 review — market instruments & sector classification <span class="tag tag-quiz">quiz</span></div>
+            <div class="time">30 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 3 -->
+    <div class="week" data-week="3">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">3</div>
+          <div><div class="title">Analysis & Decision Making</div><div class="theme">Fundamental, Technical, Risk, DCA, Biases</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+        <div class="days">
+          <div class="day-row" data-id="w3d1">
+            <div class="day">D1</div>
+            <div class="topic">Fundamental analysis — top-down, moat, competitive advantage <span class="tag tag-video">18m</span></div>
+            <div class="time">45 min</div>
+          </div>
+          <div class="day-row" data-id="w3d2">
+            <div class="day">D2</div>
+            <div class="topic">Technical analysis intro — trends, S/R, moving averages, RSI <span class="tag tag-video">10m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w3d3">
+            <div class="day">D3</div>
+            <div class="topic">Reading an annual report — MD&A, notes, red flags <span class="tag tag-video">12m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w3d4">
+            <div class="day">D4</div>
+            <div class="topic">Risk & Return — risk-free rate, beta, Sharpe ratio, volatility <span class="tag tag-video">10m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w3d5">
+            <div class="day">D5</div>
+            <div class="topic">Dollar-cost averaging — lump sum vs SIP, rupee-cost averaging <span class="tag tag-read">10m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w3d6">
+            <div class="day">D6</div>
+            <div class="topic">Common biases — confirmation, loss aversion, recency, FOMO <span class="tag tag-video">8m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w3d7">
+            <div class="day">D7</div>
+            <div class="topic">Week 3 review — analyze one real company's stats (P/E, market cap) <span class="tag tag-quiz">quiz</span></div>
+            <div class="time">30 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 4 -->
+    <div class="week" data-week="4">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">4</div>
+          <div><div class="title">Portfolio & Real World</div><div class="theme">Construction, Tax, Brokers, News, Scams, Watchlist</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+        <div class="days">
+          <div class="day-row" data-id="w4d1">
+            <div class="day">D1</div>
+            <div class="topic">Portfolio construction — asset allocation, correlation, rebalancing <span class="tag tag-video">10m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w4d2">
+            <div class="day">D2</div>
+            <div class="topic">Tax implications — STCG vs LTCG, dividend tax, tax-loss harvesting <span class="tag tag-video">8m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w4d3">
+            <div class="day">D3</div>
+            <div class="topic">Brokers & platforms — discount vs full-service, demat, order types <span class="tag tag-read">15m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w4d4">
+            <div class="day">D4</div>
+            <div class="topic">Reading financial news — decode headlines, Fed, earnings, yield curve <span class="tag tag-video">10m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w4d5">
+            <div class="day">D5</div>
+            <div class="topic">Scams & red flags — pump-and-dump, Ponzi, guaranteed returns <span class="tag tag-video">12m</span></div>
+            <div class="time">35 min</div>
+          </div>
+          <div class="day-row" data-id="w4d6">
+            <div class="day">D6</div>
+            <div class="topic">Build your first watchlist — 3-5 companies you understand <span class="tag tag-video">8m</span></div>
+            <div class="time">40 min</div>
+          </div>
+          <div class="day-row" data-id="w4d7">
+            <div class="day">D7</div>
+            <div class="topic">Capstone — write a 1-paragraph investment thesis for one company <span class="tag tag-quiz">quiz</span></div>
+            <div class="time">40 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resources -->
+  <div class="section">
+    <h2><span class="emoji">📚</span> Free Resources</h2>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="r-title">Zerodha Varsity</div>
+        <div class="r-desc">Best free text-based stock market course. Modules for every topic.</div>
+        <a href="https://zerodha.com/varsity/modules/" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">The Plain Bagel (YouTube)</div>
+        <div class="r-desc">CFA-level explainers — stocks, bonds, behavioral finance, and more.</div>
+        <a href="https://www.youtube.com/playlist?list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Investopedia</div>
+        <div class="r-desc">Encyclopedia for any finance term. Always start here for definitions.</div>
+        <a href="https://www.investopedia.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Britannica Money</div>
+        <div class="r-desc">Dollar-cost averaging, bull/bear markets, and other explainers.</div>
+        <a href="https://www.britannica.com/money" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Screener.in</div>
+        <div class="r-desc">Indian stock screener — filter by P/E, market cap, sector.</div>
+        <a href="https://www.screener.in" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Yahoo Finance</div>
+        <div class="r-desc">Stock prices, financials, news — global markets.</div>
+        <a href="https://finance.yahoo.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Anki Flashcards</div>
+        <div class="r-desc">Spaced-repetition flashcard app. Make 3-5 cards per day.</div>
+        <a href="https://apps.ankiweb.net" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">NerdWallet</div>
+        <div class="r-desc">Capital gains tax rates, brokerage comparisons, beginner guides.</div>
+        <a href="https://www.nerdwallet.com/investing/learn" target="_blank">Open →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="section">
+    <h2><span class="emoji">💡</span> How to Use This Plan</h2>
+    <div style="background: #FFF8E7; border: 1px solid #FFE0A0; border-radius: 10px; padding: 20px 24px; font-size: 14px; line-height: 1.8;">
+      <p>✅ <strong>Daily routine:</strong> Watch the video (~8-18 min) then read the article (~10-20 min). Total = ~35-45 min.</p>
+      <p>✅ <strong>Click each day</strong> to mark it complete — progress is saved in your browser (localStorage).</p>
+      <p>✅ <strong>Day 2 rule:</strong> Next morning, spend 5 min writing 3 key concepts from memory. If blank, re-skim.</p>
+      <p>✅ <strong>Flashcards:</strong> Make 3-5 Anki cards per day. By week 4 you'll have ~100 cards for review.</p>
+      <p>📌 <strong>After week 4:</strong> Paper trade (virtual portfolio) for 2-4 weeks. Read <em>The Intelligent Investor</em> or <em>A Random Walk Down Wall Street</em> next.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    Financial Literacy Study Plan — Built for beginners, by a software engineer<br>
+    Updated: <span id="dateDisplay"></span>
+  </div>
+</footer>
+
+<script>
+const DAY_IDS = [
+  'w1d1','w1d2','w1d3','w1d4','w1d5','w1d6','w1d7',
+  'w2d1','w2d2','w2d3','w2d4','w2d5','w2d6','w2d7',
+  'w3d1','w3d2','w3d3','w3d4','w3d5','w3d6','w3d7',
+  'w4d1','w4d2','w4d3','w4d4','w4d5','w4d6','w4d7'
+];
+const KEY = 'financial-learning-progress';
+
+function loadDone() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+}
+function saveDone(arr) { localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+function toggleDay(id) {
+  const done = loadDone();
+  const idx = done.indexOf(id);
+  idx >= 0 ? done.splice(idx, 1) : done.push(id);
+  saveDone(done);
+  render();
+}
+
+function render() {
+  const done = loadDone();
+  const total = DAY_IDS.length;
+  const count = done.length;
+  const pct = Math.round(count / total * 100);
+  document.getElementById('doneCount').textContent = count;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.querySelectorAll('.day-row').forEach(el => {
+    el.classList.toggle('done', done.includes(el.dataset.id));
+  });
+}
+
+// Accordion
+document.querySelectorAll('.week-header').forEach(h => {
+  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+});
+
+// Day click toggle
+document.querySelectorAll('.day-row').forEach(r => {
+  r.addEventListener('click', function() { toggleDay(this.dataset.id); });
+});
+
+document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+
+render();
+document.querySelector('.week').classList.add('open');
+</script>
+</body>
+</html>
