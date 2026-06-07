@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Literacy — Phase 2: Portfolio & Trading</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --gold: #F0B429; --dark: #1A2A3A; --gray: #6B7A8D; --green: #2ECC71; --border: #E0E0E0; --card-bg: #FFFFFF; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A2E; line-height: 1.7; }
+.container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+header {
+  background: linear-gradient(135deg, #1A3A2A 0%, #0F2B3D 100%); color: #fff;
+  padding: 48px 0 40px; border-bottom: 4px solid var(--green);
+}
+header h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+header h1 span { color: var(--green); }
+header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400; }
+.header-meta { display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+.header-meta .badge { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+
+.stats-bar {
+  background: var(--card-bg); border-radius: 12px; padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: -24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid var(--border); flex-wrap: wrap; gap: 12px;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 24px; font-weight: 700; color: var(--dark); }
+.stat-item .label { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.progress-bar { flex: 1; min-width: 120px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+
+.section { margin: 40px 0; }
+.section h2 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.section h2 .emoji { font-size: 24px; }
+
+.week { margin-bottom: 12px; }
+.week-header {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; user-select: none;
+}
+.week-header:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+.week-header .left { display: flex; align-items: center; gap: 14px; }
+.week-header .left .num { background: var(--green); color: #fff; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.week-header .left .title { font-weight: 600; font-size: 15px; }
+.week-header .left .theme { font-size: 13px; color: var(--gray); }
+.week-header .check { font-size: 18px; color: var(--gray); transition: transform 0.2s; }
+.week.open .week-header .check { transform: rotate(180deg); }
+.week-body { display: none; }
+.week.open .week-body { display: block; }
+
+.day-card {
+  background: var(--card-bg); border: 1px solid #F0F0F0; border-top: none;
+  cursor: pointer; transition: background 0.15s;
+}
+.day-card:first-child { border-top: 1px solid #F0F0F0; border-radius: 0 0 0 0; }
+.day-card:last-child { border-radius: 0 0 10px 10px; }
+.day-card .day-header {
+  padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+}
+.day-card .day-header:hover { background: #FAFBFC; }
+.day-card .day { font-weight: 600; color: var(--gray); font-size: 13px; min-width: 28px; }
+.day-card .topic { font-weight: 500; flex: 1; font-size: 14px; }
+.day-card .time { color: var(--gray); font-size: 12px; white-space: nowrap; }
+.day-card .expand-icon { font-size: 12px; color: #B0B0B0; transition: transform 0.2s; }
+.day-card.open .expand-icon { transform: rotate(90deg); }
+.day-card .day-content { display: none; padding: 0 20px 16px 60px; font-size: 14px; color: #333; }
+.day-card.open .day-content { display: block; }
+.day-card.done .day { color: #B0B0B0; }
+.day-card.done .topic { color: #B0B0B0; text-decoration: line-through; }
+.day-card.done .time { color: var(--green); }
+.day-content h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--dark); }
+.day-content h4:first-child { margin-top: 0; }
+.day-content ul { margin: 6px 0; padding-left: 18px; }
+.day-content li { margin-bottom: 4px; }
+.day-content .key { background: #E8F5E9; border-left: 3px solid var(--green); padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.day-content .key strong { color: #2E7D32; }
+.day-content .links { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F0F0F0; }
+.day-content .links a { color: #2563EB; text-decoration: none; font-weight: 500; margin-right: 16px; display: inline-block; margin-bottom: 4px; }
+.day-content .links a:hover { text-decoration: underline; }
+.day-content .links .label { font-size: 12px; color: var(--gray); font-weight: 600; display: block; margin-bottom: 6px; }
+
+.resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.resource-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.resource-card .r-title { font-weight: 600; font-size: 14px; }
+.resource-card .r-desc { font-size: 12px; color: var(--gray); margin-top: 4px; }
+.resource-card a { color: #2563EB; text-decoration: none; font-weight: 500; font-size: 13px; display: inline-block; margin-top: 6px; }
+.resource-card a:hover { text-decoration: underline; }
+
+footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+footer a { color: var(--green); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 26px; }
+  .day-card .day-header { padding: 10px 14px; }
+  .day-card .day-content { padding: 0 14px 14px 48px; }
+  .stats-bar { flex-direction: column; text-align: center; }
+  .progress-bar { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Financial Literacy <span>Phase 2: Portfolio & Trading</span></h1>
+    <p class="sub">Portfolio theory, options strategies, risk management, and trading execution — 2 weeks, ~1hr/day.</p>
+    <div class="header-meta">
+      <span class="badge">2 Weeks</span>
+      <span class="badge">14 Sessions</span>
+      <span class="badge">~1 hr/day</span>
+      <span class="badge">Advanced concepts</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="num" id="doneCount">0</div><div class="label">Done</div></div>
+    <div class="stat-item"><div class="num" id="totalCount">14</div><div class="label">Total</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stat-item"><div class="num" id="pctDisplay">0%</div><div class="label">Complete</div></div>
+  </div>
+
+  <div class="section">
+
+    <!-- ======== WEEK 1 ======== -->
+    <div class="week" data-week="1">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">1</div>
+          <div><div class="title">Portfolio Theory & Construction</div><div class="theme">MPT, Asset Allocation, Rebalancing, Risk, Performance, Factors</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w1d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Modern Portfolio Theory — efficient frontier, correlation, optimization</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Core Idea</h4>
+            <p><strong>Modern Portfolio Theory (MPT)</strong>, developed by Harry Markowitz (Nobel Prize), proves mathematically that you can reduce portfolio risk without sacrificing return — simply by combining assets that don't move in perfect lockstep.</p>
+            <h4>Key concepts</h4>
+            <ul>
+              <li><strong>Expected Return:</strong> Weighted average of each asset's expected return.</li>
+              <li><strong>Portfolio Variance:</strong> NOT a weighted average of individual variances. Correlation between assets dramatically changes total risk.</li>
+              <li><strong>Diversification effect:</strong> As you add more uncorrelated assets, portfolio volatility decreases — approaching the "market" risk that can't be diversified away.</li>
+            </ul>
+            <h4>Efficient Frontier</h4>
+            <p>A curve showing the <strong>best possible return for each level of risk</strong>. Every portfolio below the curve is suboptimal — you could get more return for the same risk. The "optimal" portfolio depends on your risk tolerance.</p>
+            <h4>Correlation Matrix</h4>
+            <ul>
+              <li>+1.0: Perfect positive — no diversification benefit (two identical assets)</li>
+              <li>0.0: No correlation — solid diversification</li>
+              <li>-1.0: Perfect negative — ideal diversification (rare in practice)</li>
+              <li>Typical stock-stock correlation: ~0.5-0.7. Stock-bond: ~0.0 to -0.3.</li>
+            </ul>
+            <h4>Limitations of MPT</h4>
+            <ul>
+              <li>Relies on historical data — past correlation may not persist</li>
+              <li>Assumes returns follow a normal distribution (they don't — fat tails)</li>
+              <li>One-period model — real investing is multi-period</li>
+              <li>Sensitive to input assumptions (garbage in, garbage out)</li>
+            </ul>
+            <div class="key">💡 <strong>Takeaway:</strong> You don't need to build efficient frontier models yourself. Just understand the principle: mixing uncorrelated assets reduces risk. This is why a stock + bond portfolio beats all-stocks on a risk-adjusted basis.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=kJxTsYpryLg" target="_blank">▶ Plain Bagel: Modern Portfolio Theory (10m)</a>
+              <a href="https://www.investopedia.com/terms/m/modernportfoliotheory.asp" target="_blank">📄 Investopedia: Modern Portfolio Theory (12m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Strategic Asset Allocation — building a portfolio, glide paths, target-date</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Strategic vs Tactical Allocation</h4>
+            <ul>
+              <li><strong>Strategic:</strong> Set a long-term target (e.g., 60% stocks / 30% bonds / 10% gold) and stick to it. This is the foundation.</li>
+              <li><strong>Tactical:</strong> Short-term deviations from strategic allocation based on market views. Most people should NOT do this — studies show it rarely adds value.</li>
+            </ul>
+            <h4>Classic portfolios</h4>
+            <ul>
+              <li><strong>60/40 Portfolio:</strong> 60% stocks, 40% bonds. The classic "balanced" portfolio. ~8-9% historical return, ~10% volatility.</li>
+              <li><strong>Permanent Portfolio:</strong> 25% stocks, 25% bonds, 25% gold, 25% cash. Designed to withstand any economic environment.</li>
+              <li><strong>All-Weather Portfolio:</strong> Ray Dalio's approach — 30% stocks, 40% long-term bonds, 15% intermediate bonds, 7.5% gold, 7.5% commodities.</li>
+              <li><strong>Three-Fund Portfolio:</strong> Total stock market + total international + total bond market. Ultra-simple, ultra-effective.</li>
+            </ul>
+            <h4>Glide Paths</h4>
+            <p>Target-date funds automatically shift from stocks to bonds as you approach retirement. A "glide path" is the planned equity allocation over time. At age 25: 90% stocks. At 65: 40% stocks. The glide gets steeper as you near retirement.</p>
+            <h4>Your age in bonds</h4>
+            <p>A simple heuristic: bond allocation = your age. Age 30 → 30% bonds, 70% stocks. Age 60 → 60% bonds. Adjust based on your actual risk tolerance and financial situation.</p>
+            <div class="key">💡 <strong>Bottom line:</strong> Asset allocation determines 90%+ of your return variability. Spend more time on this than on picking individual stocks. A simple 3-fund portfolio beats most actively managed portfolios over time.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.bogleheads.org/wiki/Three-fund_portfolio" target="_blank">📄 Bogleheads: Three-Fund Portfolio (15m)</a>
+              <a href="https://www.investopedia.com/terms/a/assetallocation.asp" target="_blank">📄 Investopedia: Asset Allocation Strategies (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Rebalancing — methods, tax implications, drift tolerance</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Why rebalance?</h4>
+            <p>Over time, winners outperform and your allocation drifts. A 60/40 portfolio becomes 75/25 after a bull market. Rebalancing <strong>forces you to sell high (winners) and buy low (laggards)</strong>. It systematically enforces discipline.</p>
+            <h4>Rebalancing methods</h4>
+            <ul>
+              <li><strong>Calendar rebalancing:</strong> Rebalance every 6 or 12 months on a fixed schedule. Simple, predictable, low effort.</li>
+              <li><strong>Threshold rebalancing:</strong> Rebalance only when an asset class drifts beyond a threshold (e.g., ±5% from target). More responsive, less frequent.</li>
+              <li><strong>Band + calendar hybrid:</strong> Check quarterly; rebalance only if beyond threshold. Best of both worlds.</li>
+            </ul>
+            <h4>Tax considerations</h4>
+            <ul>
+              <li>In a <strong>taxable account</strong>, selling winners triggers capital gains tax. Rebalance by directing <strong>new contributions</strong> to underweight assets first — no tax hit.</li>
+              <li>In a <strong>retirement account</strong> (401k/IRA/PPF/NPS), trades have no immediate tax consequence. Rebalance freely.</li>
+              <li><strong>Tax-loss harvesting:</strong> Sell losers to offset gains from winners when rebalancing.</li>
+            </ul>
+            <h4>How often?</h4>
+            <p>Vanguard research: annual rebalancing is sufficient for most investors. More frequent rebalancing adds minimal benefit and increases costs/taxes. The typical 60/40 portfolio drifts only ~2-3% per year.</p>
+            <div class="key">💡 <strong>Simple rule:</strong> Pick a date (your birthday, Jan 1, or April 1) and rebalance once a year. Set a 5% threshold. If no asset class drifted >5%, skip it. This takes 15 minutes annually.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.bogleheads.org/wiki/Rebalancing" target="_blank">📄 Bogleheads: Rebalancing (10m)</a>
+              <a href="https://www.investopedia.com/terms/r/rebalancing.asp" target="_blank">📄 Investopedia: Rebalancing (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Risk Management — VaR, drawdown, position sizing, stop-losses</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Value at Risk (VaR)</h4>
+            <p><strong>VaR</strong> answers: "What's the maximum I could lose in a day (or month) with 95% confidence?" If daily VaR(95%) = ₹5,000, you have a 5% chance of losing more than ₹5,000 in any given day.</p>
+            <ul>
+              <li>Historical VaR: Sort past returns, pick the 5th percentile loss.</li>
+              <li>Parametric VaR: Assume normal distribution, use standard deviation.</li>
+              <li>Monte Carlo VaR: Simulate thousands of random scenarios.</li>
+            </ul>
+            <h4>Max Drawdown</h4>
+            <p>The largest peak-to-trough decline in your portfolio's history. If your portfolio went from ₹1L to ₹60K, max drawdown = 40%. This is the most intuitive risk measure — "how bad could it get?"</p>
+            <ul>
+              <li>S&P 500 max drawdown (2008): -51%</li>
+              <li>60/40 portfolio max drawdown (2008): ~-30%</li>
+              <li>Bonds max drawdown (2022): ~-20% (rare — rates rose faster than ever)</li>
+            </ul>
+            <h4>Position Sizing</h4>
+            <p>The single most important risk control for individual stocks. No single position should be large enough to ruin you.</p>
+            <ul>
+              <li><strong>2% rule:</strong> Never risk more than 2% of your portfolio on any single trade.</li>
+              <li><strong>5% position limit:</strong> No single stock > 5% of portfolio (except index funds).</li>
+              <li><strong>Kelly Criterion:</strong> Mathematical formula for optimal bet size. f* = (bp - q) / b. Most retail investors should use fractional Kelly (1/4 or 1/2).</li>
+            </ul>
+            <h4>Stop-Losses</h4>
+            <p>A predetermined price at which you sell to limit losses. Common rules: 8-15% stop-loss on individual stocks, or trailing stop-loss that follows the price up.</p>
+            <div class="key">⚠️ <strong>Caveat:</strong> Stop-losses don't guarantee your exit price. In a gap-down (overnight crash), your order executes at the next available price — which could be far below your stop. For index ETFs, this is less of a concern.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=NzTqL8DGPK4" target="_blank">▶ Plain Bagel: Position Sizing & Risk Management (12m)</a>
+              <a href="https://www.investopedia.com/terms/v/var.asp" target="_blank">📄 Investopedia: Value at Risk (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Performance Measurement — alpha, beta, Sharpe, Sortino, benchmarking</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Absolute vs Relative Returns</h4>
+            <p><strong>Absolute:</strong> "My portfolio returned 12%." <strong>Relative:</strong> "My portfolio returned 12% vs the benchmark's 10%. I beat the market by 2%." Always measure both.</p>
+            <h4>Key metrics</h4>
+            <ul>
+              <li><strong>Alpha:</strong> Excess return vs benchmark after adjusting for risk. Positive alpha = manager added value. Negative alpha = underperformed.</li>
+              <li><strong>Beta:</strong> Sensitivity to market moves. β=1.2 means portfolio moves 20% more than the market.</li>
+              <li><strong>Sharpe Ratio:</strong> (Portfolio Return − Risk-Free Rate) ÷ Standard Deviation. Measures return per unit of total risk. >1 is good, >2 is great.</li>
+              <li><strong>Sortino Ratio:</strong> Same as Sharpe but only penalizes <strong>downside</strong> volatility. Better for investors who care more about losses than gains.</li>
+              <li><strong>Information Ratio:</strong> (Portfolio Return − Benchmark Return) ÷ Tracking Error. Measures consistency of outperformance.</li>
+              <li><strong>Treynor Ratio:</strong> (Portfolio Return − Risk-Free Rate) ÷ Beta. Return per unit of systematic risk.</li>
+            </ul>
+            <h4>Benchmarking</h4>
+            <ul>
+              <li>Indian large-cap → Nifty 50 or Sensex</li>
+              <li>US large-cap → S&P 500</li>
+              <li>Balanced portfolio → 60% Nifty + 40% bond index</li>
+              <li>Never benchmark a small-cap fund against the Nifty 50 — wrong comparison</li>
+            </ul>
+            <div class="key">💡 <strong>For most people:</strong> Just track your return vs an appropriate benchmark annually. If you're in index funds, your return should match the benchmark minus fees. If you're picking stocks, compare your CAGR to the index over 3+ years.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/s/sharperatio.asp" target="_blank">📄 Investopedia: Sharpe Ratio (8m)</a>
+              <a href="https://www.investopedia.com/terms/a/alpha.asp" target="_blank">📄 Investopedia: Alpha (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Factor Investing — value, momentum, size, quality, low volatility</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What are factors?</h4>
+            <p><strong>Factors</strong> are persistent, measurable characteristics that explain differences in stock returns. Academic research (Fama-French) identified that factors beyond market beta explain performance.</p>
+            <h4>The 5 major factors</h4>
+            <ul>
+              <li><strong>Value:</strong> Cheap stocks (low P/E, low P/B) tend to outperform expensive ones over long periods. ETFs: NIFTY Value 20, IWD (US).</li>
+              <li><strong>Momentum:</strong> Stocks that went up recently tend to keep going up (3-12 month horizon). Contrary to EMH. ETFs: MTUM (US).</li>
+              <li><strong>Size:</strong> Small-cap stocks have historically outperformed large-caps (higher risk, higher return). ETFs: NIFTY Smallcap 250, IWM (US).</li>
+              <li><strong>Quality:</strong> Companies with high ROE, low debt, stable earnings tend to outperform. ETFs: QUAL (US), NIFTY200 Quality 30.</li>
+              <li><strong>Low Volatility:</strong> Low-beta stocks have historically outperformed high-beta on a risk-adjusted basis (the "low-vol anomaly"). ETFs: USMV (US).</li>
+            </ul>
+            <h4>Factor ETFs — investing in factors</h4>
+            <p>You can buy factor exposure through "smart beta" ETFs that screen stocks by specific factors. Instead of buying the whole index, you buy only the value stocks, or only quality stocks.</p>
+            <h4>Caveats</h4>
+            <ul>
+              <li>Factors can underperform for <strong>10+ years</strong> at a time (value had a terrible 2010-2020).</li>
+              <li>Factor performance can be cyclical — what worked last decade may not work next.</li>
+              <li>Factor ETFs have higher expense ratios than plain index funds.</li>
+            </ul>
+            <div class="key">💡 <strong>For most investors:</strong> A plain cap-weighted index fund is sufficient. Factor investing adds complexity and may not pay off in your timeframe. If you do use factors, hold them for 15+ years and don't abandon them during underperformance.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=nkkg_kZQY3I" target="_blank">▶ Plain Bagel: Factor Investing (10m)</a>
+              <a href="https://www.investopedia.com/terms/f/factor-investing.asp" target="_blank">📄 Investopedia: Factor Investing (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Week 1 review — build a sample portfolio, compare allocations</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Practice exercise</h4>
+            <p>Design three portfolios for different hypothetical investors:</p>
+            <h4>Portfolio A: Aggressive (age 25, high risk tolerance)</h4>
+            <ul>
+              <li>70% Nifty 50 / S&P 500 index ETF</li>
+              <li>20% Small-cap index ETF</li>
+              <li>10% Gold ETF</li>
+              <li>Expected return: ~11%, Volatility: ~18%</li>
+              <li>Max drawdown: ~45%</li>
+            </ul>
+            <h4>Portfolio B: Moderate (age 40, balanced)</h4>
+            <ul>
+              <li>50% Nifty 50 / S&P 500 index ETF</li>
+              <li>30% Bond index fund / G-Sec</li>
+              <li>10% Gold ETF</li>
+              <li>10% International index ETF</li>
+              <li>Expected return: ~9%, Volatility: ~12%</li>
+              <li>Max drawdown: ~25%</li>
+            </ul>
+            <h4>Portfolio C: Conservative (age 60, near retirement)</h4>
+            <ul>
+              <li>25% Nifty 50 / S&P 500 index ETF</li>
+              <li>55% Bond index fund / G-Sec / FDs</li>
+              <li>10% Gold ETF</li>
+              <li>10% Liquid fund / Cash</li>
+              <li>Expected return: ~7%, Volatility: ~7%</li>
+              <li>Max drawdown: ~12%</li>
+            </ul>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.bogleheads.org/wiki/Lazy_portfolios" target="_blank">📄 Bogleheads: Lazy Portfolios (10m)</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======== WEEK 2 ======== -->
+    <div class="week" data-week="2">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">2</div>
+          <div><div class="title">Options & Trading Strategies</div><div class="theme">Greeks, Income Strategies, Spreads, Volatility, Hedging, Execution</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w2d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Options deep dive — calls, puts, moneyness, intrinsic vs time value, greeks</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Options recap from Phase 1</h4>
+            <ul>
+              <li><strong>Call option:</strong> Right to BUY at strike price. You buy a call if you think price will go UP.</li>
+              <li><strong>Put option:</strong> Right to SELL at strike price. You buy a put if you think price will go DOWN.</li>
+              <li><strong>Premium:</strong> The price you pay for the option (non-refundable).</li>
+            </ul>
+            <h4>Moneyness</h4>
+            <ul>
+              <li><strong>ITM (In The Money):</strong> Call: strike < market price. Put: strike > market price. Has intrinsic value.</li>
+              <li><strong>ATM (At The Money):</strong> Strike ≈ market price. Mostly time value.</li>
+              <li><strong>OTM (Out of The Money):</strong> Call: strike > market price. Put: strike < market price. Only time value.</li>
+            </ul>
+            <h4>Intrinsic Value vs Time Value</h4>
+            <p><strong>Intrinsic Value:</strong> What the option would be worth if exercised RIGHT NOW. ITM only. Formula: |Market Price − Strike Price|.</p>
+            <p><strong>Time Value:</strong> Premium − Intrinsic Value. The "hope" component. Decays as expiry approaches (time decay / theta).</p>
+            <h4>The Greeks (brief intro)</h4>
+            <ul>
+              <li><strong>Delta (Δ):</strong> Change in option price per ₹1 change in stock. Call: 0 to 1. Put: -1 to 0. ATM ≈ 0.5.</li>
+              <li><strong>Gamma (Γ):</strong> Rate of change of delta. High near expiry for ATM options.</li>
+              <li><strong>Theta (Θ):</strong> Time decay. Options lose value daily. ATM options lose value fastest near expiry.</li>
+              <li><strong>Vega (ν):</strong> Sensitivity to implied volatility. Higher when volatility is uncertain.</li>
+              <li><strong>Rho (ρ):</strong> Sensitivity to interest rates. Least important for most retail traders.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Warning:</strong> Options are a zero-sum game (before fees). For every buyer who profits, a seller loses. Most retail options traders lose money. If you trade options, <strong>sell premium (be the casino)</strong> rather than buying it (be the gambler).</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=EjILEfWEO2U" target="_blank">▶ Plain Bagel: Options Trading Explained (15m)</a>
+              <a href="https://zerodha.com/varsity/module/option-theory/" target="_blank">📄 Zerodha Varsity: Option Theory (Ch. 1-5, 20m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Covered Calls & Cash-Secured Puts — income strategies</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Covered Call</h4>
+            <p><strong>Strategy:</strong> Own 100 shares of a stock. Sell 1 call option (OTM) against it.</p>
+            <p><strong>Why:</strong> You collect premium (income). If stock stays below strike, you keep the premium and your shares. If stock rises above strike, your shares get called away (sold) at the strike price — you miss upside beyond the strike but keep the premium.</p>
+            <ul>
+              <li>Best for: Sideways or slightly bullish markets. Stocks you're willing to sell at the strike price.</li>
+              <li>Risk: You cap upside. If stock moons, you don't participate beyond the strike.</li>
+              <li>Example: Own Reliance at ₹2,500. Sell ₹2,600 call for ₹50 premium. If Reliance stays ≤ ₹2,600 → you keep ₹50/share (₹5,000). If Reliance hits ₹2,700 → shares sold at ₹2,600, you miss ₹100 upside but kept ₹50 premium.</li>
+            </ul>
+            <h4>Cash-Secured Put</h4>
+            <p><strong>Strategy:</strong> Sell 1 put option. Keep cash ready to buy 100 shares if assigned.</p>
+            <p><strong>Why:</strong> You collect premium. If stock stays above strike, you keep the premium (free money). If stock falls below strike, you buy the stock at a discount (strike − premium received).</p>
+            <ul>
+              <li>Best for: Stocks you want to own at a lower price.</li>
+              <li>Risk: Stock could crash below strike → you're forced to buy at a loss.</li>
+              <li>Example: Sell Nifty 22,000 put for ₹150. If Nifty stays above 22,000 → keep ₹150/share (₹15,000). If Nifty falls to 21,500 → you buy at 22,000 (₹500 loss) but kept ₹150 premium → net loss ₹350.</li>
+            </ul>
+            <div class="key">💡 <strong>For beginners:</strong> Covered calls on stocks you already own are safer than naked options. Cash-secured puts require significant capital. Never sell naked (uncovered) options as a retail trader.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/c/coveredcall.asp" target="_blank">📄 Investopedia: Covered Call (8m)</a>
+              <a href="https://www.investopedia.com/terms/c/cashsecuredput.asp" target="_blank">📄 Investopedia: Cash-Secured Put (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Spreads — vertical spreads, iron condor, risk-defined strategies</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Vertical Spreads</h4>
+            <p>Buy one option, sell another of the same type (both calls or both puts) at different strikes, same expiry. This <strong>defines your max risk and max profit</strong> upfront.</p>
+            <h4>Bull Call Spread</h4>
+            <p>Buy an ITM/ATM call, sell a higher OTM call. You pay a net debit (cost). Profit if stock rises above the higher strike. Max loss = premium paid. Max profit = difference in strikes − premium paid.</p>
+            <h4>Bear Put Spread</h4>
+            <p>Buy an ITM/ATM put, sell a lower OTM put. Net debit. Profit if stock falls below lower strike. Defined risk and reward.</p>
+            <h4>Iron Condor</h4>
+            <p><strong>Strategy:</strong> Sell an OTM put spread + sell an OTM call spread. Four options total. Collect net credit.</p>
+            <ul>
+              <li>You profit if the stock stays within a range (between the two short strikes).</li>
+              <li>Max profit = net credit received. Max loss = width of one spread − credit.</li>
+              <li>Best for: Low-volatility, sideways markets. "I don't think the stock will move much."</li>
+              <li>Common for index options (Nifty, SPX) — less risky than single stocks.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Risk-defined is NOT risk-free.</strong> Spreads limit your loss, but you can still lose 100% of your investment. Iron condors can get crushed in a volatile market move. Always size positions appropriately (1-2% of portfolio).</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/module/option-strategies/" target="_blank">📄 Zerodha Varsity: Option Strategies (Ch. 1-4, 20m)</a>
+              <a href="https://www.investopedia.com/terms/i/ironcondor.asp" target="_blank">📄 Investopedia: Iron Condor (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Straddles & Strangles — volatility strategies</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Long Straddle</h4>
+            <p><strong>Strategy:</strong> Buy an ATM call + buy an ATM put (same strike, same expiry).</p>
+            <ul>
+              <li>You profit if the stock moves significantly in EITHER direction.</li>
+              <li>You lose if the stock stays flat (time decay kills both options).</li>
+              <li>Best before: Earnings announcements, major news events, budget day.</li>
+              <li>Risk: You can lose 100% if the stock doesn't move enough to cover the combined premium.</li>
+            </ul>
+            <h4>Long Strangle</h4>
+            <p><strong>Strategy:</strong> Buy an OTM call + buy an OTM put (different strikes, same expiry).</p>
+            <ul>
+              <li>Cheaper than a straddle (both options are OTM).</li>
+              <li>Needs a LARGER move to profit (the stock must move beyond either strike).</li>
+              <li>Higher % return if the move is huge. Lower probability of profit.</li>
+            </ul>
+            <h4>Implied Volatility (IV)</h4>
+            <p>IV is the market's forecast of future volatility. High IV → options are expensive. Low IV → options are cheap.</p>
+            <ul>
+              <li>Buy straddles/strangles when IV is LOW (options are cheap) and you expect a big move.</li>
+              <li>Sell straddles/strangles when IV is HIGH (options are expensive) and you expect calm.</li>
+              <li>After earnings, IV typically crashes (volatility crush) — even if stock moves, the options may lose value.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Volatility is mean-reverting.</strong> High IV tends to fall. Low IV tends to rise. Selling premium during high IV (when fear is high) is statistically profitable. Buying premium during low IV is smarter than buying during high IV.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/s/straddle.asp" target="_blank">📄 Investopedia: Straddle (8m)</a>
+              <a href="https://www.investopedia.com/terms/s/strangle.asp" target="_blank">📄 Investopedia: Strangle (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Hedging — protective puts, collars, portfolio hedging</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Protective Put (Married Put)</h4>
+            <p><strong>Strategy:</strong> Own 100 shares + buy 1 put option (usually OTM or ATM). Acts like insurance — limits downside while keeping upside.</p>
+            <ul>
+              <li>Max loss = (stock price − strike price) × 100 + premium paid</li>
+              <li>Example: Buy TCS at ₹4,000. Buy ₹3,800 put for ₹50. Max loss = (₹4,000 − ₹3,800 + ₹50) = ₹250/share. If TCS crashes to ₹3,000, you can still sell at ₹3,800.</li>
+              <li>Cost: The put premium + time decay. You're paying for peace of mind.</li>
+            </ul>
+            <h4>Collar</h4>
+            <p><strong>Strategy:</strong> Own 100 shares + buy a put (protective) + sell a call (funds the put). Net cost can be zero ("zero-cost collar").</p>
+            <ul>
+              <li>You cap downside (via the put) AND cap upside (via the sold call).</li>
+              <li>Best for: Large unrealized gains that you want to protect without selling (avoiding capital gains tax).</li>
+              <li>Example: Own Apple at $150, now $200. Buy $180 put (protect $20 downside), sell $230 call (cap upside at $30 gain). You keep the $30 gain potential, protect $20, no premium cost.</li>
+            </ul>
+            <h4>Portfolio Hedging with Index Puts</h4>
+            <p>Instead of hedging each stock, buy puts on the index (Nifty or SPX) to protect your entire portfolio. This is simpler and cheaper than individual hedges.</p>
+            <ul>
+              <li>Tail hedge: Buy deep OTM index puts that pay off big during a crash. These are cheap (low premium) but expire worthless most of the time. You're paying for crash insurance.</li>
+              <li>Proportional hedge: Buy enough puts to cover your portfolio beta-adjusted exposure.</li>
+            </ul>
+            <div class="key">💡 <strong>For most investors:</strong> You don't need active hedging. Time in the market beats timing the market. Hedging makes sense when you have concentrated positions, large unrealized gains, or are approaching a major financial goal (retirement, home purchase).</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/c/collar.asp" target="_blank">📄 Investopedia: Collar (8m)</a>
+              <a href="https://www.investopedia.com/terms/p/protective-put.asp" target="_blank">📄 Investopedia: Protective Put (6m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Trading execution — order types (iceberg, TWAP, VWAP), slippage, liquidity</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Advanced Order Types</h4>
+            <ul>
+              <li><strong>Iceberg Order:</strong> A large order broken into smaller visible chunks. Only the tip shows in the order book. Used by institutions to hide their full size; prevents price moving against them.</li>
+              <li><strong>TWAP (Time-Weighted Average Price):</strong> Spreads a large order evenly over time. Algorithm slices into smaller pieces and executes at regular intervals. Goal: execute near the average price over the period.</li>
+              <li><strong>VWAP (Volume-Weighted Average Price):</strong> Similar to TWAP but sizes slices based on historical volume patterns. More volume when market is more active. Goal: execute at or below the VWAP benchmark.</li>
+              <li><strong>Implementation Shortfall:</strong> Algorithm that balances speed vs price impact. Aggressive for urgent orders, passive for patient ones.</li>
+            </ul>
+            <h4>Slippage</h4>
+            <p>The difference between the expected price of a trade and the actual execution price. Caused by:</p>
+            <ul>
+              <li><strong>Market impact:</strong> Your own trade moves the price (especially for large orders, illiquid stocks).</li>
+              <li><strong>Spread costs:</strong> You buy at ask, sell at bid — the spread is a cost.</li>
+              <li><strong>Latency:</strong> Price changes between when you click and when the order reaches the exchange.</li>
+            </ul>
+            <h4>Liquidity</h4>
+            <p><strong>Liquid:</strong> Nifty 50 stocks, S&P 500, major ETFs. Tight spreads, large volumes, minimal slippage.</p>
+            <p><strong>Illiquid:</strong> Small-cap stocks, low-volume ETFs, options with low OI. Wide spreads, large slippage. Can be dangerous for large orders.</p>
+            <h4>Practical tips</h4>
+            <ul>
+              <li>For large positions (>₹1L), use limit orders, not market orders.</li>
+              <li>Avoid trading in the first 15 minutes and last 15 minutes (highest volatility, widest spreads).</li>
+              <li>Best execution is usually 10am-11am and 2pm-3:30pm (Indian market).</li>
+              <li>For options, use limit orders — options spreads can be predatory with market orders.</li>
+            </ul>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/chapter/orders-2/" target="_blank">📄 Zerodha Varsity: Advanced Orders (12m)</a>
+              <a href="https://www.investopedia.com/terms/s/slippage.asp" target="_blank">📄 Investopedia: Slippage (6m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Capstone — write your Investment Policy Statement (IPS)</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is an IPS?</h4>
+            <p>An <strong>Investment Policy Statement</strong> is a written document that defines your investment philosophy, goals, asset allocation, and rules. It's the single most important tool for maintaining discipline. When markets crash, your IPS tells you what to do — you don't make emotional decisions.</p>
+            <h4>Template — fill in your answers</h4>
+            <ol>
+              <li><strong>Investment Goal:</strong> "I'm saving for retirement / a home purchase / financial independence. Target date: 20___."</li>
+              <li><strong>Time Horizon:</strong> "I'll need this money in ___ years."</li>
+              <li><strong>Risk Tolerance:</strong> "If my portfolio dropped 30%, I would: (a) do nothing, (b) buy more, (c) panic sell."</li>
+              <li><strong>Asset Allocation:</strong> "I will maintain ___% stocks, ___% bonds, ___% gold, ___% cash."</li>
+              <li><strong>Rebalancing Rule:</strong> "I will rebalance every ___ months / when any asset class drifts more than ___%."</li>
+              <li><strong>Investment Vehicles:</strong> "I will use ___ ETFs / index funds. My broker is ___."</li>
+              <li><strong>Contribution Plan:</strong> "I will invest ₹___ every month via SIP. I will increase this by ___% annually."</li>
+              <li><strong>Withdrawal Strategy (if applicable):</strong> "I will withdraw ___% of portfolio annually. I will use the bucket strategy / 4% rule."</li>
+              <li><strong>Rules to prevent mistakes:</strong> "I will not trade based on news headlines. I will not use leverage. I will not buy individual stocks without writing a thesis. I will review my IPS once a year."</li>
+            </ol>
+            <div class="key">💡 <strong>The IPS is a contract with yourself.</strong> Write it when markets are calm and you're thinking clearly. When fear or greed takes over, read it before making any move. The best investors don't have better ideas — they have better discipline.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/i/investment-policy-statement.asp" target="_blank">📄 Investopedia: Investment Policy Statement (10m)</a>
+              <a href="https://www.bogleheads.org/wiki/Investment_policy_statement" target="_blank">📄 Bogleheads: IPS Examples (15m)</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resources -->
+  <div class="section">
+    <h2><span class="emoji">📚</span> Advanced Resources</h2>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="r-title">Zerodha Varsity</div>
+        <div class="r-desc">Option theory, option strategies, futures trading modules.</div>
+        <a href="https://zerodha.com/varsity/modules/" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Bogleheads Wiki</div>
+        <div class="r-desc">Three-fund portfolio, lazy portfolios, rebalancing, IPS.</div>
+        <a href="https://www.bogleheads.org/wiki/Main_Page" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Investopedia</div>
+        <div class="r-desc">Reference for any options strategy, greek, or risk metric.</div>
+        <a href="https://www.investopedia.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Options Profit Calculator</div>
+        <div class="r-desc">Visualize P&L for any options strategy before trading.</div>
+        <a href="https://www.optionsprofitcalculator.com" target="_blank">Open →</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <a href="./basics.html">← Phase 1: Basics</a><br>
+    Financial Literacy — Phase 2: Portfolio & Trading<br>
+    Last updated: <span id="dateDisplay">loading...</span>
+  </div>
+</footer>
+
+<script>
+const DAY_IDS = ['w1d1','w1d2','w1d3','w1d4','w1d5','w1d6','w1d7','w2d1','w2d2','w2d3','w2d4','w2d5','w2d6','w2d7'];
+const KEY = 'financial-learning-progress-p2';
+
+function loadDone() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+function saveDone(arr) { localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+function toggleDay(id) {
+  const done = loadDone();
+  const idx = done.indexOf(id);
+  idx >= 0 ? done.splice(idx, 1) : done.push(id);
+  saveDone(done);
+  render();
+}
+
+function render() {
+  const done = loadDone();
+  const total = DAY_IDS.length;
+  const count = done.length;
+  const pct = Math.round(count / total * 100);
+  document.getElementById('doneCount').textContent = count;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.querySelectorAll('.day-card').forEach(el => {
+    el.classList.toggle('done', done.includes(el.dataset.id));
+  });
+}
+
+document.querySelectorAll('.week-header').forEach(h => {
+  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+});
+
+document.querySelectorAll('.day-card .day-header').forEach(hdr => {
+  hdr.addEventListener('click', function(e) {
+    const card = this.parentElement;
+    if (card.classList.contains('open')) {
+      toggleDay(card.dataset.id);
+    } else {
+      const week = card.closest('.week-body');
+      week.querySelectorAll('.day-card.open').forEach(c => c.classList.remove('open'));
+      card.classList.add('open');
+    }
+  });
+});
+
+fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
+  .then(r => r.json())
+  .then(d => {
+    const date = new Date(d.commit.committer.date);
+    document.getElementById('dateDisplay').textContent = date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) + ' at ' + date.toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+  })
+  .catch(() => document.getElementById('dateDisplay').textContent = 'recent');
+
+render();
+document.querySelector('.week').classList.add('open');
+document.querySelector('.day-card').classList.add('open');
+</script>
+</body>
+</html>

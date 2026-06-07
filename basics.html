@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Literacy — Phase 1: Basics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --gold: #F0B429; --dark: #1A2A3A; --gray: #6B7A8D; --green: #2ECC71; --border: #E0E0E0; --card-bg: #FFFFFF; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A2E; line-height: 1.7; }
+.container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+header {
+  background: linear-gradient(135deg, #0F2B3D 0%, #1A3A4A 100%); color: #fff;
+  padding: 48px 0 40px; border-bottom: 4px solid var(--gold);
+}
+header h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+header h1 span { color: var(--gold); }
+header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400; }
+.header-meta { display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+.header-meta .badge { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+
+.stats-bar {
+  background: var(--card-bg); border-radius: 12px; padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: -24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid var(--border); flex-wrap: wrap; gap: 12px;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 24px; font-weight: 700; color: var(--dark); }
+.stat-item .label { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.progress-bar { flex: 1; min-width: 120px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+
+.section { margin: 40px 0; }
+.section h2 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.section h2 .emoji { font-size: 24px; }
+
+.week { margin-bottom: 12px; }
+.week-header {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; user-select: none;
+}
+.week-header:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+.week-header .left { display: flex; align-items: center; gap: 14px; }
+.week-header .left .num { background: var(--gold); color: #fff; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.week-header .left .title { font-weight: 600; font-size: 15px; }
+.week-header .left .theme { font-size: 13px; color: var(--gray); }
+.week-header .check { font-size: 18px; color: var(--gray); transition: transform 0.2s; }
+.week.open .week-header .check { transform: rotate(180deg); }
+.week-body { display: none; }
+.week.open .week-body { display: block; }
+
+/* Day cards */
+.day-card {
+  background: var(--card-bg); border: 1px solid #F0F0F0; border-top: none;
+  cursor: pointer; transition: background 0.15s;
+}
+.day-card:first-child { border-top: 1px solid #F0F0F0; border-radius: 0 0 0 0; }
+.day-card:last-child { border-radius: 0 0 10px 10px; }
+.day-card .day-header {
+  padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+}
+.day-card .day-header:hover { background: #FAFBFC; }
+.day-card .day { font-weight: 600; color: var(--gray); font-size: 13px; min-width: 28px; }
+.day-card .topic { font-weight: 500; flex: 1; font-size: 14px; }
+.day-card .time { color: var(--gray); font-size: 12px; white-space: nowrap; }
+.day-card .expand-icon { font-size: 12px; color: #B0B0B0; transition: transform 0.2s; }
+.day-card.open .expand-icon { transform: rotate(90deg); }
+
+.day-card .day-content { display: none; padding: 0 20px 16px 60px; font-size: 14px; color: #333; }
+.day-card.open .day-content { display: block; }
+
+.day-card.done .day { color: #B0B0B0; }
+.day-card.done .topic { color: #B0B0B0; text-decoration: line-through; }
+.day-card.done .time { color: var(--green); }
+
+.day-content h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--dark); }
+.day-content h4:first-child { margin-top: 0; }
+.day-content ul { margin: 6px 0; padding-left: 18px; }
+.day-content li { margin-bottom: 4px; }
+.day-content .key { background: #FFF8E7; border-left: 3px solid var(--gold); padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.day-content .key strong { color: #B8860B; }
+.day-content .links { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F0F0F0; }
+.day-content .links a { color: #2563EB; text-decoration: none; font-weight: 500; margin-right: 16px; display: inline-block; margin-bottom: 4px; }
+.day-content .links a:hover { text-decoration: underline; }
+.day-content .links .label { font-size: 12px; color: var(--gray); font-weight: 600; display: block; margin-bottom: 6px; }
+
+/* Resources */
+.resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.resource-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.resource-card .r-title { font-weight: 600; font-size: 14px; }
+.resource-card .r-desc { font-size: 12px; color: var(--gray); margin-top: 4px; }
+.resource-card a { color: #2563EB; text-decoration: none; font-weight: 500; font-size: 13px; display: inline-block; margin-top: 6px; }
+.resource-card a:hover { text-decoration: underline; }
+
+footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+
+/* Sidebar layout */
+.page-layout { display: flex; gap: 28px; align-items: flex-start; }
+.main-content { flex: 1; min-width: 0; }
+.sidebar {
+  position: sticky; top: 16px; width: 195px; min-width: 195px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+  max-height: calc(100vh - 32px); overflow-y: auto;
+}
+.sidebar h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px; }
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.sidebar li { margin-bottom: 2px; }
+.sidebar a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  color: var(--dark); text-decoration: none; transition: background 0.15s; line-height: 1.3;
+}
+.sidebar a:hover { background: #FFF8E7; }
+.sidebar a .w { font-size: 11px; color: var(--gold); font-weight: 700; margin-left: 6px; white-space: nowrap; }
+.sidebar a.active { background: #FFF0D0; }
+.nav-group { display: flex; flex-direction: column; gap: 2px; }
+.nav-week-header {
+  display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+  border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+  color: var(--dark); transition: background 0.15s; user-select: none;
+}
+.nav-week-header:hover { background: #FFF8E7; }
+.nav-week-header .nav-arrow { font-size: 10px; color: var(--gold); transition: transform 0.2s; width: 12px; text-align: center; }
+.nav-week.open .nav-week-header .nav-arrow { transform: rotate(90deg); }
+.nav-week-body { display: none; flex-direction: column; margin-left: 18px; }
+.nav-week.open .nav-week-body { display: flex; }
+.nav-link {
+  display: block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  color: var(--gray); text-decoration: none; transition: background 0.15s, color 0.15s; line-height: 1.3;
+}
+.nav-link:hover { background: #FFF8E7; color: var(--dark); }
+
+#phase2-banner { transition: opacity 0.5s ease; }
+#phase2-banner a:hover { opacity: 0.9; }
+
+@media (max-width: 800px) {
+  .page-layout { flex-direction: column; }
+  .sidebar { position: static; width: 100%; min-width: unset; max-height: none; }
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 26px; }
+  .day-card .day-header { padding: 10px 14px; }
+  .day-card .day-content { padding: 0 14px 14px 48px; }
+  .stats-bar { flex-direction: column; text-align: center; }
+  .progress-bar { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Financial Literacy <span>Phase 1: Basics</span></h1>
+    <p class="sub">From zero to functional — 4 weeks, ~1hr/day. Click any day to expand the lesson.</p>
+    <div class="header-meta">
+      <span class="badge">4 Weeks</span>
+      <span class="badge">28 Sessions</span>
+      <span class="badge">~1 hr/day</span>
+      <span class="badge">Self-contained lessons</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-layout">
+
+  <nav class="sidebar">
+    <h3>📋 Topics</h3>
+    <div class="nav-group">
+      <div class="nav-week">
+        <div class="nav-week-header" data-target="week-1">
+          <span class="nav-arrow">▶</span>
+          <span class="nav-week-title">Week 1: Foundations & Terminology</span>
+        </div>
+        <div class="nav-week-body">
+          <a href="#week-1" class="nav-link">Stocks & Equity</a>
+          <a href="#week-1" class="nav-link">Bonds & Fixed Income</a>
+          <a href="#week-1" class="nav-link">Mutual Funds & ETFs</a>
+          <a href="#week-1" class="nav-link">Valuation Ratios</a>
+        </div>
+      </div>
+      <div class="nav-week">
+        <div class="nav-week-header" data-target="week-2">
+          <span class="nav-arrow">▶</span>
+          <span class="nav-week-title">Week 2: Markets & Instruments</span>
+        </div>
+        <div class="nav-week-body">
+          <a href="#week-2" class="nav-link">Market Indices</a>
+          <a href="#week-2" class="nav-link">Derivatives (F&O)</a>
+          <a href="#week-2" class="nav-link">IPOs & Dividends</a>
+        </div>
+      </div>
+      <div class="nav-week">
+        <div class="nav-week-header" data-target="week-3">
+          <span class="nav-arrow">▶</span>
+          <span class="nav-week-title">Week 3: Analysis & Decision Making</span>
+        </div>
+        <div class="nav-week-body">
+          <a href="#week-3" class="nav-link">Fundamental Analysis</a>
+          <a href="#week-3" class="nav-link">Technical Analysis</a>
+          <a href="#week-3" class="nav-link">Risk & Return</a>
+          <a href="#week-3" class="nav-link">Behavioral Finance</a>
+        </div>
+      </div>
+      <div class="nav-week">
+        <div class="nav-week-header" data-target="week-4">
+          <span class="nav-arrow">▶</span>
+          <span class="nav-week-title">Week 4: Portfolio & Real World</span>
+        </div>
+        <div class="nav-week-body">
+          <a href="#week-4" class="nav-link">Portfolio Construction</a>
+          <a href="#week-4" class="nav-link">Tax & Brokers</a>
+          <a href="#week-4" class="nav-link">Scams & Red Flags</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="num" id="doneCount">0</div><div class="label">Done</div></div>
+    <div class="stat-item"><div class="num" id="totalCount">28</div><div class="label">Total</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stat-item"><div class="num" id="pctDisplay">0%</div><div class="label">Complete</div></div>
+  </div>
+
+  <div class="section">
+
+    <!-- ======== WEEK 1 ======== -->
+    <div class="week" id="week-1" data-week="1">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">1</div>
+          <div><div class="title">Foundations & Terminology</div><div class="theme">Stocks, Bonds, ETFs, Valuation, Financial Statements</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <!-- D1 -->
+        <div class="day-card" data-id="w1d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">What is a stock? Ownership, equity, public vs private, IPO</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is a stock?</h4>
+            <p>A <strong>stock</strong> (also called a <strong>share</strong> or <strong>equity</strong>) represents partial ownership in a company. When you buy one share of Apple, you own a tiny piece of Apple — you're a <strong>shareholder</strong>.</p>
+            <ul>
+              <li><strong>Public company</strong> = shares trade on an exchange (NYSE, NASDAQ, NSE). Anyone can buy.</li>
+              <li><strong>Private company</strong> = shares not publicly traded. Only employees/founders/VCs own it.</li>
+              <li><strong>IPO (Initial Public Offering)</strong> = first time a company sells shares to the public. The company "goes public." Raises capital for growth.</li>
+            </ul>
+            <h4>How you make money from stocks</h4>
+            <ul>
+              <li><strong>Price appreciation</strong> — buy at ₹100, sell at ₹150 = ₹50 profit</li>
+              <li><strong>Dividends</strong> — company shares a portion of its profit with you (cash per share)</li>
+            </ul>
+            <h4>Key terms</h4>
+            <ul>
+              <li><strong>Market Cap</strong> = Share Price × Total Shares. Size of the company.</li>
+              <li><strong>Shareholder</strong> = owner of at least one share</li>
+              <li><strong>Equity</strong> = another word for stock/ownership</li>
+            </ul>
+            <div class="key">💡 <strong>Mental model:</strong> Think of a stock like owning a piece of a pizza shop. If the shop does well, your slice becomes more valuable. If the shop pays you some of the profits each year, that's a dividend.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=p7HKvq2_Bnc&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=4" target="_blank">▶ Plain Bagel: Stocks — How Equity Earns You Money (7m)</a>
+              <a href="https://www.investopedia.com/articles/basics/07/getting-started-stocks.asp" target="_blank">📄 Investopedia: Beginner's Guide to Stocks (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D2 -->
+        <div class="day-card" data-id="w1d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">How stock markets work — exchanges, bid/ask, order types</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Stock exchanges</h4>
+            <p>Exchanges are marketplaces where buyers and sellers meet. Examples: <strong>NYSE</strong> (New York), <strong>NASDAQ</strong> (tech-heavy), <strong>NSE</strong> / <strong>BSE</strong> (India). Most trading is electronic — orders matched by computers in milliseconds.</p>
+            <h4>Bid, Ask, and Spread</h4>
+            <ul>
+              <li><strong>Bid</strong> = highest price a buyer is willing to pay RIGHT NOW (demand)</li>
+              <li><strong>Ask</strong> = lowest price a seller is willing to accept RIGHT NOW (supply)</li>
+              <li><strong>Spread</strong> = Ask − Bid. The transaction cost. Liquid stocks (like Reliance, Apple) have tiny spreads (~₹0.05). Illiquid stocks have wide spreads.</li>
+              <li>You buy at the Ask price. You sell at the Bid price.</li>
+            </ul>
+            <h4>Order types</h4>
+            <ul>
+              <li><strong>Market Order:</strong> "Buy NOW at whatever price." Instant execution, but you might overpay if the spread is wide.</li>
+              <li><strong>Limit Order:</strong> "Buy only at ₹100 or less." You control the price, but the order may not fill.</li>
+              <li><strong>Stop-Loss:</strong> "Sell if price drops to ₹90." Protects against big losses.</li>
+            </ul>
+            <h4>Settlement</h4>
+            <p>After you buy, it takes <strong>T+2 days</strong> (trade date + 2 business days) for the shares to officially be yours and for money to move. In India, <strong>T+1</strong> is now standard for most stocks.</p>
+            <div class="key">💡 <strong>Mental model:</strong> Think of it like a vegetable market. Bid = what buyers are offering for a kilo of tomatoes. Ask = what the seller wants. Spread = the haggle gap.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/playlist?list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy" target="_blank">▶ Plain Bagel Basics playlist (any one video, ~8m)</a>
+              <a href="https://zerodha.com/varsity/module/introduction-to-stock-markets/" target="_blank">📄 Zerodha Varsity: Intro to Stock Markets (Ch. 1-4)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D3 -->
+        <div class="day-card" data-id="w1d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Bonds 101 — coupon, maturity, yield, price-yield relationship</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is a bond?</h4>
+            <p>A <strong>bond</strong> is a loan you give to a company or government. They promise to pay you interest and return your money on a fixed date. Bondholders are <strong>creditors</strong>, not owners (unlike stocks).</p>
+            <h4>Key terms</h4>
+            <ul>
+              <li><strong>Face Value (Par Value)</strong> = amount you get back at maturity (e.g., ₹1,000)</li>
+              <li><strong>Coupon Rate</strong> = interest rate printed on the bond. E.g., 8% coupon on ₹1,000 = ₹80/year.</li>
+              <li><strong>Maturity</strong> = date when the bond repays face value. Short-term (1-3yr), medium (3-10yr), long-term (10-30yr)</li>
+              <li><strong>Yield</strong> = your effective return based on what you actually paid. If you buy a ₹1,000 bond at ₹900, your yield is higher than the coupon rate.</li>
+            </ul>
+            <h4>The most important rule of bonds</h4>
+            <p><strong>When interest rates go UP, bond prices go DOWN.</strong> And vice versa. This is inverse relationship is critical. Example: You hold a bond paying 5% coupon. New bonds now pay 6%. Your 5% bond is worth less — who would buy it at face value when they can get 6% elsewhere? So its price falls.</p>
+            <h4>Types</h4>
+            <ul>
+              <li><strong>Government bonds</strong> (G-Secs in India, Treasuries in US) — safest, lowest yield</li>
+              <li><strong>Corporate bonds</strong> — riskier (company might default), higher yield</li>
+              <li><strong>Credit ratings:</strong> AAA (safest) → BBB (investment grade) → BB and below ("junk")</li>
+            </ul>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=IuyejHOGCwk&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=3" target="_blank">▶ Plain Bagel: Bonds — Using Debt to Invest (8m)</a>
+              <a href="https://www.investopedia.com/ask/answers/051215/what-difference-between-bonds-yield-rate-and-its-coupon-rate.asp" target="_blank">📄 Investopedia: Bond Coupon vs Yield (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D4 -->
+        <div class="day-card" data-id="w1d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Mutual Funds & ETFs — active vs passive, expense ratio, NAV</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What are Mutual Funds and ETFs?</h4>
+            <p>Both are <strong>pools</strong> of many stocks (or bonds) bundled into one product. Instead of buying 20 different stocks, you buy one fund that holds them all. Instant diversification.</p>
+            <h4>Mutual Funds</h4>
+            <ul>
+              <li>You buy <strong>units</strong> directly from the fund company at the day's <strong>NAV</strong> (Net Asset Value)</li>
+              <li>NAV is calculated once per day after market close</li>
+              <li>Can be <strong>active</strong> (fund manager picks stocks to beat the market) or <strong>passive</strong> (just tracks an index like Nifty 50)</li>
+              <li><strong>Expense Ratio</strong> = annual fee. Active funds: 1-2.5%. Passive/index funds: 0.1-1%.</li>
+            </ul>
+            <h4>ETFs (Exchange Traded Funds)</h4>
+            <ul>
+              <li>Trade on exchanges like stocks — price changes throughout the day</li>
+              <li>Almost always <strong>passive</strong> (track an index)</li>
+              <li>Much lower expense ratios: 0.03-0.5%</li>
+              <li>More tax-efficient than mutual funds</li>
+              <li>Examples: SPY (tracks S&P 500), NIFTYBEES (tracks Nifty 50)</li>
+            </ul>
+            <h4>Active vs Passive — the big debate</h4>
+            <p><strong>80-90% of active mutual fund managers FAIL to beat their benchmark index</strong> over 10+ years. This is why low-cost passive investing (index funds/ETFs) is recommended for most people. Warren Buffett famously bet $1M that an S&P 500 index fund would beat a basket of hedge funds over 10 years — and won easily.</p>
+            <div class="key">💡 <strong>For a beginner:</strong> Buy a low-cost index ETF (like one tracking Nifty 50 or S&P 500). Set up monthly SIP. Done. You'll beat most professional investors over time.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=qn0hE1wLhr4&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=6" target="_blank">▶ Plain Bagel: Mutual Funds & ETFs (12m)</a>
+              <a href="https://zerodha.com/varsity/module/personal-finance/" target="_blank">📄 Zerodha Varsity: Personal Finance Module (Ch. 1-3, 15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D5 -->
+        <div class="day-card" data-id="w1d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Key financial statements — income, balance sheet, cash flow</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>The 3 Financial Statements (The Foundation)</h4>
+            <p>Every public company publishes these every quarter. They tell you the complete financial health story.</p>
+            <h4>1. Income Statement (P&L)</h4>
+            <ul>
+              <li>Shows <strong>profitability</strong> over a period (quarter/year)</li>
+              <li>Revenue − Expenses = Net Income</li>
+              <li>Key metrics: <strong>Revenue</strong> (top line), <strong>Gross Profit</strong> (Revenue − COGS), <strong>Operating Income</strong>, <strong>Net Income</strong> (bottom line), <strong>EPS</strong> (Earnings Per Share = Net Income ÷ Shares)</li>
+            </ul>
+            <h4>2. Balance Sheet</h4>
+            <ul>
+              <li>A <strong>snapshot</strong> at a point in time. The accounting equation: <strong>Assets = Liabilities + Shareholders' Equity</strong></li>
+              <li><strong>Assets</strong> = what the company owns (cash, buildings, inventory, patents)</li>
+              <li><strong>Liabilities</strong> = what it owes (loans, accounts payable)</li>
+              <li><strong>Equity</strong> = what's left for shareholders (Assets − Liabilities)</li>
+              <li>Key: check <strong>Debt-to-Equity ratio</strong> — high debt = risky</li>
+            </ul>
+            <h4>3. Cash Flow Statement</h4>
+            <ul>
+              <li><strong>Operating CF</strong> = cash from core business (most important — should be positive!)</li>
+              <li><strong>Investing CF</strong> = cash spent on equipment, acquisitions (usually negative for growing companies)</li>
+              <li><strong>Financing CF</strong> = cash from debt/equity raises, buybacks, dividends</li>
+            </ul>
+            <div class="key">💡 <strong>Watch out for:</strong> A company showing profit on the income statement but <strong>negative operating cash flow</strong>. That means the profit is "on paper" only — they're not actually collecting cash from customers. Red flag.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=kXYvRR7gV2E" target="_blank">▶ Plain Bagel: How I Research Stocks — step-by-step FA (18m)</a>
+              <a href="https://zerodha.com/varsity/module/fundamental-analysis/" target="_blank">📄 Zerodha Varsity: Fundamental Analysis (Ch. 1-4, 20m)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D6 -->
+        <div class="day-card" data-id="w1d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Valuation basics — market cap, P/E, P/B, dividend yield</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Market Capitalization</h4>
+            <p><strong>Market Cap</strong> = Share Price × Total Shares Outstanding. This is the total market value of a company.</p>
+            <ul>
+              <li>Large-cap: >$10B (or >₹20,000 Cr in India). Stable, established companies.</li>
+              <li>Mid-cap: $2-10B (₹5,000-20,000 Cr). Growth potential, moderate risk.</li>
+              <li>Small-cap: $300M-$2B (₹1,000-5,000 Cr). High growth, high risk.</li>
+            </ul>
+            <h4>P/E Ratio (Price to Earnings)</h4>
+            <p><strong>P/E = Share Price ÷ Earnings Per Share.</strong> The most popular valuation metric. It tells you how many years of earnings you're paying for.</p>
+            <ul>
+              <li>P/E of 20 = you're paying ₹20 for every ₹1 of annual earnings</li>
+              <li><strong>High P/E</strong> = expensive, OR the market expects high future growth</li>
+              <li><strong>Low P/E</strong> = cheap, OR the company is in trouble</li>
+              <li>Always compare P/E within the <strong>same industry</strong>. Tech companies have higher P/Es than utilities.</li>
+            </ul>
+            <h4>P/B Ratio (Price to Book)</h4>
+            <p><strong>P/B = Share Price ÷ Book Value Per Share.</strong> Book Value = Assets − Liabilities (accounting net worth). Common for banks and financial companies.</p>
+            <ul>
+              <li>P/B > 1 = market values company more than its accounting value</li>
+              <li>P/B < 1 = potentially undervalued (or company has problems)</li>
+            </ul>
+            <h4>Dividend Yield</h4>
+            <p><strong>Dividend Yield = Annual Dividend ÷ Share Price.</strong> Your cash return from dividends alone. Mature companies (ITC, HUL, Coke) pay dividends. Growth companies (Zomato, Tesla) usually don't — they reinvest profits.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/p/price-earningsratio.asp" target="_blank">📄 Investopedia: P/E Ratio (6m)</a>
+              <a href="https://www.investopedia.com/terms/p/price-to-bookratio.asp" target="_blank">📄 Investopedia: P/B Ratio (6m)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- D7 -->
+        <div class="day-card" data-id="w1d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Week 1 review — flashcards + match terms to definitions</span>
+            <span class="time">30 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Week 1 — Self-Test</h4>
+            <p>Cover the right side and test yourself:</p>
+            <ul>
+              <li><strong>Stock/Share/Equity</strong> → Ownership slice of a company</li>
+              <li><strong>IPO</strong> → First time a company sells shares to the public</li>
+              <li><strong>Bid vs Ask</strong> → Bid = highest buyer price. Ask = lowest seller price.</li>
+              <li><strong>Spread</strong> → Ask − Bid. Transaction cost.</li>
+              <li><strong>Coupon Rate</strong> → Interest rate a bond pays (% of face value)</li>
+              <li><strong>Yield</strong> → Effective return accounting for price paid</li>
+              <li><strong>NAV</strong> → Net Asset Value. Price of a mutual fund unit.</li>
+              <li><strong>Expense Ratio</strong> → Annual fee % charged by a fund</li>
+              <li><strong>EPS</strong> → Earnings Per Share = Net Income ÷ Shares Outstanding</li>
+              <li><strong>P/E Ratio</strong> → Price ÷ EPS (valuation metric)</li>
+              <li><strong>Market Cap</strong> → Price × Shares Outstanding</li>
+              <li><strong>Operating Cash Flow</strong> → Cash from core business (most important cash flow)</li>
+            </ul>
+            <div class="key">💡 <strong>Tip:</strong> If you can explain all 12 terms above in your own words without looking, you're in good shape. If not, re-skim D1-D6.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/module/introduction-to-stock-markets/" target="_blank">📄 Zerodha Varsity: Module 1 — review questions at chapter bottoms</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======== WEEK 2 ======== -->
+    <div class="week" id="week-2" data-week="2">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">2</div>
+          <div><div class="title">Markets & Instruments</div><div class="theme">Indices, Bull/Bear, Derivatives, IPOs, Dividends, Sectors</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w2d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Market indices — S&P 500, Dow Jones, NASDAQ, Nifty 50</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is a market index?</h4>
+            <p>An <strong>index</strong> is a basket of stocks representing a market or sector. You can't buy an index directly — but you can buy an <strong>index fund/ETF</strong> that tracks it.</p>
+            <h4>Major indices</h4>
+            <ul>
+              <li><strong>S&P 500:</strong> 500 largest US companies. Market-cap weighted. The gold standard for US market performance. Average annual return ~10% historically.</li>
+              <li><strong>Dow Jones (DJIA):</strong> 30 large US companies. <strong>Price-weighted</strong> (unusual — higher stock price = more influence, even if the company is smaller). Less representative than S&P 500.</li>
+              <li><strong>NASDAQ Composite:</strong> All stocks listed on NASDAQ exchange. Heavy on tech (Apple, Microsoft, Google, Amazon, Meta, Tesla). Tech-heavy = more volatile.</li>
+              <li><strong>Nifty 50:</strong> Top 50 companies on India's NSE. Cap-weighted. <strong>Sensex:</strong> Top 30 on BSE. Both represent the Indian market.</li>
+            </ul>
+            <h4>Cap-weighted vs Price-weighted</h4>
+            <p><strong>Cap-weighted</strong> (S&P 500, Nifty 50): bigger companies have proportional influence. Apple moves the S&P 500 more than a small company. This is standard today.</p>
+            <p><strong>Price-weighted</strong> (Dow Jones): a ₹50,000 stock (like MRF in India) moves the index 100× more than a ₹500 stock, even if the ₹500 company is actually bigger. Makes no logical sense — but the Dow is old (1896) and people still use it out of tradition.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=H3wfmF1-SHk" target="_blank">▶ Plain Bagel: What is an Index? (6m)</a>
+              <a href="https://www.investopedia.com/terms/m/marketindex.asp" target="_blank">📄 Investopedia: Market Index (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Bull vs Bear markets — cycles, corrections, what to do</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Bull Market</h4>
+            <p>Sustained rise of <strong>20%+</strong> from recent lows. Characterized by optimism, strong economy, rising corporate profits, low unemployment. Investors are confident and buying.</p>
+            <p>Typical bull market duration: <strong>2-9 years</strong>. The longest: 2009-2020 (11 years, COVID crash ended it).</p>
+            <h4>Bear Market</h4>
+            <p>Sustained decline of <strong>20%+</strong> from recent highs. Characterized by pessimism, weak economy, fear, selling. Typical duration: <strong>9-18 months</strong>.</p>
+            <p>On average, bear markets happen every <strong>3-5 years</strong>. They're normal. They always end. The market has always recovered and gone to new highs.</p>
+            <h4>Correction vs Crash</h4>
+            <ul>
+              <li><strong>Correction:</strong> 10% decline. Happens ~1-2x per year. Normal and healthy.</li>
+              <li><strong>Bear market:</strong> 20%+ decline. Less common, more painful.</li>
+              <li><strong>Crash:</strong> Rapid, sharp decline (e.g., COVID March 2020: -34% in 5 weeks). Rare.</li>
+            </ul>
+            <div class="key">💡 <strong>The most important lesson:</strong> Do NOT panic sell during bear markets. Historically, investors who stay invested recover all losses and reach new highs. Investors who sell lock in losses. Time IN the market beats timing the market.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=bSVyodxbfOo" target="_blank">▶ Plain Bagel: Is a Bear Market Coming? (15m)</a>
+              <a href="https://www.investopedia.com/insights/digging-deeper-bull-and-bear-markets/" target="_blank">📄 Investopedia: Bull vs Bear Markets (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Derivatives intro — futures, options, call/put, leverage</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is a derivative?</h4>
+            <p>A <strong>derivative</strong> is a financial contract whose <em>value is derived from</em> an underlying asset (stock, index, commodity, currency). You're not buying the stock itself — you're buying a contract based on its price movement.</p>
+            <h4>Futures</h4>
+            <p><strong>Futures contract</strong> = agreement to <strong>buy or sell</strong> an asset at a fixed price on a future date. <strong>Both sides are obligated</strong>. Used for hedging (farmers locking in crop prices) or speculation.</p>
+            <ul>
+              <li>Example: Buy Nifty 50 Futures at 22,000. If Nifty rises to 22,500, you profit ₹500 per contract.</li>
+              <li><strong>Margin:</strong> You only put up a small % (~10-15%) as collateral. This creates <strong>leverage</strong>.</li>
+            </ul>
+            <h4>Options</h4>
+            <p><strong>Options</strong> give you the <strong>right, but not the obligation</strong>, to buy or sell at a fixed price by a certain date. You pay a <strong>premium</strong> for this right.</p>
+            <ul>
+              <li><strong>Call option</strong> = right to BUY. You buy a call if you think the price will go UP.</li>
+              <li><strong>Put option</strong> = right to SELL. You buy a put if you think the price will go DOWN.</li>
+              <li><strong>Strike Price</strong> = the fixed price at which you can buy/sell.</li>
+              <li><strong>Expiry</strong> = last date the option is valid. After this, it's worthless.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Warning:</strong> Derivatives use <strong>leverage</strong> — you can control ₹1L worth of stock with just ₹10K. This amplifies both profits AND losses. Options are complex and most retail traders <strong>lose money</strong> trading them. For AIF-C01 level: just understand the concepts. Don't trade options until you deeply understand them.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=QGD7FS5UWLE" target="_blank">▶ Plain Bagel: Derivatives Explained (8m)</a>
+              <a href="https://zerodha.com/varsity/module/futures-trading/" target="_blank">📄 Zerodha Varsity: Futures Trading (Ch. 1-3, 15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">IPOs & FPOs — book building, price band, listing day</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>IPO (Initial Public Offering)</h4>
+            <p>When a company sells shares to the public for the <strong>first time</strong>. Why? To raise capital for expansion, let early investors cash out, and gain visibility.</p>
+            <h4>FPO (Follow-on Public Offering)</h4>
+            <p>When an <strong>already-public</strong> company issues <strong>more shares</strong>. Existing shareholders may also sell their shares (OFS = Offer for Sale).</p>
+            <h4>Book Building Process</h4>
+            <p>The company hires investment banks (Book Running Lead Managers) to determine the right price:</p>
+            <ol>
+              <li>Company sets a <strong>price band</strong> (e.g., ₹100-120 per share)</li>
+              <li>Investors place bids within that range (how many shares at what price)</li>
+              <li>After bidding closes, the <strong>cut-off price</strong> is set based on demand</li>
+              <li>Shares are allocated to bidders who bid at or above the cut-off</li>
+            </ol>
+            <h4>Listing Day</h4>
+            <p>First day the stock trades on the exchange. The stock can <strong>list at a premium</strong> (above issue price — yay!) or <strong>at a discount</strong> (below issue price — ouch!).</p>
+            <h4>Lock-up Period</h4>
+            <p>Company insiders and early investors <strong>cannot sell</strong> their shares for a set period (usually 90-180 days). This prevents them from dumping shares immediately.</p>
+            <div class="key">💡 <strong>Should you invest in IPOs?</strong> Carefully. Many IPOs are hyped and list at huge premiums (tempting!), but long-term performance is mixed. Read the <strong>Red Herring Prospectus</strong> — it has all the risks. Don't invest just because "everyone is talking about it."</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=QJZJ52JX_Yg" target="_blank">▶ Plain Bagel: The IPO Process (8m)</a>
+              <a href="https://zerodha.com/varsity/chapter/the-ipo-markets-part-1/" target="_blank">📄 Zerodha Varsity: IPO Markets (12m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Dividends & Buybacks — record date, ex-date, yield</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Dividend</h4>
+            <p>A <strong>dividend</strong> is a portion of company profits paid to shareholders. Usually in cash, paid quarterly. Not all companies pay dividends — growth companies reinvest profits instead.</p>
+            <h4>The important dates</h4>
+            <ul>
+              <li><strong>Declaration Date:</strong> Company announces the dividend and its amount</li>
+              <li><strong>Ex-Dividend Date:</strong> <strong>THE crucial date.</strong> Buy BEFORE this date → you get the dividend. Buy ON or after → you don't. The stock price typically drops by the dividend amount on this date.</li>
+              <li><strong>Record Date:</strong> Company checks who is on the shareholder list (usually 2 days after ex-date)</li>
+              <li><strong>Payment Date:</strong> When the money hits your account</li>
+            </ul>
+            <h4>Dividend Yield</h4>
+            <p>Annual Dividend ÷ Share Price. Example: ₹10 annual dividend on ₹500 stock = 2% yield. Mature sectors like utilities, FMCG, and banking pay higher dividends.</p>
+            <h4>Share Buyback</h4>
+            <p>Company buys its own shares from the open market. This <strong>reduces shares outstanding</strong>, which <strong>increases EPS</strong> (earnings per share). It's a tax-efficient way to return value to shareholders — you don't pay tax until you sell your shares (unlike dividends, which are taxed immediately).</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=0Uks0N66Qds" target="_blank">▶ Plain Bagel: Dividends Explained (7m)</a>
+              <a href="https://www.investopedia.com/terms/e/ex-date.asp" target="_blank">📄 Investopedia: Ex-Dividend Date (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Sectors & Industries — cyclical vs defensive, growth vs value</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Cyclical vs Defensive</h4>
+            <p><strong>Cyclical stocks</strong> = demand depends on the economy doing well.</p>
+            <ul>
+              <li>Examples: Auto (Maruti), airlines, luxury goods, semiconductors, real estate</li>
+              <li>They BOOM when economy is growing and CRASH in recessions</li>
+              <li>Earnings are volatile → stock price is volatile</li>
+            </ul>
+            <p><strong>Defensive stocks</strong> = demand stays stable regardless of economy.</p>
+            <ul>
+              <li>Examples: Utilities (power companies), healthcare (hospitals, pharma), consumer staples (HUL, Nestlé, toothpaste/food companies)</li>
+              <li>People still need electricity, medicine, and food in a recession</li>
+              <li>Earnings are stable → stock price is less volatile</li>
+            </ul>
+            <h4>Growth vs Value</h4>
+            <p><strong>Growth stocks:</strong> High expected earnings growth. Reinvest all profits. No/low dividends. High P/E. Examples: Zomato, Tesla, most tech companies. Higher risk, higher potential return.</p>
+            <p><strong>Value stocks:</strong> Trade below what fundamentals suggest. Lower P/E, higher dividends. Often mature companies temporarily out of favor. Examples: ITC, SBI, Coca-Cola. Lower risk, steady returns.</p>
+            <h4>Sector Rotation</h4>
+            <p>Investors shift money between sectors based on the economic cycle. Early recovery → financials, auto do well. Late cycle → energy, commodities. Recession → defensive (pharma, FMCG, utilities). You don't need to time this — just be aware it happens.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.britannica.com/money/cyclical-stocks-defensive-investing" target="_blank">📄 Britannica: Defensive & Cyclical Stocks (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Week 2 review — market instruments & sector classification</span>
+            <span class="time">30 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Week 2 — Self-Test</h4>
+            <ul>
+              <li><strong>Index</strong> → Basket of stocks. S&P 500 (US large-cap), Nifty 50 (India)</li>
+              <li><strong>Bull Market</strong> → 20%+ rise from lows. Optimism.</li>
+              <li><strong>Bear Market</strong> → 20%+ decline from highs. Fear.</li>
+              <li><strong>Futures</strong> → Obligation to buy/sell at fixed price on future date.</li>
+              <li><strong>Options</strong> → Right (not obligation) to buy/sell at fixed price. Call = right to buy. Put = right to sell.</li>
+              <li><strong>Leverage</strong> → Control large position with small margin. Amplifies gains/losses.</li>
+              <li><strong>Book Building</strong> → Price discovery via investor bids within a price band.</li>
+              <li><strong>Ex-Date</strong> → Buy before this to get the dividend.</li>
+              <li><strong>Buyback</strong> → Company buys own shares → reduces count → increases EPS.</li>
+              <li><strong>Cyclical</strong> → Depends on economy (auto, airlines).</li>
+              <li><strong>Defensive</strong> → Stable regardless of economy (utilities, pharma).</li>
+              <li><strong>Growth vs Value</strong> → High P/E, reinvesting (growth) vs Low P/E, dividends (value).</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======== WEEK 3 ======== -->
+    <div class="week" id="week-3" data-week="3">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">3</div>
+          <div><div class="title">Analysis & Decision Making</div><div class="theme">Fundamental, Technical, Risk, DCA, Biases</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w3d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Fundamental analysis — top-down, moat, competitive advantage</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Two approaches</h4>
+            <p><strong>Top-Down:</strong> Start with the economy → pick a strong sector → pick the best company in that sector.</p>
+            <p><strong>Bottom-Up:</strong> Find great companies regardless of macro. If the business is strong enough, it will grow even in a weak economy.</p>
+            <h4>Economic Moat</h4>
+            <p>A <strong>moat</strong> is a sustainable competitive advantage that protects a company from competitors. This is the most important question in fundamental analysis: <em>"Why can't someone else easily take their business?"</em></p>
+            <ul>
+              <li><strong>Brand:</strong> Coca-Cola, Nike, Apple — people pay more for the brand</li>
+              <li><strong>Network Effects:</strong> Facebook, Uber, Zomato — more users = more value for each user</li>
+              <li><strong>Cost Advantage:</strong> Walmart, IndiGo — can offer lower prices than competitors</li>
+              <li><strong>Switching Costs:</strong> Adobe, Salesforce, banking software — too painful to switch to competitor</li>
+              <li><strong>Regulatory/Patents:</strong> Pharma companies with drug patents, telecom with spectrum licenses</li>
+            </ul>
+            <h4>The FA process</h4>
+            <ol>
+              <li>Understand the business model (how do they make money?)</li>
+              <li>Analyze financials (revenue growth, margins, debt, cash flow)</li>
+              <li>Evaluate management (good capital allocators? honest?)</li>
+              <li>Assess competitive position (moat)</li>
+              <li>Determine valuation (is the price reasonable?)</li>
+            </ol>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=kXYvRR7gV2E" target="_blank">▶ Plain Bagel: How I Research Stocks — focus on moat section (18m)</a>
+              <a href="https://zerodha.com/varsity/module/fundamental-analysis/" target="_blank">📄 Zerodha Varsity: FA Module (Ch. 5-8, 20m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Technical analysis intro — trends, support/resistance, RSI</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is Technical Analysis (TA)?</h4>
+            <p>TA studies <strong>price and volume patterns</strong> to predict future price movements. It ignores business fundamentals entirely. The core belief: <em>"All information is already reflected in the price, and prices move in trends."</em></p>
+            <h4>Key TA concepts</h4>
+            <ul>
+              <li><strong>Trend:</strong> Uptrend (higher highs + higher lows), Downtrend (lower highs + lower lows), Sideways</li>
+              <li><strong>Support:</strong> Price level where buying is strong enough to stop further decline</li>
+              <li><strong>Resistance:</strong> Price level where selling is strong enough to stop further rise</li>
+              <li><strong>Moving Average (MA):</strong> Average price over X days. 50-day MA and 200-day MA are common. Price above MA = bullish. 50 crossing above 200 = "Golden Cross" (bullish signal).</li>
+              <li><strong>RSI (Relative Strength Index):</strong> 0-100 scale. Above 70 = "overbought" (might decline). Below 30 = "oversold" (might rise).</li>
+            </ul>
+            <div class="key">⚠️ <strong>Caveat:</strong> TA is highly controversial. Academic research largely concludes it <strong>does not reliably predict future prices</strong>. Many professionals view it as data mining / pattern-seeking (seeing shapes in clouds). If you use it, use it as ONE input alongside fundamentals, not as your sole decision tool.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/module/technical-analysis-video-series/" target="_blank">▶ Zerodha Varsity: TA Video Series — pick 1 chapter (10m)</a>
+              <a href="https://zerodha.com/varsity/module/technical-analysis/" target="_blank">📄 Zerodha Varsity: Technical Analysis (Ch. 1-4, 15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Reading an annual report — MD&A, notes, red flags</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What's in an annual report?</h4>
+            <ul>
+              <li><strong>Letter to Shareholders:</strong> CEO's narrative. Listen for tone — is it honest about problems or glossing over them?</li>
+              <li><strong>MD&A (Management Discussion & Analysis):</strong> Management explains what happened and why. Most important qualitative section.</li>
+              <li><strong>Financial Statements:</strong> Income Statement, Balance Sheet, Cash Flow Statement (from D5)</li>
+              <li><strong>Notes to Financial Statements:</strong> The <strong>fine print</strong>. Details on debt terms, lawsuit risks, accounting policies, related-party transactions. READ THIS.</li>
+              <li><strong>Auditor's Report:</strong> Independent auditor's opinion. "Unqualified" = clean. "Qualified" = problems found.</li>
+            </ul>
+            <h4>Red flags to watch for</h4>
+            <ul>
+              <li>Revenue growing but <strong>receivables growing faster</strong> (selling on credit, not collecting cash)</li>
+              <li>Debt increasing faster than equity</li>
+              <li>Negative <strong>operating cash flow</strong> despite positive net income (paper profit, no real cash)</li>
+              <li><strong>Related-party transactions</strong> (company doing business with the CEO's other companies)</li>
+              <li>Frequent accounting policy changes</li>
+              <li>CEO selling huge amounts of stock</li>
+            </ul>
+            <div class="key">💡 <strong>Pro tip:</strong> Always compare numbers year-over-year, not just the current year. A 10% revenue jump is impressive — unless last year was down 30% and they're still below 3 years ago.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=5QE2ul0v_Oc" target="_blank">▶ Plain Bagel: How to Read a 10-K (12m)</a>
+              <a href="https://www.investopedia.com/articles/basics/06/readannualreport.asp" target="_blank">📄 Investopedia: Reading Annual Reports (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Risk & Return — beta, Sharpe ratio, volatility, risk-free rate</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Risk-Free Rate</h4>
+            <p>The return on the <strong>safest possible investment</strong> — typically 10-year government bond yield. In India, ~7%. In US, ~4-5%. This is your baseline: any investment should return MORE than this, otherwise why take risk?</p>
+            <h4>Volatility (Standard Deviation)</h4>
+            <p>How much a stock's price fluctuates. High volatility = price swings wildly (exciting but stressful = RISK). Low volatility = price moves slowly. Volatility ≠ risk of permanent loss, but it's the most common proxy.</p>
+            <h4>Beta</h4>
+            <p>How much a stock moves relative to the overall market (usually S&P 500 or Nifty 50).</p>
+            <ul>
+              <li><strong>Beta = 1:</strong> Moves with the market. Market up 10% → stock up ~10%.</li>
+              <li><strong>Beta = 1.5:</strong> 50% more volatile than market. Market up 10% → stock up ~15%. Market down 10% → stock down ~15%.</li>
+              <li><strong>Beta = 0.5:</strong> Half as volatile. More stable.</li>
+              <li><strong>Beta = 0 or negative:</strong> Rare. Gold, some currencies.</li>
+            </ul>
+            <h4>Sharpe Ratio</h4>
+            <p><strong>(Portfolio Return − Risk-Free Rate) ÷ Standard Deviation.</strong> Measures <strong>risk-adjusted return</strong>. Higher is better. A Sharpe ratio of 1+ is good, 2+ is excellent.</p>
+            <p>Two funds: Fund A returned 15% (volatility 20%), Fund B returned 12% (volatility 10%). Fund B might have a <strong>higher Sharpe ratio</strong> — better return per unit of risk.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=AeDvqNMCx3A&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=11" target="_blank">▶ Plain Bagel: Risk — Investment Uncertainty (10m)</a>
+              <a href="https://www.investopedia.com/terms/r/riskreturntradeoff.asp" target="_blank">📄 Investopedia: Risk-Return Tradeoff (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Dollar-cost averaging (DCA) / SIP — the lazy investor's superpower</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>What is DCA?</h4>
+            <p><strong>Dollar-Cost Averaging</strong> = investing the same fixed amount of money at regular intervals (weekly/monthly), regardless of the price.</p>
+            <p>Example: ₹10,000 every month into a Nifty 50 index fund.</p>
+            <ul>
+              <li>Month 1: Nifty at 22,000 → you buy more units</li>
+              <li>Month 2: Nifty at 20,000 → you buy even MORE units (sale!)</li>
+              <li>Month 3: Nifty at 24,000 → you buy fewer units</li>
+            </ul>
+            <p>Result: You buy <strong>more shares when prices are low</strong> and fewer when high. Your average cost is lower.</p>
+            <h4>DCA vs Lump Sum</h4>
+            <p>If you have ₹1.2L to invest, should you invest all at once (lump sum) or ₹10K/month for 12 months (DCA)?</p>
+            <p><strong>Statistically, lump sum wins ~67% of the time</strong> over long periods because markets generally go UP. BUT — DCA wins <strong>psychologically</strong>: you won't feel terrible if the market crashes right after you invested everything.</p>
+            <h4>SIP (Systematic Investment Plan)</h4>
+            <p>Same concept, Indian term. Set up auto-debit from your bank into a mutual fund every month. Most common way Indians invest in mutual funds.</p>
+            <div class="key">💡 <strong>Bottom line:</strong> DCA/SIP is the single best strategy for a beginner. Removes emotion, removes timing decisions, builds discipline, and works reliably over decades. <strong>Time IN the market beats TIMING the market.</strong></div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.britannica.com/money/dollar-cost-averaging" target="_blank">📄 Britannica: Dollar Cost Averaging — has embedded video (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Common biases — why our brains sabotage investing</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Confirmation Bias</h4>
+            <p>You seek information that confirms what you already believe and ignore contradictory evidence. Bought a stock? You'll notice every positive news article and dismiss negative ones. This is why it helps to <strong>actively seek opposing views</strong>.</p>
+            <h4>Loss Aversion</h4>
+            <p>Losing ₹1,000 psychologically hurts ~<strong>2-2.5× more</strong> than gaining ₹1,000 feels good. This leads to <strong>two big mistakes</strong>:</p>
+            <ul>
+              <li>Holding losing stocks too long ("it'll come back") — the <strong>disposition effect</strong></li>
+              <li>Selling winning stocks too early ("locking in profits") — missing out on big gains</li>
+            </ul>
+            <h4>Recency Bias</h4>
+            <p>You over-weight recent events. "The market has been falling for 3 months — it will never recover!" (Despite history showing it always has.) "This stock has doubled — it will keep going up!" (Until it doesn't.)</p>
+            <h4>Herd Mentality / FOMO</h4>
+            <p>Everyone is buying crypto/Zomato/Gamestop → you feel left out → you buy at the peak. This is how bubbles form. When your cab driver/grandma/barber is giving stock tips, it's usually time to be cautious.</p>
+            <h4>Overconfidence Bias</h4>
+            <p>"I know more than the market." Most retail investors think they're above average (statistically impossible). The market price reflects the collective wisdom of ALL participants. Assuming you know something others don't is dangerous.</p>
+            <div class="key">💡 <strong>The cure:</strong> Write an investment plan when you're calm and rational. Automate your investments (SIP). Check your portfolio monthly, not daily. Don't trade on news or tips.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=7jI-zXZP1-U&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=12" target="_blank">▶ Plain Bagel: Behavioral Finance (8m)</a>
+              <a href="https://www.investopedia.com/terms/b/behavioralfinance.asp" target="_blank">📄 Investopedia: Behavioral Finance (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w3d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Week 3 review — apply it to a real company</span>
+            <span class="time">30 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Practice exercise</h4>
+            <p>Pick any public company you're interested in. Go to <a href="https://www.screener.in" target="_blank">Screener.in</a> (India) or <a href="https://finance.yahoo.com" target="_blank">Yahoo Finance</a> (global) and find:</p>
+            <ul>
+              <li><strong>Sector</strong> (cyclical/defensive/growth/value?)</li>
+              <li><strong>Market Cap</strong> (large/mid/small?)</li>
+              <li><strong>P/E ratio</strong> (compare to industry average — is it higher or lower?)</li>
+              <li><strong>Revenue & Profit growth</strong> (over 3-5 years — growing or declining?)</li>
+              <li><strong>Debt levels</strong> (Debt-to-Equity ratio)</li>
+              <li><strong>Dividend Yield</strong> (if applicable)</li>
+              <li><strong>52-week high/low</strong> (where is the stock now in its range?)</li>
+            </ul>
+            <p>Write down 2-3 observations. Example: "P/E of 45 seems high for auto sector average of 25. But revenue has grown 20%/yr for 5 years. Strong moat via dealer network. Debt is low. Might justify the premium."</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=HFfXvfzrnOc" target="_blank">▶ Plain Bagel: Active vs Passive Investing (12m)</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======== WEEK 4 ======== -->
+    <div class="week" id="week-4" data-week="4">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">4</div>
+          <div><div class="title">Portfolio & Real World</div><div class="theme">Construction, Tax, Brokers, News, Scams, Watchlist</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w4d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Portfolio construction — asset allocation, correlation, rebalancing</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Asset Allocation — the most important decision</h4>
+            <p>Research shows <strong>90%+ of investment returns</strong> come from asset allocation (how you split between stocks, bonds, cash, gold), not from picking individual stocks. Asset allocation is the single most important decision you'll make.</p>
+            <h4>Simple starter portfolios</h4>
+            <ul>
+              <li><strong>Aggressive (young, far from retirement):</strong> 100% stocks (index ETFs)</li>
+              <li><strong>Moderate (mid-life):</strong> 70% stocks, 30% bonds/FDs</li>
+              <li><strong>Conservative (near retirement):</strong> 40% stocks, 60% bonds</li>
+              <li>Simplest: Buy a <strong>target-date fund</strong> or <strong>balanced advantage fund</strong> — it automatically adjusts allocation for you.</li>
+            </ul>
+            <h4>Correlation</h4>
+            <p>How two assets move relative to each other. Range: -1 (opposite) to +1 (identical). The key to diversification: combine assets with <strong>low or negative correlation</strong>.</p>
+            <ul>
+              <li>Stocks and gold = low correlation (gold often rises when stocks fall)</li>
+              <li>Stocks and bonds = low to negative correlation (bonds rise when rates fall)</li>
+              <li>Two different stocks = usually high correlation (they both follow the market)</li>
+            </ul>
+            <h4>Rebalancing</h4>
+            <p>Over time, some assets grow faster. Your 70/30 split becomes 80/20. <strong>Rebalancing</strong> = selling the winners and buying the losers to restore original allocation. This <strong>forces you to sell high and buy low</strong> systematically.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=8ZPStcG_EVg" target="_blank">▶ Plain Bagel: Portfolio Diversification (10m)</a>
+              <a href="https://www.investopedia.com/terms/a/assetallocation.asp" target="_blank">📄 Investopedia: Asset Allocation (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Tax implications — STCG, LTCG, dividend tax, tax-loss harvesting</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Short-Term vs Long-Term Capital Gains</h4>
+            <p>The tax rate depends on how long you held the investment. This is a crucial difference.</p>
+            <p><strong>India (as of 2024):</strong></p>
+            <ul>
+              <li><strong>STCG (held ≤1 year):</strong> 15% on gains + surcharge/cess</li>
+              <li><strong>LTCG (held >1 year):</strong> 10% on gains above ₹1 lakh + surcharge/cess</li>
+            </ul>
+            <p><strong>US:</strong></p>
+            <ul>
+              <li><strong>STCG (held ≤1 year):</strong> Taxed at your ordinary income rate (10-37%)</li>
+              <li><strong>LTCG (held >1 year):</strong> 0%, 15%, or 20% depending on income level</li>
+            </ul>
+            <h4>Dividend Tax</h4>
+            <p>Dividends are taxable income. In India, dividends above ₹5,000 are taxed at 10% (TDS). In US, qualified dividends are taxed at LTCG rates.</p>
+            <h4>Tax-Loss Harvesting</h4>
+            <p>Sell a losing investment to <strong>offset gains</strong> from winning investments. Example: Stock A gave ₹50K profit (taxable). Stock B gave ₹30K loss. Sell Stock B → you only pay tax on ₹20K (₹50K − ₹30K). This is perfectly legal and smart.</p>
+            <h4>Tax-Advantaged Accounts</h4>
+            <p><strong>Use these first!</strong> In India: PPF, ELSS (tax-saver mutual funds), NPS. In US: 401(k), IRA, Roth IRA. These allow growth to be tax-free or tax-deferred.</p>
+            <div class="key">💡 <strong>Key strategy:</strong> Hold investments for MORE than 1 year to qualify for lower LTCG rates. This alone can save you 5-25% in taxes.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=NpZQk3QJh7s&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=10" target="_blank">▶ Plain Bagel: Taxes — Registered Accounts (8m)</a>
+              <a href="https://www.nerdwallet.com/taxes/learn/capital-gains-tax-rates" target="_blank">📄 NerdWallet: Capital Gains Tax Rates (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Brokers & platforms — choosing where to invest</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Discount vs Full-Service Brokers</h4>
+            <ul>
+              <li><strong>Discount Broker:</strong> Low fees, self-service platform, no advice. Examples: Zerodha, Groww, Angel One (India). Vanguard, Fidelity, Schwab (US). Best for DIY investors.</li>
+              <li><strong>Full-Service Broker:</strong> Higher fees, provides research reports, relationship manager, advice. Examples: ICICI Direct, HDFC Sec, Motilal Oswal. Better if you want hand-holding.</li>
+            </ul>
+            <h4>India-specific: Demat & Trading Accounts</h4>
+            <ul>
+              <li><strong>Demat Account:</strong> Holds your shares in electronic form (like a digital locker). Mandatory for trading.</li>
+              <li><strong>Trading Account:</strong> Linked to demat. Used for actual buying/selling on exchanges.</li>
+              <li><strong>Bank Account:</strong> Linked for fund transfer.</li>
+              <li>All three are linked together. One broker provides all three when you open an account.</li>
+            </ul>
+            <h4>Fees to check before opening</h4>
+            <ul>
+              <li>Account opening charges</li>
+              <li>Annual maintenance charges (AMC)</li>
+              <li>Brokerage per trade (₹20/order flat vs % of trade value)</li>
+              <li>STT, GST, SEBI turnover fees, stamp duty (these are on every trade)</li>
+            </ul>
+            <h4>Order Types Recap</h4>
+            <p><strong>Market Order:</strong> Execute immediately at current price. <strong>Limit Order:</strong> Execute only at X price or better. <strong>Stop-Loss:</strong> Triggers a market order when price hits X. <strong>GTC (Good Till Cancelled):</strong> Order stays active until you cancel.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/chapter/getting-started/" target="_blank">📄 Zerodha Varsity: Getting Started — has video embed (15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Reading financial news — decoding headlines like a pro</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Common headlines — what they actually mean</h4>
+            <p><strong>"Fed hikes interest rates by 25 bps"</strong></p>
+            <ul>
+              <li>US central bank raised rates. Makes borrowing more expensive (home loans, corporate debt).</li>
+              <li>Impact: Bad for growth/tech stocks (they rely on cheap borrowing). Good for banks (they can charge more on loans). The dollar strengthens.</li>
+              <li>"bps" = basis points. 100 bps = 1%.</li>
+            </ul>
+            <p><strong>"Earnings beat estimates"</strong></p>
+            <ul>
+              <li>Company reported profit higher than what analysts predicted. Usually → stock price rises.</li>
+              <li>But sometimes the stock still falls — "sell the news." The good news was already expected (priced in).</li>
+            </ul>
+            <p><strong>"Yield curve inverts"</strong></p>
+            <ul>
+              <li>Short-term bonds pay more than long-term bonds (unusual — normally long-term pays more for taking duration risk).</li>
+              <li>Historically, this predicts recession 12-18 months ahead. But it has given false signals too.</li>
+            </ul>
+            <p><strong>"Markets enter correction territory"</strong></p>
+            <ul>
+              <li>Index fell 10% from its peak. Normal. Not a crisis. Historically, corrections happen ~1-2x/year.</li>
+            </ul>
+            <h4>One crucial rule</h4>
+            <p><strong>Don't trade on news headlines.</strong> By the time you see the news, it's already reflected in stock prices. Big institutions have faster access and have already acted. If you trade on what you read in the newspaper, you're the last to know.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=2mJfz5xRsF8" target="_blank">▶ Plain Bagel: What Rising Rates ACTUALLY Mean (10m)</a>
+              <a href="https://www.investopedia.com/articles/economics/08/fed-rate-hikes.asp" target="_blank">📄 Investopedia: Understanding Fed Rate Hikes (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Scams & red flags — how to never get fooled</span>
+            <span class="time">35 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Pump-and-Dump</h4>
+            <p>Fraudsters buy a cheap, obscure stock (often penny stock). They promote it heavily — WhatsApp groups, Telegram channels, Twitter, YouTube. "GUARANTEED MULTIBAGGER 🚀". Price spikes as people buy. Fraudsters sell at the peak. Price crashes. You're left holding worthless shares.</p>
+            <h4>Ponzi Scheme</h4>
+            <p>Early investors are paid with money from NEW investors, not from actual profits. The scheme grows as long as more people join. It ALWAYS collapses when new money stops. Madoff's Ponzi scheme lost $65B. In India: many chit fund scams.</p>
+            <h4>Red Flag Phrases</h4>
+            <ul>
+              <li>"Guaranteed returns" — NO INVESTMENT GUARANTEES RETURNS. Run.</li>
+              <li>"Risk-free" — Higher return always means higher risk.</li>
+              <li>"2% daily/20% monthly returns" — Mathematically impossible sustainably.</li>
+              <li>"Limited time / once in a lifetime" — Creates false urgency.</li>
+              <li>"Everyone is getting rich" — FOMO is not an investment strategy.</li>
+            </ul>
+            <h4>Due Diligence Checklist</h4>
+            <ul>
+              <li>Is the company <strong>profitable</strong> with real revenue?</li>
+              <li>Is it <strong>regulated</strong> by SEBI/SEC?</li>
+              <li>Can you find <strong>independent information</strong> (not just from the person promoting it)?</li>
+              <li>Is the stock <strong>liquid</strong> (can you actually sell when you want to)?</li>
+              <li>Does the business make <strong>logical sense</strong> to you?</li>
+            </ul>
+            <div class="key">⚠️ <strong>Golden rule:</strong> If you can't explain in one sentence how the investment makes money, don't invest. If it sounds too good to be true, it IS too good to be true.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=AqZbO8Ojhmw" target="_blank">▶ Plain Bagel: The Passive Income Scam (12m)</a>
+              <a href="https://www.sebi.gov.in/investor-alerts.html" target="_blank">📄 SEBI Investor Alerts (10m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Build your first watchlist — 3-5 companies to follow</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Choose companies in sectors you understand</h4>
+            <p>Peter Lynch (legendary investor): "Buy what you know." You work in tech? Look at IT companies. You use Zomato/Swiggy every day? Understand their business model. Your industry knowledge is an advantage.</p>
+            <h4>For each company, check:</h4>
+            <ol>
+              <li><strong>P/E ratio:</strong> Compare to industry average and 5-year history</li>
+              <li><strong>Market Cap:</strong> Large/mid/small cap</li>
+              <li><strong>Revenue & Profit growth:</strong> 3-5 year trend (CAGR)</li>
+              <li><strong>Debt-to-Equity:</strong> High debt = high risk</li>
+              <li><strong>Promoter holding</strong> (India): High promoter holding = founders have skin in the game</li>
+              <li><strong>Dividend yield:</strong> If applicable</li>
+              <li><strong>52-week range:</strong> Where does current price sit?</li>
+            </ol>
+            <h4>Follow without trading</h4>
+            <p>Add them to your watchlist on Screener.in or Yahoo Finance. Check once a week. Read any news about them. Ask yourself: "Would I buy more if it dropped 20%? Or would I panic?"</p>
+            <p>Do this for <strong>2-4 weeks</strong> before putting any real money in. The goal is to observe your own emotional reactions.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=HXGSTtGClUY&list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy&index=13" target="_blank">▶ Plain Bagel: 5 Steps for Getting Started (8m)</a>
+              <a href="https://www.screener.in" target="_blank">📄 Screener.in — Indian stock screener (free)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w4d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Capstone — write your first investment thesis</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Write a 1-paragraph thesis</h4>
+            <p>Pick one company from your watchlist. Write a short paragraph covering:</p>
+            <ol>
+              <li><strong>What does the company do?</strong> Business model in one sentence.</li>
+              <li><strong>Why is it better than competitors?</strong> Its moat.</li>
+              <li><strong>Is the price reasonable?</strong> Current P/E vs industry, vs history.</li>
+              <li><strong>What could go wrong?</strong> The risks (no thesis is complete without risks).</li>
+            </ol>
+            <h4>Example thesis</h4>
+            <p><em>"Reliance Industries is India's largest retailer and telecom operator via Jio. Its moat is vertical integration across petrochemicals, telecom, and retail — competitors can't easily replicate its scale. At 28x P/E, it's in line with historical averages. Risks: high debt from capex spending, regulatory risk in telecom, and dependence on Indian consumer spending. Overall, it's a reasonably priced bet on India's digital consumption story."</em></p>
+            <p><strong>This is NOT a buy recommendation.</strong> It's a practice exercise in articulating your reasoning. The goal is to think clearly, not to be right.</p>
+            <h4>What's next?</h4>
+            <ul>
+              <li><strong>Paper trade</strong> for 2-4 weeks (track your picks in a spreadsheet, no real money)</li>
+              <li>Read <em>The Intelligent Investor</em> (Benjamin Graham) or <em>A Random Walk Down Wall Street</em> (Burton Malkiel)</li>
+              <li>Start with <strong>index ETFs</strong> for your first real investments — not individual stocks</li>
+            </ul>
+            <div class="key">💡 <strong>You've completed 4 weeks. You now know more than most retail investors.</strong> The barrier to good investing isn't knowledge — it's discipline. Stick to your plan. Don't panic sell. Automate your SIP. You'll do fine.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=1T4vB4jq_3s" target="_blank">▶ Plain Bagel: Investing Won't Make You Rich (Probably) (10m)</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resources -->
+  <div class="section">
+    <h2><span class="emoji">📚</span> Free Resources</h2>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="r-title">Zerodha Varsity</div>
+        <div class="r-desc">Best free text-based stock market course. Modules for every topic.</div>
+        <a href="https://zerodha.com/varsity/modules/" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">The Plain Bagel (YouTube)</div>
+        <div class="r-desc">CFA-level explainers — stocks, bonds, behavioral finance, and more.</div>
+        <a href="https://www.youtube.com/playlist?list=PLD18sR-9Y-XHGlrT_3aKElcyzz9eTDGsy" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Investopedia</div>
+        <div class="r-desc">Encyclopedia for any finance term.</div>
+        <a href="https://www.investopedia.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Screener.in</div>
+        <div class="r-desc">Indian stock screener — filter by P/E, market cap, sector.</div>
+        <a href="https://www.screener.in" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Yahoo Finance</div>
+        <div class="r-desc">Stock prices, financials, news — global markets.</div>
+        <a href="https://finance.yahoo.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Anki Flashcards</div>
+        <div class="r-desc">Spaced-repetition flashcard app. Make 3-5 cards per day.</div>
+        <a href="https://apps.ankiweb.net" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">NerdWallet</div>
+        <div class="r-desc">Capital gains tax rates, brokerage comparisons.</div>
+        <a href="https://www.nerdwallet.com/investing/learn" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Britannica Money</div>
+        <div class="r-desc">DCA, bull/bear markets, and other fundamentals.</div>
+        <a href="https://www.britannica.com/money" target="_blank">Open →</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase2-banner" style="display:none; background: #FFF8E7; border: 2px solid var(--gold); border-radius: 12px; padding: 24px 28px; text-align: center; margin: 40px 0;">
+    <h2 style="font-size: 20px; margin-bottom: 8px;">🎉 All 28 days complete!</h2>
+    <p style="font-size: 14px; color: #555; margin-bottom: 16px;">You've finished the basics. Ready to level up?</p>
+    <a href="./portfolio-trading.html" style="display: inline-block; background: var(--gold); color: var(--dark); padding: 12px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none;">Start Phase 2: Portfolio & Trading →</a>
+  </div>
+
+</div></div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <a href="./portfolio-trading.html" style="color: var(--gold);">Phase 2: Portfolio & Trading →</a><br>
+    Financial Literacy Study Plan — Self-contained lessons for beginners<br>
+    Last updated: <span id="dateDisplay">loading...</span>
+  </div>
+</footer>
+
+<script>
+const DAY_IDS = ['w1d1','w1d2','w1d3','w1d4','w1d5','w1d6','w1d7','w2d1','w2d2','w2d3','w2d4','w2d5','w2d6','w2d7','w3d1','w3d2','w3d3','w3d4','w3d5','w3d6','w3d7','w4d1','w4d2','w4d3','w4d4','w4d5','w4d6','w4d7'];
+const KEY = 'financial-learning-progress';
+
+function loadDone() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+function saveDone(arr) { localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+function toggleDay(id) {
+  const done = loadDone();
+  const idx = done.indexOf(id);
+  idx >= 0 ? done.splice(idx, 1) : done.push(id);
+  saveDone(done);
+  render();
+}
+
+function render() {
+  const done = loadDone();
+  const total = DAY_IDS.length;
+  const count = done.length;
+  const pct = Math.round(count / total * 100);
+  document.getElementById('doneCount').textContent = count;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.querySelectorAll('.day-card').forEach(el => {
+    el.classList.toggle('done', done.includes(el.dataset.id));
+  });
+  const banner = document.getElementById('phase2-banner');
+  if (banner) banner.style.display = count === total ? 'block' : 'none';
+}
+
+// Accordion weeks
+document.querySelectorAll('.week-header').forEach(h => {
+  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+});
+
+// Expand/collapse day + toggle done on header click
+document.querySelectorAll('.day-card .day-header').forEach(hdr => {
+  hdr.addEventListener('click', function(e) {
+    const card = this.parentElement;
+    if (card.classList.contains('open')) {
+      // If already open, clicking header toggles done
+      toggleDay(card.dataset.id);
+    } else {
+      // Close all others in same week, open this one
+      const week = card.closest('.week-body');
+      week.querySelectorAll('.day-card.open').forEach(c => c.classList.remove('open'));
+      card.classList.add('open');
+    }
+  });
+});
+
+
+// Sidebar — toggle nav week groups
+document.querySelectorAll('.nav-week-header').forEach(h => {
+  h.addEventListener('click', function() {
+    this.parentElement.classList.toggle('open');
+  });
+});
+
+// Sidebar — nav links scroll to week + open accordion
+document.querySelectorAll('.nav-link').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const id = this.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('open');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Dynamic last-updated from GitHub API
+fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
+  .then(r => r.json())
+  .then(d => {
+    const date = new Date(d.commit.committer.date);
+    document.getElementById('dateDisplay').textContent = date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) + ' at ' + date.toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+  })
+  .catch(() => document.getElementById('dateDisplay').textContent = 'recent');
+
+render();
+document.querySelector('.week').classList.add('open');
+document.querySelector('.day-card').classList.add('open');
+</script>
+</body>
+</html>
