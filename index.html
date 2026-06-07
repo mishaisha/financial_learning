@@ -1206,7 +1206,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
 <footer>
   <div class="container">
     Financial Literacy Study Plan — Self-contained lessons for beginners<br>
-    Updated: <span id="dateDisplay"></span>
+    Last updated: <span id="dateDisplay">June 07, 2026</span>
   </div>
 </footer>
 
@@ -1260,9 +1260,6 @@ document.querySelectorAll('.day-card .day-header').forEach(hdr => {
   });
 });
 
-document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
-  year: 'numeric', month: 'long', day: 'numeric'
-});
 
 render();
 document.querySelector('.week').classList.add('open');
