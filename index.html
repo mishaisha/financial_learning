@@ -1222,7 +1222,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
 <footer>
   <div class="container">
     Financial Literacy Study Plan — Self-contained lessons for beginners<br>
-    Last updated: <span id="dateDisplay">June 07, 2026 at 02:57 PM MST</span>
+    Last updated: <span id="dateDisplay">loading...</span>
   </div>
 </footer>
 
@@ -1289,6 +1289,19 @@ document.querySelectorAll('.sidebar a').forEach(a => {
     }
   });
 });
+
+// Dynamic last-updated from GitHub API
+fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
+  .then(r => r.json())
+  .then(d => {
+    const date = new Date(d.commit.committer.date);
+    document.getElementById('dateDisplay').textContent = date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) + ' at ' + date.toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+  })
+  .catch(() => document.getElementById('dateDisplay').textContent = 'recent');
 
 render();
 document.querySelector('.week').classList.add('open');
