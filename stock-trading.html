@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Literacy — Phase 3: Stock Research & Active Trading</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --blue: #4A90D9; --dark: #1A2A3A; --gray: #6B7A8D; --green: #2ECC71; --border: #E0E0E0; --card-bg: #FFFFFF; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A2E; line-height: 1.7; }
+.container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+header {
+  background: linear-gradient(135deg, #1A2A4A 0%, #2A1A4A 100%); color: #fff;
+  padding: 48px 0 40px; border-bottom: 4px solid var(--blue);
+}
+header h1 { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+header h1 span { color: var(--blue); }
+header .sub { font-size: 16px; color: #A0C0D0; margin-top: 8px; font-weight: 400; }
+.header-meta { display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+.header-meta .badge { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+
+.stats-bar {
+  background: var(--card-bg); border-radius: 12px; padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: -24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid var(--border); flex-wrap: wrap; gap: 12px;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 24px; font-weight: 700; color: var(--dark); }
+.stat-item .label { font-size: 12px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.progress-bar { flex: 1; min-width: 120px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--blue); width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+
+.section { margin: 40px 0; }
+.section h2 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.section h2 .emoji { font-size: 24px; }
+
+.week { margin-bottom: 12px; }
+.week-header {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; user-select: none;
+}
+.week-header:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+.week-header .left { display: flex; align-items: center; gap: 14px; }
+.week-header .left .num { background: var(--blue); color: #fff; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.week-header .left .title { font-weight: 600; font-size: 15px; }
+.week-header .left .theme { font-size: 13px; color: var(--gray); }
+.week-header .check { font-size: 18px; color: var(--gray); transition: transform 0.2s; }
+.week.open .week-header .check { transform: rotate(180deg); }
+.week-body { display: none; }
+.week.open .week-body { display: block; }
+
+.day-card {
+  background: var(--card-bg); border: 1px solid #F0F0F0; border-top: none;
+  cursor: pointer; transition: background 0.15s;
+}
+.day-card:first-child { border-top: 1px solid #F0F0F0; border-radius: 0 0 0 0; }
+.day-card:last-child { border-radius: 0 0 10px 10px; }
+.day-card .day-header {
+  padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+}
+.day-card .day-header:hover { background: #FAFBFC; }
+.day-card .day { font-weight: 600; color: var(--gray); font-size: 13px; min-width: 28px; }
+.day-card .topic { font-weight: 500; flex: 1; font-size: 14px; }
+.day-card .time { color: var(--gray); font-size: 12px; white-space: nowrap; }
+.day-card .expand-icon { font-size: 12px; color: #B0B0B0; transition: transform 0.2s; }
+.day-card.open .expand-icon { transform: rotate(90deg); }
+.day-card .day-content { display: none; padding: 0 20px 16px 60px; font-size: 14px; color: #333; }
+.day-card.open .day-content { display: block; }
+.day-card.done .day { color: #B0B0B0; }
+.day-card.done .topic { color: #B0B0B0; text-decoration: line-through; }
+.day-card.done .time { color: var(--blue); }
+.day-content h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--dark); }
+.day-content h4:first-child { margin-top: 0; }
+.day-content ul { margin: 6px 0; padding-left: 18px; }
+.day-content li { margin-bottom: 4px; }
+.day-content .key { background: #E8EEF8; border-left: 3px solid var(--blue); padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.day-content .key strong { color: #2A5DB0; }
+.day-content .links { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F0F0F0; }
+.day-content .links a { color: #2563EB; text-decoration: none; font-weight: 500; margin-right: 16px; display: inline-block; margin-bottom: 4px; }
+.day-content .links a:hover { text-decoration: underline; }
+.day-content .links .label { font-size: 12px; color: var(--gray); font-weight: 600; display: block; margin-bottom: 6px; }
+
+.resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.resource-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.resource-card .r-title { font-weight: 600; font-size: 14px; }
+.resource-card .r-desc { font-size: 12px; color: var(--gray); margin-top: 4px; }
+.resource-card a { color: #2563EB; text-decoration: none; font-weight: 500; font-size: 13px; display: inline-block; margin-top: 6px; }
+.resource-card a:hover { text-decoration: underline; }
+
+footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+footer a { color: var(--blue); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+#next-banner { transition: opacity 0.5s ease; }
+#next-banner a:hover { opacity: 0.9; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 26px; }
+  .day-card .day-header { padding: 10px 14px; }
+  .day-card .day-content { padding: 0 14px 14px 48px; }
+  .stats-bar { flex-direction: column; text-align: center; }
+  .progress-bar { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Financial Literacy <span>Phase 3: Stock Research & Trading</span></h1>
+    <p class="sub">Stock screening, deep-dive analysis, competitive moat, trading execution, and journaling — 2 weeks, ~1hr/day.</p>
+    <div class="header-meta">
+      <span class="badge">2 Weeks</span>
+      <span class="badge">14 Sessions</span>
+      <span class="badge">~1 hr/day</span>
+      <span class="badge">Active trading focus</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="num" id="doneCount">0</div><div class="label">Done</div></div>
+    <div class="stat-item"><div class="num" id="totalCount">14</div><div class="label">Total</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="stat-item"><div class="num" id="pctDisplay">0%</div><div class="label">Complete</div></div>
+  </div>
+
+  <div class="section">
+
+    <!-- ======== WEEK 1 ======== -->
+    <div class="week" data-week="1">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">1</div>
+          <div><div class="title">Stock Research & Analysis</div><div class="theme">Screening, Financials, Moat, Management, Industry</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w1d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Stock screening — filters, ratios, promoter holding, insider buying</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Why screen?</h4>
+            <p>There are 5,000+ listed stocks in India and 10,000+ in the US. Screening narrows the universe to a manageable watchlist (10-20 stocks). You apply quant filters first, then do deep-dive research.</p>
+            <h4>Essential screening filters</h4>
+            <ul>
+              <li><strong>Market Cap:</strong> Only large-cap (>₹20,000 Cr) for beginners. Mid/small-cap adds volatility.</li>
+              <li><strong>P/E Ratio:</strong> Avoid stocks with P/E > 50 unless growth is exceptional. Compare to industry average.</li>
+              <li><strong>Revenue Growth (3yr CAGR):</strong> >10% for established companies, >20% for growth companies.</li>
+              <li><strong>Profit Growth (3yr CAGR):</strong> Should roughly track revenue. Profit growing faster than revenue = margin expansion.</li>
+              <li><strong>Debt-to-Equity:</strong> < 1 for most sectors. < 0.5 for safety. Exception: banks and NBFCs (different structure).</li>
+              <li><strong>ROE (Return on Equity):</strong> >15% consistently. Indicates efficient capital use.</li>
+              <li><strong>Operating Cash Flow:</strong> Must be positive. Bonus: OCF > Net Income = high-quality earnings.</li>
+            </ul>
+            <h4>Screening tools</h4>
+            <ul>
+              <li><strong>India:</strong> Screener.in (free), Tijori Finance, Chartink</li>
+              <li><strong>US:</strong> Finviz (free tier), Yahoo Finance screener, TradingView</li>
+              <li><strong>Global:</strong> SimplyWallSt, GurufFocus</li>
+            </ul>
+            <h4>Promoter holding (India-specific)</h4>
+            <ul>
+              <li>High promoter holding (>50%) = founders have skin in the game. Aligned with shareholders.</li>
+              <li>Promoter holding DECREASING over time = they're exiting. Red flag.</li>
+              <li>Promoter pledge (shares used as loan collateral) > 30% = risky. If stock falls, lenders sell = crash.</li>
+            </ul>
+            <h4>Insider buying (US)</h4>
+            <ul>
+              <li>Multiple insiders (CEO, CFO, directors) buying in the open market = strong signal.</li>
+              <li>Insider SELLING is normal (they have compensation, need to diversify). But mass selling by multiple executives = red flag.</li>
+              <li>Use: Openinsider.com (US), or check insider filing data.</li>
+            </ul>
+            <div class="key">💡 <strong>Process:</strong> Spend 15 min screening to create a shortlist of 10-15 stocks. Then spend 30 min on quick sanity checks on each. Pick 3-5 for deep-dive. Don't try to analyze every stock — be ruthless in filtering.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.screener.in" target="_blank">📄 Screener.in — start with pre-built screens (15m)</a>
+              <a href="https://finviz.com/screener.ashx" target="_blank">📄 Finviz Screener — US markets (15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Deep-dive annual report — revenue quality, MD&A, red flags</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Revenue quality — not all revenue is equal</h4>
+            <ul>
+              <li><strong>Recurring revenue</strong> (subscriptions, consumables) >> one-time project revenue. Higher predictability = higher multiple.</li>
+              <li><strong>Cash revenue</strong> (customer pays immediately) > credit revenue. Check if receivables grow slower than revenue.</li>
+              <li><strong>Organic growth</strong> (same customers buying more) >> acquired growth (buying other companies). Acquired growth comes with integration risk and goodwill.</li>
+              <li><strong>Related-party revenue:</strong> If a big chunk comes from promoter-owned entities, it may be fake. Red flag.</li>
+            </ul>
+            <h4>MD&A — the most important section</h4>
+            <p>Management explains what happened and why. Read the last 3 years. Watch for:</p>
+            <ul>
+              <li><strong>Consistent narrative:</strong> Do they keep changing the bull story? Credible management admits problems.</li>
+              <li><strong>Future outlook:</strong> Specific and measurable > vague platitudes. "We plan to open 50 stores" is concrete. "We expect growth" is fluff.</li>
+              <li><strong>Risk factors:</strong> Are they upfront about challenges? Companies that hide risks usually have bigger problems.</li>
+            </ul>
+            <h4>Notes to accounts — the fine print</h4>
+            <ul>
+              <li><strong>Contingent liabilities:</strong> Potential future liabilities (lawsuits, tax disputes). If large vs net worth, it's a bomb waiting.</li>
+              <li><strong>Related-party transactions:</strong> Money flowing to promoter-linked entities. Should be at arm's length and minimal.</li>
+              <li><strong>Change in accounting policy:</strong> Why did they change depreciation method or revenue recognition? Usually to make numbers look better.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Top red flags:</strong> (1) CEO suddenly resigning, (2) Auditor resigning or issuing a qualified opinion, (3) Repeated "extraordinary items" that somehow appear every year (they're ordinary), (4) Revenue growing but cash flow declining, (5) Promoter selling while company hits new highs.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=5QE2ul0v_Oc" target="_blank">▶ Plain Bagel: How to Read a 10-K (12m)</a>
+              <a href="https://zerodha.com/varsity/chapter/the-annual-report/" target="_blank">📄 Zerodha Varsity: The Annual Report (15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Competitive moat — Porter's Five Forces, moat durability, moat types</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Porter's Five Forces</h4>
+            <p>Framework to analyze industry structure and competitive intensity. Ask each question for your target company:</p>
+            <ul>
+              <li><strong>1. Threat of new entrants:</strong> How hard is it for a new company to enter this industry? High barriers (patents, brand, capital, regulation) = safer moat.</li>
+              <li><strong>2. Bargaining power of suppliers:</strong> Can suppliers squeeze margins? If there's only one chip supplier for a phone maker, that supplier has power. If there are 100 suppliers, the company has power.</li>
+              <li><strong>3. Bargaining power of buyers:</strong> Can customers force prices down? If you sell to a single giant retailer (Walmart), they control you. If you sell to millions of individuals (Apple selling iPhones), you control price.</li>
+              <li><strong>4. Threat of substitutes:</strong> Can customers switch to something else? Uber vs buses. Netflix vs YouTube. If substitutes are plentiful and cheap, moat is weak.</li>
+              <li><strong>5. Rivalry among existing competitors:</strong> How intense is competition? Airlines (bloodbath) vs credit card networks (oligopoly with high margins).</li>
+            </ul>
+            <h4>Moat durability — how long will it last?</h4>
+            <ul>
+              <li><strong>Very narrow moat:</strong> Tech hardware, retail, airlines, restaurants.</li>
+              <li><strong>Narrow moat:</strong> Automobiles, media, telecom.</li>
+              <li><strong>Wide moat:</strong> Consumer staples (HUL, Nestlé), credit card networks (Visa, Mastercard), exchanges (NSE).</li>
+              <li><strong>Very wide moat:</strong> Companies with brands that have existed for 50+ years and are still gaining share. Example: Coca-Cola, ITC, Asian Paints.</li>
+            </ul>
+            <div class="key">💡 <strong>Moat checklist:</strong> Does the company have pricing power (can raise prices without losing customers)? Can it earn above-average ROE for 10+ years? If yes, it has a moat. If no, it's a commodity business competing on price alone.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/p/porter.asp" target="_blank">📄 Investopedia: Porter's Five Forces (10m)</a>
+              <a href="https://www.youtube.com/watch?v=mYF2_FBCvXw" target="_blank">▶ Warren Buffett: The Most Important Thing in Investing (6m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Financial health deep-dive — debt, cash flow, working capital, ROCE</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Debt analysis</h4>
+            <ul>
+              <li><strong>Debt-to-Equity (D/E):</strong> < 0.5 is safe. > 1 is risky unless the business is stable (utilities). Banks are different — deposits are their "debt."</li>
+              <li><strong>Interest Coverage Ratio:</strong> Operating Profit ÷ Interest Expense. > 3 is safe. < 1.5 is dangerous (cannot cover interest payments).</li>
+              <li><strong>Debt-to-EBITDA:</strong> < 2x is safe. > 4x is risky. Common metric used by credit rating agencies.</li>
+              <li><strong>Debt maturity profile:</strong> Is a big chunk coming due soon? If they can't refinance, they're in trouble.</li>
+            </ul>
+            <h4>Cash flow health</h4>
+            <ul>
+              <li><strong>Operating Cash Flow (OCF):</strong> Should be positive and growing. If OCF < Net Income consistently, earnings quality is poor.</li>
+              <li><strong>Free Cash Flow (FCF):</strong> OCF − Capex. The real money available for dividends, buybacks, debt repayment.</li>
+              <li><strong>Cash Conversion Cycle:</strong> Days Inventory + Days Receivables − Days Payables. Shorter is better. Negative cycle (like a retailer collecting cash before paying suppliers) is a superpower.</li>
+            </ul>
+            <h4>Working capital health</h4>
+            <ul>
+              <li><strong>Current Ratio:</strong> Current Assets ÷ Current Liabilities. > 1.5 is healthy. < 1 means they might struggle to pay short-term bills.</li>
+              <li><strong>Receivables Days:</strong> How fast customers pay. Increasing trend = customers taking longer to pay = red flag.</li>
+              <li><strong>Inventory Days:</strong> How long inventory sits. Increasing = products not selling = possible write-down ahead.</li>
+            </ul>
+            <h4>ROCE (Return on Capital Employed)</h4>
+            <p><strong>ROCE = Operating Profit ÷ (Total Assets − Current Liabilities).</strong> The best measure of how efficiently a company uses its capital. Consistently > 15% = excellent business. > 25% = world-class.</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://zerodha.com/varsity/chapter/financial-ratios-part-2/" target="_blank">📄 Zerodha Varsity: Financial RatiosDeep-Dive (20m)</a>
+              <a href="https://www.investopedia.com/terms/r/roce.asp" target="_blank">📄 Investopedia: ROCE (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Growth quality — organic vs acquired, revenue drivers, margin sustainability</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Organic vs Acquired growth</h4>
+            <p><strong>Organic:</strong> Selling more to existing customers, opening new stores, raising prices. Sustainable, within the company's control.</p>
+            <p><strong>Acquired:</strong> Buying other companies. Comes with integration risk, goodwill on balance sheet, and culture clashes. Serial acquirers often overpay and destroy value over time.</p>
+            <p><strong>How to check:</strong> Compare revenue growth to industry growth. If a company grows 20% but the industry grew 10%, half the growth is market share gain (organic) — real edge. If the industry grew 20% too, they're just riding the wave.</p>
+            <h4>Revenue drivers — what makes the business tick?</h4>
+            <ul>
+              <li><strong>Volume vs Price:</strong> Is growth from selling more units (volume) or charging more (price)? Volume growth is more sustainable. Price growth eventually hits consumer resistance.</li>
+              <li><strong>Same-store sales (retail):</strong> Growth from existing stores (not new ones). Negative same-store + positive total = opening stores to mask decline.</li>
+              <li><strong>Customer concentration:</strong> If top 5 customers = 40%+ of revenue, losing one could devastate. Diversified customer base = safer.</li>
+            </ul>
+            <h4>Margin sustainability</h4>
+            <ul>
+              <li><strong>Gross Margin:</strong> Should be stable or improving. Shrinking = competitive pressure or cost inflation.</li>
+              <li><strong>Operating Margin:</strong> If it's much higher than competitors, is it sustainable? Check if they're under-investing (lower R&D, lower marketing) to juice short-term numbers.</li>
+              <li><strong>Net Margin:</strong> Higher isn't always better. Could be one-time gains, low tax rate that won't last, or unsustainable cost-cutting.</li>
+            </ul>
+            <div class="key">💡 <strong>The quality test:</strong> If you covered the company's name, could you identify it by looking only at its financial trends? Truly great businesses have a distinctive, consistent financial fingerprint.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/o/organicgrowth.asp" target="_blank">📄 Investopedia: Organic Growth (6m)</a>
+              <a href="https://www.investopedia.com/terms/p/profitmargin.asp" target="_blank">📄 Investopedia: Profit Margin Analysis (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Management & governance — capital allocation, insider behavior, track record</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Capital allocation — the most important CEO skill</h4>
+            <p>Management has two jobs: (1) Run the business well. (2) Allocate capital wisely. The second is more important. Capital allocation decisions:</p>
+            <ul>
+              <li><strong>Reinvest in the business:</strong> Best option if ROE > 15%. Growing existing profitable operations.</li>
+              <li><strong>Acquisitions:</strong> Most destroy value (studies show 70%+ of acquisitions fail to create value). Check their track record.</li>
+              <li><strong>Dividends:</strong> Good for mature businesses. If a company with 8% ROE pays dividends, that's fine. If a company with 30% ROE pays high dividends, they're robbing growth.</li>
+              <li><strong>Buybacks:</strong> Great if stock is undervalued. Terrible if they buy high (buying at peak prices destroys value). Check if buybacks reduced share count over 5 years.</li>
+              <li><strong>Debt repayment:</strong> Wise if debt was high. Neutral signal.</li>
+            </ul>
+            <h4>Insider behavior</h4>
+            <ul>
+              <li>Promoters buying shares from the open market = bullish. They know the business best.</li>
+              <li>Promoters selling even a small % = investigate why (tax planning? personal need? or business trouble?).</li>
+              <li>Salary/perks of top management: Excessive compensation despite poor performance = entitlement, not ownership mentality.</li>
+            </ul>
+            <h4>Corporate governance red flags</h4>
+            <ul>
+              <li>Promoter-owned entities doing business with the company (related-party transactions)</li>
+              <li>Auditor resigning abruptly</li>
+              <li>Board lacking independent directors</li>
+              <li>Subsidiaries with opaque financials</li>
+              <li>Changing auditors frequently</li>
+            </ul>
+            <div class="key">💡 <strong>One simple test:</strong> Would you trust management with your money? If you met the CEO one-on-one, would you feel confident they're competent and honest? If the answer isn't an emphatic yes, skip the stock.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.youtube.com/watch?v=ngz98qkQ7fQ" target="_blank">▶ Plain Bagel: How to Analyze Management (10m)</a>
+              <a href="https://www.investopedia.com/terms/c/capitalallocation.asp" target="_blank">📄 Investopedia: Capital Allocation (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w1d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Industry & peer comparison — relative valuation, positioning, market share</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Industry analysis — know the terrain</h4>
+            <ul>
+              <li><strong>Industry structure:</strong> Fragmented (many small players) → consolidation opportunity. Concentrated (3-4 big players) → stable margins, pricing discipline.</li>
+              <li><strong>Regulatory environment:</strong> Is the industry regulated (banking, pharma, telecom)? Regulation limits competition but also limits growth.</li>
+              <li><strong>Growth stage:</strong> Emerging (high growth, unprofitable), Growth (high growth, profitable), Mature (low growth, high margins), Declining (shrinking).</li>
+            </ul>
+            <h4>Peer comparison — rank the companies</h4>
+            <p>Compare the target company to its top 3-5 competitors on:</p>
+            <ul>
+              <li><strong>Valuation:</strong> P/E, P/B, EV/EBITDA (trailing and forward). Is the target cheaper or more expensive? Why?</li>
+              <li><strong>Growth:</strong> Revenue CAGR (3yr, 5yr). Profit CAGR. Who is growing fastest?</li>
+              <li><strong>Profitability:</strong> Gross margin, operating margin, net margin, ROE, ROCE. Ranking.</li>
+              <li><strong>Financial health:</strong> D/E, current ratio, interest coverage. Who is strongest?</li>
+              <li><strong>Market share:</strong> Who has the most? Is share increasing or decreasing?</li>
+            </ul>
+            <h4>Relative valuation example</h4>
+            <p>Company A: P/E 25, growth 20%, ROE 25%. Company B: P/E 30, growth 15%, ROE 18%. Company A is cheaper AND growing faster AND more profitable. Unless there's a moat reason (Company B has a patent portfolio), Company A is the better buy.</p>
+            <div class="key">💡 <strong>PEG Ratio:</strong> P/E ÷ Growth Rate. < 1 = potentially undervalued. PEG 0.5 with 20% growth and P/E 10 → excellent. PEG 3 with 10% growth and P/E 30 → expensive. But PEG ignores moat durability and financial health — use as one input, not the only one.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/p/pegratio.asp" target="_blank">📄 Investopedia: PEG Ratio (6m)</a>
+              <a href="https://www.investopedia.com/terms/c/competitiveanalysis.asp" target="_blank">📄 Investopedia: Competitive Analysis (10m)</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======== WEEK 2 ======== -->
+    <div class="week" data-week="2">
+      <div class="week-header">
+        <div class="left">
+          <div class="num">2</div>
+          <div><div class="title">Trading Execution & Psychology</div><div class="theme">Entry/Exit, Position Sizing, Journal, Psychology, Paper Trading</div></div>
+        </div>
+        <div class="check">▼</div>
+      </div>
+      <div class="week-body">
+
+        <div class="day-card" data-id="w2d1">
+          <div class="day-header">
+            <span class="day">D1</span>
+            <span class="topic">Entry strategies — breakouts, pullbacks, volume confirmation, MA crosses</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Breakout entry</h4>
+            <p>Buy when price breaks above a resistance level or 52-week high with high volume. Idea: the stock has "broken out" of its range and momentum will continue.</p>
+            <ul>
+              <li><strong>Volume confirmation:</strong> Breakout on 2x+ average volume = real move. Breakout on low volume = false breakout (bear trap).</li>
+              <li><strong>Pullback entry:</strong> Instead of buying the breakout, wait for price to pull back to the broken level (now support) and buy there. Better risk-reward.</li>
+            </ul>
+            <h4>Pullback entry (buying the dip)</h4>
+            <p>Buy when price pulls back to a support level (moving average, trendline, previous resistance-turned-support). Requires an existing uptrend — don't buy pullbacks in a downtrend.</p>
+            <ul>
+              <li><strong>50-day MA pullback:</strong> In a strong uptrend, stocks often bounce off the 50-day moving average. Place a limit buy near this level.</li>
+              <li><strong>Fibonacci pullback:</strong> 38.2% and 61.8% retracement levels are common bounce points in a trend.</li>
+            </ul>
+            <h4>Moving average crossover</h4>
+            <ul>
+              <li><strong>Golden cross:</strong> 50-day MA crossing ABOVE 200-day MA = bullish. Long-term trend turned up.</li>
+              <li><strong>Death cross:</strong> 50-day crossing BELOW 200-day = bearish. Consider exiting.</li>
+              <li><strong>Short-term:</strong> 20-day crossing above 50-day = short-term entry signal.</li>
+            </ul>
+            <h4>One rule for all entries</h4>
+            <p><strong>Have a thesis BEFORE the trade.</strong> Don't buy because "it looks like it's going up." Write down: "I'm buying because [catalyst/reason]. I'll sell if [exit condition]. My max loss is [amount]."</p>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/b/breakout.asp" target="_blank">📄 Investopedia: Breakout Trading (8m)</a>
+              <a href="https://zerodha.com/varsity/chapter/buying-and-selling-2/" target="_blank">📄 Zerodha Varsity: Buying & Selling (15m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d2">
+          <div class="day-header">
+            <span class="day">D2</span>
+            <span class="topic">Exit strategies — profit targets, trailing stops, time stops, thesis breaks</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Exits are harder than entries</h4>
+            <p>Anyone can buy a stock. Knowing when to SELL is what separates profitable traders from everyone else. Have your exit plan BEFORE you enter.</p>
+            <h4>Profit targets</h4>
+            <ul>
+              <li><strong>Fixed % target:</strong> "I'll sell when I'm up 20%." Simple but rigid.</li>
+              <li><strong>Resistance-based:</strong> Sell at the next resistance level (previous high, trendline, round number). More dynamic.</li>
+              <li><strong>Scale out:</strong> Sell 50% at first target, let 50% run. Captures profits while staying in if it goes higher.</li>
+              <li><strong>Risk-reward ratio:</strong> Target at least 2:1 (risk ₹100 to make ₹200).</li>
+            </ul>
+            <h4>Stop-losses</h4>
+            <ul>
+              <li><strong>Fixed % stop:</strong> 8-15% below entry. Adjust for volatility (more volatile = wider stop).</li>
+              <li><strong>Technical stop:</strong> Below support level. If support breaks, the chart pattern is invalidated.</li>
+              <li><strong>Volatility stop (ATR):</strong> Stop at 2× ATR (Average True Range) below entry. Adapts to market conditions.</li>
+            </ul>
+            <h4>Trailing stops</h4>
+            <p>Stop that moves up as the stock rises. Say buy at ₹100, set 10% trailing stop. Stock hits ₹120 → stop moves to ₹108. Stock hits ₹150 → stop moves to ₹135. You lock in gains while letting winners run.</p>
+            <h4>Time stop</h4>
+            <p>If the stock hasn't moved your way within a set time (e.g., 2 weeks), exit. Else you tie up capital in dead trades. "I gave it 10 trading days — it didn't work, moving on."</p>
+            <h4>Thesis-breaking events</h4>
+            <p>Sell immediately if: (1) The reason you bought is no longer true. (2) A material negative event (fraud, regulatory action, key person leaving). (3) The competitive landscape changed permanently. Don't wait — exit first, analyze later.</p>
+            <div class="key">💡 <strong>Mental model:</strong> Think of every trade as having a "sell ticket" pre-written. The only question is when you punch it. Pre-decide your exits and you remove emotion from the decision.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/terms/t/trailingstop.asp" target="_blank">📄 Investopedia: Trailing Stop (6m)</a>
+              <a href="https://www.investopedia.com/terms/s/stop-lossorder.asp" target="_blank">📄 Investopedia: Stop-Loss (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d3">
+          <div class="day-header">
+            <span class="day">D3</span>
+            <span class="topic">Position sizing for active trades — Kelly, risk per trade, scaling</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Why sizing matters more than entry</h4>
+            <p>A great stock pick with terrible sizing destroys your account. A mediocre pick with great sizing works fine. The goal: survive long enough for your edge to play out.</p>
+            <h4>The 1-2% rule</h4>
+            <p><strong>Never risk more than 1-2% of your total portfolio on any single trade.</strong></p>
+            <ul>
+              <li>Portfolio size: ₹1,00,000</li>
+              <li>Max risk per trade (2%): ₹2,000</li>
+              <li>Stop-loss distance: ₹10 per share (5% below entry of ₹200)</li>
+              <li>Max position size: ₹2,000 ÷ ₹10 = 200 shares × ₹200 = ₹40,000</li>
+              <li>So you buy 200 shares at ₹200, max loss ₹2,000 if stopped out.</li>
+            </ul>
+            <h4>Kelly Criterion</h4>
+            <p>Mathematical formula for optimal bet size. f* = (bp − q) / b where b = odds ratio, p = win probability, q = loss probability.</p>
+            <ul>
+              <li>If your system wins 60% of the time and avg win = avg loss: f* = (1×0.6 − 0.4)/1 = 20% of portfolio per trade. TOO AGGRESSIVE for real life.</li>
+              <li><strong>Fractional Kelly:</strong> Use 1/4 or 1/2 Kelly. 20% ÷ 4 = 5% max risk per trade. Safer.</li>
+            </ul>
+            <h4>Scaling in / scaling out</h4>
+            <ul>
+              <li><strong>Scale in:</strong> Buy 1/3 at entry, 1/3 lower, 1/3 lower. Avoids buying all at the top. But don't "average down" into a bad stock — add only if thesis is intact.</li>
+              <li><strong>Scale out:</strong> Sell 1/2 at first target, 1/4 at second, let 1/4 ride. Locks in profits while keeping upside exposure.</li>
+            </ul>
+            <div class="key">⚠️ <strong>Cardinal rule:</strong> If a trade drops to your stop-loss, exit. Don't "wait to see if it recovers." Don't double down. Don't average down unless you'd buy the position fresh at this price. Losses are part of trading — small losses are tuition, large losses are fatal.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/articles/trading/04/091504.asp" target="_blank">📄 Investopedia: Position Sizing (10m)</a>
+              <a href="https://www.investopedia.com/terms/k/kellycriterion.asp" target="_blank">📄 Investopedia: Kelly Criterion (8m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d4">
+          <div class="day-header">
+            <span class="day">D4</span>
+            <span class="topic">Trading journal — what to track, analyzing wins/losses, identifying edge</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Why you NEED a journal</h4>
+            <p>Without a journal, you repeat the same mistakes. Your memory is biased — you remember winners and forget losers or rationalize bad decisions. A journal forces honesty.</p>
+            <h4>What to record for every trade</h4>
+            <ul>
+              <li><strong>Date, stock, direction (long/short):</strong> Basic metadata.</li>
+              <li><strong>Entry price, exit price, quantity:</strong> For P&L calculation.</li>
+              <li><strong>Entry reason (3-5 sentences):</strong> "Broke above resistance at ₹500 with 3x volume. Industry tailwind (budget allocated to this sector). Good Q2 results last week." Be specific.</li>
+              <li><strong>Exit reason:</strong> "Hit stop-loss. Thesis busted — competitor launched better product."</li>
+              <li><strong>Emotions at entry:</strong> Excited? Nervous? FOMO? Greed?</li>
+              <li><strong>Emotions at exit:</strong> Relieved? Angry? Impatient?</li>
+              <li><strong>Followed plan? (Y/N):</strong> If no, what went wrong?</li>
+              <li><strong>Lesson learned:</strong> One sentence.</li>
+            </ul>
+            <h4>Analyzing your journal</h4>
+            <p>Every month, review and answer:</p>
+            <ul>
+              <li>What setups produced the best win rate? The best risk-reward?</li>
+              <li>What types of trades lose money consistently? (e.g., "I always lose on biotech stocks" → stop trading biotech)</li>
+              <li>How many trades followed the plan vs broke the plan? Plan-breakers always lose more.</li>
+              <li>Which emotion appears most in losing trades? (For most people: impatience — entering too early or exiting too early.)</li>
+            </ul>
+            <h4>Finding your edge</h4>
+            <p>After 50+ journaled trades, patterns emerge. Maybe you win 70% on breakout trades but only 40% on pullback trades. That's your edge — focus on breakouts. Without data, you're guessing.</p>
+            <div class="key">💡 <strong>Start today:</strong> Create a Google Sheet or use a notebook. Record every trade — even paper trades. After 20 trades, analyze. Most traders discover that their best trades are calm, planned, and patience-driven. Their worst are impulsive, urgent, and emotional.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/articles/trading/11/trading-journal.asp" target="_blank">📄 Investopedia: How to Create a Trading Journal (10m)</a>
+              <a href="https://tradervue.com" target="_blank">📄 TraderVue — automated journal tool (free tier)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d5">
+          <div class="day-header">
+            <span class="day">D5</span>
+            <span class="topic">Trading psychology — FOMO, revenge trading, confirmation bias, discipline rituals</span>
+            <span class="time">40 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>FOMO (Fear of Missing Out)</h4>
+            <p>Stock goes up 20%. You didn't buy. Your brain screams "YOU'RE MISSING THE BOAT!" You buy at the top. Stock corrects 15%. You panic sell at a loss. The stock then doubles.</p>
+            <ul>
+              <li><strong>Antidote:</strong> The market will always have opportunities. Missing one trade does not matter. There will be another. Detach ego from each individual trade.</li>
+            </ul>
+            <h4>Revenge Trading</h4>
+            <p>You lose ₹5,000 on a bad trade. Instead of stepping back, you immediately jump into another trade to "win it back." You lose another ₹3,000. Now you chase losses — a death spiral.</p>
+            <ul>
+              <li><strong>Antidote:</strong> After any loss, step away for 24 hours. No trades. The money is gone. Trying to get it back quickly is the fastest way to lose more.</li>
+            </ul>
+            <h4>Confirmation Bias</h4>
+            <p>You bought a stock. Now you only read bullish news and ignore bearish signs. You hold through warning signals because you "believe in the company." Loss deepens.</p>
+            <ul>
+              <li><strong>Antidote:</strong> Write a "bull case" AND a "bear case" before buying. Review the bear case every week. If you can't counter it, sell.</li>
+            </ul>
+            <h4>Discipline rituals</h4>
+            <ul>
+              <li><strong>Pre-trade checklist:</strong> Before ANY trade, answer 5 questions: (1) What's my thesis? (2) Where's my stop? (3) What's my target? (4) Position size? (5) Am I calm right now?</li>
+              <li><strong>Daily review (5 min):</strong> Every evening, skim positions. I's a "check engine light" scan. If nothing is wrong, do nothing.</li>
+              <li><strong>Weekly review (15 min):</strong> Review journal entries. What worked? What didn't? What will I do differently?</li>
+              <li><strong>No-trade zones:</strong> Avoid trading first 15 min (spread too wide, too emotional). Skip trading after a big loss. Take a week off every 3 months.</li>
+            </ul>
+            <div class="key">💡 <strong>The ultimate truth:</strong> Your psychology matters more than your strategy. A subpar strategy executed with discipline beats a brilliant strategy executed emotionally. Work on your mind more than your screen.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/articles/trading/09/trading-psychology.asp" target="_blank">📄 Investopedia: Trading Psychology (10m)</a>
+              <a href="https://www.youtube.com/watch?v=H4jJqRATy_8" target="_blank">▶ Plain Bagel: Why Traders Lose Money (12m)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d6">
+          <div class="day-header">
+            <span class="day">D6</span>
+            <span class="topic">Paper trading exercise — simulate 1 month of active trading</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Paper trading challenge</h4>
+            <p>You'll simulate managing a ₹1,00,000 portfolio for the next 4 weeks (this exercise will take about 45 min to set up, then 5 min/day).</p>
+            <h4>Setup</h4>
+            <ol>
+              <li><strong>Method:</strong> Use a Google Sheet or TradingView paper trading account. Spreadsheet is fine — you don't need a fancy tool.</li>
+              <li><strong>Initial capital:</strong> ₹1,00,000 (or ₹10,000 if tracking a smaller portfolio).</li>
+              <li><strong>Pick 3-5 stocks</strong> from your screening in Week 1 (D1-D7). Use your research process.</li>
+            </ol>
+            <h4>Rules for the simulation</h4>
+            <ul>
+              <li><strong>Max 5 positions</strong> at any time. Concentrated enough to matter, diversified enough to survive.</li>
+              <li><strong>Max 20% per position</strong> (₹20,000 of your ₹1L portfolio). This enforces diversification.</li>
+              <li><strong>No more than 4 trades per week</strong> (no day trading — you're not a desk trader).</li>
+              <li><strong>Stop-loss on every position</strong> — set it when you enter. No exceptions.</li>
+              <li><strong>Minimum hold: 3 days</strong> (no flickering).</li>
+            </ul>
+            <h4>What to document</h4>
+            <ul>
+              <li>Before every trade: write the thesis (3 sentences max + stop loss + target).</li>
+              <li>After every trade: log it in your journal (from D4).</li>
+              <li>Weekly: update portfolio value, calculate P&L, review.</li>
+            </ul>
+            <h4>Goal</h4>
+            <p>Not to make a profit. The goal is to follow your process. If you can follow the process for 4 weeks, you're ready for real money. Most people fail at the process — that's what you're practicing.</p>
+            <div class="key">💡 <strong>Be honest:</strong> Don't cheat by using hindsight. Check prices once per day at market close. Simulate real fills (use closing price, not intraday spikes). The purpose is to learn discipline, not to impress yourself with fake 50% returns.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.investopedia.com/articles/active-trading/082615/how-paper-trading-can-help-you.asp" target="_blank">📄 Investopedia: Paper Trading Guide (10m)</a>
+              <a href="https://www.tradingview.com/paper-trading/" target="_blank">📄 TradingView: Paper Trading (free)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-card" data-id="w2d7">
+          <div class="day-header">
+            <span class="day">D7</span>
+            <span class="topic">Capstone — build your repeatable research template + trading process</span>
+            <span class="time">45 min</span>
+            <span class="expand-icon">▶</span>
+          </div>
+          <div class="day-content">
+            <h4>Your personal research template</h4>
+            <p>Create a reusable template (Google Doc, Notion, or paper) that you fill out for EVERY stock you consider buying. Consistency prevents missed steps.</p>
+            <h4>Template structure</h4>
+            <ol>
+              <li><strong>Company name, ticker, sector, market cap.</strong></li>
+              <li><strong>Business model (1-2 sentences):</strong> "Reliance makes money from retail, telecom (Jio), and refining."</li>
+              <li><strong>What's the moat? (Porter's Five Forces summary):</strong> Which force gives them pricing power?</li>
+              <li><strong>Financial snapshot (last 3 years):</strong>
+                <ul>
+                  <li>Revenue, profit growth (CAGR)</li>
+                  <li>P/E (current, 5yr average, industry average)</li>
+                  <li>ROE, ROCE, D/E</li>
+                  <li>OCF vs Net Income</li>
+                </ul>
+              </li>
+              <li><strong>Growth drivers (2-3 bullets):</strong> What will make revenue/profit grow next 3 years?</li>
+              <li><strong>Risks (2-3 bullets):</strong> What could go wrong? Be honest.</li>
+              <li><strong>Management quality:</strong> Promoter holding, capital allocation track record, insider transactions.</li>
+              <li><strong>Peer comparison:</strong> How does it rank vs 3 main competitors on P/E, growth, ROE?</li>
+              <li><strong>Your thesis (3 sentences max):</strong> Why will this stock outperform?</li>
+              <li><strong>Trade plan:</strong> Entry price range, stop-loss (₹ or %), target price, time horizon.</li>
+            </ol>
+            <h4>Your trading process — the daily routine</h4>
+            <ul>
+              <li><strong>Morning (10 min):</strong> Scan positions. Check if any hit stop or target. Read 1-2 relevant news items.</li>
+              <li><strong>Weekend (30 min):</strong> Screen for new candidates. Run your template on 1-2 stocks. Review journal. Reassess thesis on current positions.</li>
+              <li><strong>Monthly (1 hr):</strong> Review all closed trades. Analyze win rate, risk-reward, emotional patterns. Adjust process.</li>
+              <li><strong>Quarterly:</strong> Rebalance portfolio. Tax-loss harvest. Update IPS.</li>
+            </ul>
+            <div class="key">💡 <strong>You've completed Phase 3.</strong> You now have a complete research and trading process. The next step is execution — start with paper trading for 1 month, then real money with small size. The market will be your teacher now. Good luck.</div>
+            <div class="links">
+              <span class="label">📚 Additional resources</span>
+              <a href="https://www.bogleheads.org/wiki/Investment_policy_statement" target="_blank">📄 Bogleheads: IPS Template (10m)</a>
+              <a href="https://www.tradingview.com" target="_blank">📄 TradingView — charting + screening + paper trading</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resources -->
+  <div class="section">
+    <h2><span class="emoji">📚</span> Trading Resources</h2>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="r-title">Screener.in</div>
+        <div class="r-desc">Indian stock screener — P/E, ROE, growth, debt filters.</div>
+        <a href="https://www.screener.in" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">Finviz</div>
+        <div class="r-desc">US stock screener with visual maps and heatmaps.</div>
+        <a href="https://finviz.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">TradingView</div>
+        <div class="r-desc">Charting, screening, paper trading — all in one.</div>
+        <a href="https://www.tradingview.com" target="_blank">Open →</a>
+      </div>
+      <div class="resource-card">
+        <div class="r-title">OpenInsider</div>
+        <div class="r-desc">Track insider buying/selling for US stocks.</div>
+        <a href="https://openinsider.com" target="_blank">Open →</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <a href="./portfolio-trading.html">← Phase 2: Portfolio & Trading</a> · <a href="./">All Phases</a><br>
+    Financial Literacy — Phase 3: Stock Research & Active Trading<br>
+    Last updated: <span id="dateDisplay">loading...</span>
+  </div>
+</footer>
+
+<script>
+const DAY_IDS = ['w1d1','w1d2','w1d3','w1d4','w1d5','w1d6','w1d7','w2d1','w2d2','w2d3','w2d4','w2d5','w2d6','w2d7'];
+const KEY = 'financial-learning-progress-p3';
+
+function loadDone() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+function saveDone(arr) { localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+function toggleDay(id) {
+  const done = loadDone();
+  const idx = done.indexOf(id);
+  idx >= 0 ? done.splice(idx, 1) : done.push(id);
+  saveDone(done);
+  render();
+}
+
+function render() {
+  const done = loadDone();
+  const total = DAY_IDS.length;
+  const count = done.length;
+  const pct = Math.round(count / total * 100);
+  document.getElementById('doneCount').textContent = count;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.querySelectorAll('.day-card').forEach(el => {
+    el.classList.toggle('done', done.includes(el.dataset.id));
+  });
+}
+
+document.querySelectorAll('.week-header').forEach(h => {
+  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+});
+
+document.querySelectorAll('.day-card .day-header').forEach(hdr => {
+  hdr.addEventListener('click', function(e) {
+    const card = this.parentElement;
+    if (card.classList.contains('open')) {
+      toggleDay(card.dataset.id);
+    } else {
+      const week = card.closest('.week-body');
+      week.querySelectorAll('.day-card.open').forEach(c => c.classList.remove('open'));
+      card.classList.add('open');
+    }
+  });
+});
+
+fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
+  .then(r => r.json())
+  .then(d => {
+    const date = new Date(d.commit.committer.date);
+    document.getElementById('dateDisplay').textContent = date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) + ' at ' + date.toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+  })
+  .catch(() => document.getElementById('dateDisplay').textContent = 'recent');
+
+render();
+document.querySelector('.week').classList.add('open');
+document.querySelector('.day-card').classList.add('open');
+</script>
+</body>
+</html>

@@ -697,11 +697,17 @@ footer a:hover { text-decoration: underline; }
     </div>
   </div>
 
+  <div id="next-banner" style="display:none; background: #E8F5E9; border: 2px solid var(--green); border-radius: 12px; padding: 24px 28px; text-align: center; margin: 40px 0;">
+    <h2 style="font-size: 20px; margin-bottom: 8px;">🎉 All 14 days complete!</h2>
+    <p style="font-size: 14px; color: #555; margin-bottom: 16px;">Phase 2 mastered. Ready to research and trade individual stocks?</p>
+    <a href="./stock-trading.html" style="display: inline-block; background: var(--green); color: #fff; padding: 12px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none;">Start Phase 3: Stock Research & Trading →</a>
+  </div>
+
 </main>
 
 <footer>
   <div class="container">
-    <a href="./basics.html">← Phase 1: Basics</a><br>
+    <a href="./basics.html">← Phase 1: Basics</a> · <a href="./stock-trading.html">Phase 3: Stock Trading →</a><br>
     Financial Literacy — Phase 2: Portfolio & Trading<br>
     Last updated: <span id="dateDisplay">loading...</span>
   </div>
@@ -734,6 +740,8 @@ function render() {
   document.querySelectorAll('.day-card').forEach(el => {
     el.classList.toggle('done', done.includes(el.dataset.id));
   });
+  const banner = document.getElementById('next-banner');
+  if (banner) banner.style.display = count === total ? 'block' : 'none';
 }
 
 document.querySelectorAll('.week-header').forEach(h => {
