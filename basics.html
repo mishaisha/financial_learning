@@ -137,6 +137,19 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
 #phase2-banner { transition: opacity 0.5s ease; }
 #phase2-banner a:hover { opacity: 0.9; }
 
+.quiz { margin: 16px 0 24px; padding: 16px 20px; background: #FFFDF5; border: 1px solid #F0E6C0; border-radius: 10px; }
+.quiz h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.quiz-q { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0E6C0; }
+.quiz-q:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.quiz-text { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.quiz-opt { padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 4px; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+.quiz-opt:hover { background: #F5F0E0; }
+.quiz-opt.correct { background: #D4EDDA; border-color: #28A745; }
+.quiz-opt.wrong { background: #F8D7DA; border-color: #DC3545; }
+.quiz-feedback { font-size: 12px; margin-top: 6px; font-weight: 500; }
+.quiz-feedback.correct { color: #28A745; }
+.quiz-feedback.wrong { color: #DC3545; }
+
 @media (max-width: 800px) {
   .page-layout { flex-direction: column; }
   .sidebar { position: static; width: 100%; min-width: unset; max-height: none; }
@@ -182,6 +195,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           <a href="#week-1" class="nav-link">Bonds & Fixed Income</a>
           <a href="#week-1" class="nav-link">Mutual Funds & ETFs</a>
           <a href="#week-1" class="nav-link">Valuation Ratios</a>
+          <a href="#quiz-1" class="nav-link" style="color:var(--gold);font-weight:600;">📝 Quiz</a>
         </div>
       </div>
       <div class="nav-week">
@@ -193,6 +207,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           <a href="#week-2" class="nav-link">Market Indices</a>
           <a href="#week-2" class="nav-link">Derivatives (F&O)</a>
           <a href="#week-2" class="nav-link">IPOs & Dividends</a>
+          <a href="#quiz-2" class="nav-link" style="color:var(--gold);font-weight:600;">📝 Quiz</a>
         </div>
       </div>
       <div class="nav-week">
@@ -205,6 +220,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           <a href="#week-3" class="nav-link">Technical Analysis</a>
           <a href="#week-3" class="nav-link">Risk & Return</a>
           <a href="#week-3" class="nav-link">Behavioral Finance</a>
+          <a href="#quiz-3" class="nav-link" style="color:var(--gold);font-weight:600;">📝 Quiz</a>
         </div>
       </div>
       <div class="nav-week">
@@ -216,6 +232,7 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           <a href="#week-4" class="nav-link">Portfolio Construction</a>
           <a href="#week-4" class="nav-link">Tax & Brokers</a>
           <a href="#week-4" class="nav-link">Scams & Red Flags</a>
+          <a href="#quiz-4" class="nav-link" style="color:var(--gold);font-weight:600;">📝 Quiz</a>
         </div>
       </div>
     </div>
@@ -498,6 +515,42 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           </div>
         </div>
 
+<div class="quiz" id="quiz-1">
+  <h4>📝 Week 1 Quiz</h4>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">Which of the following represents partial ownership in a company?</p>
+    <div class="quiz-opt" data-idx="0">A) Bond</div>
+    <div class="quiz-opt" data-idx="1">B) Mutual Fund</div>
+    <div class="quiz-opt" data-idx="2">C) Stock</div>
+    <div class="quiz-opt" data-idx="3">D) Futures Contract</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">The highest price a buyer is willing to pay for a stock right now is called the:</p>
+    <div class="quiz-opt" data-idx="0">A) Ask</div>
+    <div class="quiz-opt" data-idx="1">B) Bid</div>
+    <div class="quiz-opt" data-idx="2">C) Spread</div>
+    <div class="quiz-opt" data-idx="3">D) Market Price</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">When interest rates go UP, bond prices:</p>
+    <div class="quiz-opt" data-idx="0">A) Go UP</div>
+    <div class="quiz-opt" data-idx="1">B) Go DOWN</div>
+    <div class="quiz-opt" data-idx="2">C) Stay the same</div>
+    <div class="quiz-opt" data-idx="3">D) It depends</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">What does NAV stand for in mutual funds?</p>
+    <div class="quiz-opt" data-idx="0">A) Net Asset Value</div>
+    <div class="quiz-opt" data-idx="1">B) National Asset Verification</div>
+    <div class="quiz-opt" data-idx="2">C) Net Annual Value</div>
+    <div class="quiz-opt" data-idx="3">D) Non-Associated Value</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -722,6 +775,42 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
             </ul>
           </div>
         </div>
+
+<div class="quiz" id="quiz-2">
+  <h4>📝 Week 2 Quiz</h4>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">Which index is price-weighted?</p>
+    <div class="quiz-opt" data-idx="0">A) S&P 500</div>
+    <div class="quiz-opt" data-idx="1">B) Nifty 50</div>
+    <div class="quiz-opt" data-idx="2">C) Dow Jones (DJIA)</div>
+    <div class="quiz-opt" data-idx="3">D) NASDAQ Composite</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">A sustained decline of 20%+ from recent highs is called a:</p>
+    <div class="quiz-opt" data-idx="0">A) Correction</div>
+    <div class="quiz-opt" data-idx="1">B) Bear market</div>
+    <div class="quiz-opt" data-idx="2">C) Crash</div>
+    <div class="quiz-opt" data-idx="3">D) Dip</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Which derivative gives you the RIGHT but not the OBLIGATION to buy at a fixed price?</p>
+    <div class="quiz-opt" data-idx="0">A) Futures contract</div>
+    <div class="quiz-opt" data-idx="1">B) Call option</div>
+    <div class="quiz-opt" data-idx="2">C) Put option</div>
+    <div class="quiz-opt" data-idx="3">D) Forward contract</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">Companies that sell toothpaste, food, and utilities are classified as:</p>
+    <div class="quiz-opt" data-idx="0">A) Cyclical</div>
+    <div class="quiz-opt" data-idx="1">B) Growth</div>
+    <div class="quiz-opt" data-idx="2">C) Defensive</div>
+    <div class="quiz-opt" data-idx="3">D) Value</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
 
       </div>
     </div>
@@ -952,6 +1041,42 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
             </div>
           </div>
         </div>
+
+<div class="quiz" id="quiz-3">
+  <h4>📝 Week 3 Quiz</h4>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">What is an economic moat?</p>
+    <div class="quiz-opt" data-idx="0">A) A company with high debt</div>
+    <div class="quiz-opt" data-idx="1">B) A company with a high P/E ratio</div>
+    <div class="quiz-opt" data-idx="2">C) A sustainable competitive advantage</div>
+    <div class="quiz-opt" data-idx="3">D) A government subsidy</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">An RSI reading above 70 typically indicates:</p>
+    <div class="quiz-opt" data-idx="0">A) Oversold</div>
+    <div class="quiz-opt" data-idx="1">B) Overbought</div>
+    <div class="quiz-opt" data-idx="2">C) Strong uptrend</div>
+    <div class="quiz-opt" data-idx="3">D) Low volatility</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">What does the Sharpe ratio measure?</p>
+    <div class="quiz-opt" data-idx="0">A) Total return</div>
+    <div class="quiz-opt" data-idx="1">B) Risk-adjusted return</div>
+    <div class="quiz-opt" data-idx="2">C) Market correlation</div>
+    <div class="quiz-opt" data-idx="3">D) Dividend yield</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Dollar-cost averaging means:</p>
+    <div class="quiz-opt" data-idx="0">A) Buying low and selling high</div>
+    <div class="quiz-opt" data-idx="1">B) Investing a fixed amount at regular intervals</div>
+    <div class="quiz-opt" data-idx="2">C) Using leverage to maximize returns</div>
+    <div class="quiz-opt" data-idx="3">D) Day trading small amounts</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
 
       </div>
     </div>
@@ -1212,6 +1337,42 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
           </div>
         </div>
 
+<div class="quiz" id="quiz-4">
+  <h4>📝 Week 4 Quiz</h4>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">What determines 90%+ of investment returns according to research?</p>
+    <div class="quiz-opt" data-idx="0">A) Stock picking</div>
+    <div class="quiz-opt" data-idx="1">B) Market timing</div>
+    <div class="quiz-opt" data-idx="2">C) Asset allocation</div>
+    <div class="quiz-opt" data-idx="3">D) Trading frequency</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">In India, the LTCG tax rate on stocks held >1 year (above ₹1 lakh) is:</p>
+    <div class="quiz-opt" data-idx="0">A) 15%</div>
+    <div class="quiz-opt" data-idx="1">B) 20%</div>
+    <div class="quiz-opt" data-idx="2">C) 10%</div>
+    <div class="quiz-opt" data-idx="3">D) 0%</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Which of the following is a red flag phrase in investing?</p>
+    <div class="quiz-opt" data-idx="0">A) "Past performance doesn't guarantee future returns"</div>
+    <div class="quiz-opt" data-idx="1">B) "Guaranteed returns"</div>
+    <div class="quiz-opt" data-idx="2">C) "Diversify your portfolio"</div>
+    <div class="quiz-opt" data-idx="3">D) "Invest for the long term"</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">A protective put strategy involves:</p>
+    <div class="quiz-opt" data-idx="0">A) Buying a put option against shares you own</div>
+    <div class="quiz-opt" data-idx="1">B) Selling a put option for income</div>
+    <div class="quiz-opt" data-idx="2">C) Buying a call option</div>
+    <div class="quiz-opt" data-idx="3">D) Selling a naked call option</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -1371,6 +1532,28 @@ fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
 render();
 document.querySelector('.week').classList.add('open');
 document.querySelector('.day-card').classList.add('open');
+
+document.querySelectorAll('.quiz-opt').forEach(opt => {
+  opt.addEventListener('click', function() {
+    const q = this.closest('.quiz-q');
+    if (q.classList.contains('answered')) return;
+    q.classList.add('answered');
+    const correct = parseInt(q.dataset.answer);
+    const idx = parseInt(this.dataset.idx);
+    const fb = q.querySelector('.quiz-feedback');
+    q.querySelectorAll('.quiz-opt').forEach(o => { o.classList.remove('correct', 'wrong'); });
+    if (idx === correct) {
+      this.classList.add('correct');
+      fb.textContent = '✓ Correct!';
+      fb.className = 'quiz-feedback correct';
+    } else {
+      this.classList.add('wrong');
+      q.querySelector(`.quiz-opt[data-idx="${correct}"]`).classList.add('correct');
+      fb.textContent = '✗ Incorrect.';
+      fb.className = 'quiz-feedback wrong';
+    }
+  });
+});
 </script>
 </body>
 </html>

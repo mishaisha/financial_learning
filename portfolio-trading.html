@@ -94,6 +94,19 @@ footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13p
 footer a { color: var(--green); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
+.quiz { margin: 16px 0 24px; padding: 16px 20px; background: #EAF7EE; border: 1px solid #C8E6D0; border-radius: 10px; }
+.quiz h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.quiz-q { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #C8E6D0; }
+.quiz-q:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.quiz-text { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.quiz-opt { padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 4px; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+.quiz-opt:hover { background: #D0E8D8; }
+.quiz-opt.correct { background: #D4EDDA; border-color: #28A745; }
+.quiz-opt.wrong { background: #F8D7DA; border-color: #DC3545; }
+.quiz-feedback { font-size: 12px; margin-top: 6px; font-weight: 500; }
+.quiz-feedback.correct { color: #28A745; }
+.quiz-feedback.wrong { color: #DC3545; }
+
 @media (max-width: 600px) {
   header h1 { font-size: 26px; }
   .day-card .day-header { padding: 10px 14px; }
@@ -400,10 +413,46 @@ footer a:hover { text-decoration: underline; }
           </div>
         </div>
 
+        </div>
       </div>
-    </div>
 
-    <!-- ======== WEEK 2 ======== -->
+      <div class="quiz" id="quiz-1">
+  <h4>📝 Week 1 Quiz</h4>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Who developed Modern Portfolio Theory?</p>
+    <div class="quiz-opt" data-idx="0">A) Warren Buffett</div>
+    <div class="quiz-opt" data-idx="1">B) Harry Markowitz</div>
+    <div class="quiz-opt" data-idx="2">C) Benjamin Graham</div>
+    <div class="quiz-opt" data-idx="3">D) John Bogle</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">The efficient frontier represents:</p>
+    <div class="quiz-opt" data-idx="0">A) Maximum return for each risk level</div>
+    <div class="quiz-opt" data-idx="1">B) Minimum risk for each return level</div>
+    <div class="quiz-opt" data-idx="2">C) Both A and B</div>
+    <div class="quiz-opt" data-idx="3">D) The risk-free rate</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">A stock with beta of 1.5 is:</p>
+    <div class="quiz-opt" data-idx="0">A) 50% less volatile than the market</div>
+    <div class="quiz-opt" data-idx="1">B) 50% more volatile than the market</div>
+    <div class="quiz-opt" data-idx="2">C) Exactly as volatile as the market</div>
+    <div class="quiz-opt" data-idx="3">D) Uncorrelated to the market</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">The three-fund portfolio consists of:</p>
+    <div class="quiz-opt" data-idx="0">A) Three individual stocks</div>
+    <div class="quiz-opt" data-idx="1">B) Total stock market + international + total bond</div>
+    <div class="quiz-opt" data-idx="2">C) Large-cap + mid-cap + small-cap</div>
+    <div class="quiz-opt" data-idx="3">D) Growth + value + dividend stocks</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
+      <!-- ======== WEEK 2 ======== -->
     <div class="week" data-week="2">
       <div class="week-header">
         <div class="left">
@@ -665,6 +714,42 @@ footer a:hover { text-decoration: underline; }
           </div>
         </div>
 
+      <div class="quiz" id="quiz-2">
+  <h4>📝 Week 2 Quiz</h4>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">For a CALL option, if the strike price is below the current market price, the option is:</p>
+    <div class="quiz-opt" data-idx="0">A) In The Money (ITM)</div>
+    <div class="quiz-opt" data-idx="1">B) At The Money (ATM)</div>
+    <div class="quiz-opt" data-idx="2">C) Out of The Money (OTM)</div>
+    <div class="quiz-opt" data-idx="3">D) Deep Out of The Money</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Theta measures which option Greek?</p>
+    <div class="quiz-opt" data-idx="0">A) Sensitivity to stock price movement</div>
+    <div class="quiz-opt" data-idx="1">B) Time decay</div>
+    <div class="quiz-opt" data-idx="2">C) Sensitivity to implied volatility</div>
+    <div class="quiz-opt" data-idx="3">D) Sensitivity to interest rates</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">A covered call strategy involves:</p>
+    <div class="quiz-opt" data-idx="0">A) Buying a call and a put at the same strike</div>
+    <div class="quiz-opt" data-idx="1">B) Owning shares and selling a call against them</div>
+    <div class="quiz-opt" data-idx="2">C) Selling a put with cash reserved to buy</div>
+    <div class="quiz-opt" data-idx="3">D) Buying a call and selling a put</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">What is the maximum loss on a bull call spread?</p>
+    <div class="quiz-opt" data-idx="0">A) Unlimited</div>
+    <div class="quiz-opt" data-idx="1">B) The width between strike prices</div>
+    <div class="quiz-opt" data-idx="2">C) The net premium paid</div>
+    <div class="quiz-opt" data-idx="3">D) The strike price</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -772,6 +857,28 @@ fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
     });
   })
   .catch(() => document.getElementById('dateDisplay').textContent = 'recent');
+
+document.querySelectorAll('.quiz-opt').forEach(opt => {
+  opt.addEventListener('click', function() {
+    const q = this.closest('.quiz-q');
+    if (q.classList.contains('answered')) return;
+    q.classList.add('answered');
+    const correct = parseInt(q.dataset.answer);
+    const idx = parseInt(this.dataset.idx);
+    const fb = q.querySelector('.quiz-feedback');
+    q.querySelectorAll('.quiz-opt').forEach(o => { o.classList.remove('correct', 'wrong'); });
+    if (idx === correct) {
+      this.classList.add('correct');
+      fb.textContent = '✓ Correct!';
+      fb.className = 'quiz-feedback correct';
+    } else {
+      this.classList.add('wrong');
+      q.querySelector(`.quiz-opt[data-idx="${correct}"]`).classList.add('correct');
+      fb.textContent = '✗ Incorrect.';
+      fb.className = 'quiz-feedback wrong';
+    }
+  });
+});
 
 render();
 document.querySelector('.week').classList.add('open');

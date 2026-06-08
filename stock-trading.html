@@ -97,6 +97,19 @@ footer a:hover { text-decoration: underline; }
 #next-banner { transition: opacity 0.5s ease; }
 #next-banner a:hover { opacity: 0.9; }
 
+.quiz { margin: 16px 0 24px; padding: 16px 20px; background: #EAF0F8; border: 1px solid #C8D8EE; border-radius: 10px; }
+.quiz h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.quiz-q { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #C8D8EE; }
+.quiz-q:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.quiz-text { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.quiz-opt { padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 4px; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+.quiz-opt:hover { background: #D0DDF0; }
+.quiz-opt.correct { background: #D4EDDA; border-color: #28A745; }
+.quiz-opt.wrong { background: #F8D7DA; border-color: #DC3545; }
+.quiz-feedback { font-size: 12px; margin-top: 6px; font-weight: 500; }
+.quiz-feedback.correct { color: #28A745; }
+.quiz-feedback.wrong { color: #DC3545; }
+
 @media (max-width: 600px) {
   header h1 { font-size: 26px; }
   .day-card .day-header { padding: 10px 14px; }
@@ -404,6 +417,42 @@ footer a:hover { text-decoration: underline; }
           </div>
         </div>
 
+<div class="quiz" id="quiz-1">
+  <h4>📝 Week 1 Quiz</h4>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">A good ROE (Return on Equity) threshold for stock screening is:</p>
+    <div class="quiz-opt" data-idx="0">A) Greater than 5%</div>
+    <div class="quiz-opt" data-idx="1">B) Greater than 15%</div>
+    <div class="quiz-opt" data-idx="2">C) Greater than 30%</div>
+    <div class="quiz-opt" data-idx="3">D) Greater than 50%</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">Promoter holding decreasing over time is generally:</p>
+    <div class="quiz-opt" data-idx="0">A) Bullish</div>
+    <div class="quiz-opt" data-idx="1">B) Neutral</div>
+    <div class="quiz-opt" data-idx="2">C) A red flag</div>
+    <div class="quiz-opt" data-idx="3">D) Irrelevant</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="2">
+    <p class="quiz-text">In Porter's Five Forces, which force describes how hard it is for new companies to enter the industry?</p>
+    <div class="quiz-opt" data-idx="0">A) Supplier power</div>
+    <div class="quiz-opt" data-idx="1">B) Buyer power</div>
+    <div class="quiz-opt" data-idx="2">C) Threat of new entrants</div>
+    <div class="quiz-opt" data-idx="3">D) Rivalry among competitors</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">Operating Cash Flow consistently lower than Net Income suggests:</p>
+    <div class="quiz-opt" data-idx="0">A) Strong earnings quality</div>
+    <div class="quiz-opt" data-idx="1">B) Poor earnings quality</div>
+    <div class="quiz-opt" data-idx="2">C) High revenue growth</div>
+    <div class="quiz-opt" data-idx="3">D) Low debt levels</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -697,6 +746,42 @@ footer a:hover { text-decoration: underline; }
           </div>
         </div>
 
+<div class="quiz" id="quiz-2">
+  <h4>📝 Week 2 Quiz</h4>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">The 1-2% rule in trading means:</p>
+    <div class="quiz-opt" data-idx="0">A) Never risk more than 1-2% of your portfolio per trade</div>
+    <div class="quiz-opt" data-idx="1">B) Aim for 1-2% returns per trade</div>
+    <div class="quiz-opt" data-idx="2">C) Trade only 1-2% of your capital per day</div>
+    <div class="quiz-opt" data-idx="3">D) Make only 1-2 trades per day</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">A trailing stop-loss:</p>
+    <div class="quiz-opt" data-idx="0">A) Moves up as the stock price rises</div>
+    <div class="quiz-opt" data-idx="1">B) Moves down as the stock price falls</div>
+    <div class="quiz-opt" data-idx="2">C) Stays fixed at the entry price</div>
+    <div class="quiz-opt" data-idx="3">D) Expires after a set time period</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="0">
+    <p class="quiz-text">Revenge trading is best described as:</p>
+    <div class="quiz-opt" data-idx="0">A) Trading impulsively to recover losses quickly</div>
+    <div class="quiz-opt" data-idx="1">B) Shorting a stock that went against you</div>
+    <div class="quiz-opt" data-idx="2">C) Using leverage to double down</div>
+    <div class="quiz-opt" data-idx="3">D) Day trading multiple stocks</div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-q" data-answer="1">
+    <p class="quiz-text">The minimum recommended paper trading period before using real money is:</p>
+    <div class="quiz-opt" data-idx="0">A) 1 week</div>
+    <div class="quiz-opt" data-idx="1">B) 1 month</div>
+    <div class="quiz-opt" data-idx="2">C) 6 months</div>
+    <div class="quiz-opt" data-idx="3">D) 1 day</div>
+    <div class="quiz-feedback"></div>
+  </div>
+</div>
+
       </div>
     </div>
 
@@ -800,6 +885,28 @@ fetch('https://api.github.com/repos/mishaisha/financial_learning/commits/main')
 render();
 document.querySelector('.week').classList.add('open');
 document.querySelector('.day-card').classList.add('open');
+
+document.querySelectorAll('.quiz-opt').forEach(opt => {
+  opt.addEventListener('click', function() {
+    const q = this.closest('.quiz-q');
+    if (q.classList.contains('answered')) return;
+    q.classList.add('answered');
+    const correct = parseInt(q.dataset.answer);
+    const idx = parseInt(this.dataset.idx);
+    const fb = q.querySelector('.quiz-feedback');
+    q.querySelectorAll('.quiz-opt').forEach(o => { o.classList.remove('correct', 'wrong'); });
+    if (idx === correct) {
+      this.classList.add('correct');
+      fb.textContent = '✓ Correct!';
+      fb.className = 'quiz-feedback correct';
+    } else {
+      this.classList.add('wrong');
+      q.querySelector(`.quiz-opt[data-idx="${correct}"]`).classList.add('correct');
+      fb.textContent = '✗ Incorrect.';
+      fb.className = 'quiz-feedback wrong';
+    }
+  });
+});
 </script>
 </body>
 </html>
