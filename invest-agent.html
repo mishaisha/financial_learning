@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invest Agent — Portfolio Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --accent: #8B5CF6; --dark: #1A2A3A; --gray: #6B7A8D; --green: #2ECC71; --red: #E74C3C; --border: #E0E0E0; --card-bg: #FFFFFF; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A2E; line-height: 1.7; }
+.container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+header {
+  background: linear-gradient(135deg, #2D1B69 0%, #4A1A6B 100%); color: #fff;
+  padding: 40px 0 36px; border-bottom: 4px solid var(--accent);
+}
+header h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+header h1 span { color: var(--accent); }
+header .sub { font-size: 14px; color: #C0A0E0; margin-top: 6px; }
+.header-meta { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+.header-meta .badge { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+.stats-bar {
+  background: var(--card-bg); border-radius: 12px; padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: -24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid var(--border); flex-wrap: wrap; gap: 12px;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 22px; font-weight: 700; color: var(--dark); }
+.stat-item .label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-item .num.green { color: var(--green); }
+.stat-item .num.red { color: var(--red); }
+
+.nav-tabs { display: flex; gap: 4px; margin: 28px 0 20px; border-bottom: 1px solid var(--border); }
+.nav-tab {
+  padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; background: none; color: var(--gray); border-bottom: 2px solid transparent; transition: all 0.15s;
+}
+.nav-tab:hover { color: var(--dark); }
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+
+.setup-box { text-align: center; padding: 40px 20px; }
+.setup-box h2 { font-size: 20px; margin-bottom: 8px; }
+.setup-box p { color: var(--gray); font-size: 14px; margin-bottom: 20px; }
+.btn {
+  display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px;
+  border: none; cursor: pointer; text-decoration: none; transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-outline { background: none; border: 2px solid var(--accent); color: var(--accent); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-danger { background: var(--red); color: #fff; }
+
+.quiz-opt {
+  display: block; width: 100%; text-align: left; padding: 10px 16px; margin-bottom: 6px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); cursor: pointer;
+  font-size: 14px; transition: all 0.15s;
+}
+.quiz-opt:hover { border-color: var(--accent); background: #F5F0FF; }
+.quiz-opt.selected { border-color: var(--accent); background: #EDE4FF; font-weight: 600; }
+.quiz-opt.correct { border-color: var(--green); background: #D4EDDA; }
+.quiz-opt.wrong { border-color: var(--red); background: #F8D7DA; }
+.quiz-q { margin-bottom: 16px; }
+.quiz-q p { font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); color: var(--gray); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 10px; border-bottom: 1px solid #F0F0F0; }
+tr:hover td { background: #FAFBFC; }
+td .ticker { font-weight: 700; }
+td .pct { font-size: 12px; color: var(--gray); }
+
+.alloc-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 12px 0; }
+.alloc-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; transition: width 0.3s; }
+
+.form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.form-row input, .form-row select {
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; flex: 1; min-width: 100px;
+}
+.form-row input:focus, .form-row select:focus { outline: none; border-color: var(--accent); }
+
+.rebalance-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #F0F0F0; font-size: 13px; }
+.rebalance-row:last-child { border-bottom: none; }
+.rebalance-row .diff { font-weight: 600; }
+.rebalance-row .diff.pos { color: var(--green); }
+.rebalance-row .diff.neg { color: var(--red); }
+
+.empty-state { text-align: center; padding: 40px 20px; color: var(--gray); font-size: 14px; }
+
+footer { text-align: center; padding: 32px 0; color: var(--gray); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 600px) {
+  header h1 { font-size: 24px; }
+  .stats-bar { flex-direction: column; text-align: center; }
+  .form-row input, .form-row select { min-width: 100%; }
+  .nav-tabs { overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Invest <span>Agent</span></h1>
+    <p class="sub">Your portfolio co-pilot — track, analyze, rebalance.</p>
+    <div class="header-meta">
+      <span class="badge" id="riskBadge">Risk: --</span>
+      <span class="badge" id="holdingsBadge">0 holdings</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-item"><div class="num" id="totalValue">₹0</div><div class="label">Portfolio Value</div></div>
+      <div class="stat-item"><div class="num" id="totalGain">₹0</div><div class="label">Total Gain/Loss</div></div>
+      <div class="stat-item"><div class="num" id="totalInvested">₹0</div><div class="label">Total Invested</div></div>
+      <div class="stat-item"><div class="num" id="returnPct">0%</div><div class="label">Return</div></div>
+    </div>
+
+    <div class="nav-tabs" id="tabNav">
+      <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+      <button class="nav-tab" data-tab="holdings">Holdings</button>
+      <button class="nav-tab" data-tab="allocate">Allocation</button>
+      <button class="nav-tab" data-tab="research">Research</button>
+      <button class="nav-tab" data-tab="checklist">Pre-Trade</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div id="setupPrompt" class="card setup-box">
+        <h2>👋 Welcome to Invest Agent</h2>
+        <p>Set up your risk profile and target allocation to get started.</p>
+        <button class="btn btn-primary" onclick="startSetup()">Start Setup →</button>
+      </div>
+      <div id="dashboardContent" style="display:none;">
+        <div class="card">
+          <h3>📊 Portfolio Allocation</h3>
+          <div class="alloc-bar" id="allocBar"></div>
+          <div id="allocLegend" style="font-size:12px;color:var(--gray);"></div>
+        </div>
+        <div class="card" id="rebalanceCard" style="display:none;">
+          <h3>⚖️ Rebalance Suggestions</h3>
+          <div id="rebalanceList"></div>
+        </div>
+        <div class="card">
+          <h3>📋 Recent Holdings</h3>
+          <div id="recentHoldings"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOLDINGS -->
+    <div class="tab-content" id="tab-holdings">
+      <div class="card">
+        <h3>Add Holding</h3>
+        <div class="form-row">
+          <input type="text" id="hTicker" placeholder="Ticker (e.g. RELIANCE)" style="flex:0.5;">
+          <input type="text" id="hName" placeholder="Company name">
+          <input type="number" id="hQty" placeholder="Quantity" min="1">
+          <input type="number" id="hPrice" placeholder="Buy price (₹)" step="0.01">
+          <input type="number" id="hCurrent" placeholder="Current price (₹)" step="0.01">
+          <button class="btn btn-primary btn-sm" onclick="addHolding()">+ Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>All Holdings</h3>
+        <div id="holdingsTableWrap"><div class="empty-state">No holdings yet. Add your first one above.</div></div>
+      </div>
+    </div>
+
+    <!-- ALLOCATION -->
+    <div class="tab-content" id="tab-allocate">
+      <div class="card" id="riskCard">
+        <h3>🎯 Risk Profile</h3>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;" id="riskDesc">Not set yet.</p>
+        <button class="btn btn-outline btn-sm" onclick="startSetup()">Re-take Assessment</button>
+      </div>
+      <div class="card">
+        <h3>🎯 Target Allocation</h3>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">Set your target percentages for each asset class.</p>
+        <div id="targetAllocForm"></div>
+        <button class="btn btn-primary btn-sm" onclick="saveTargetAlloc()" style="margin-top:8px;">Save Targets</button>
+      </div>
+      <div class="card">
+        <h3>📊 Current vs Target</h3>
+        <div id="allocComparison"></div>
+      </div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div class="tab-content" id="tab-research">
+      <div class="card">
+        <h3>🔍 Stock Research Copilot</h3>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">Enter a stock ticker and run through the analysis checklist.</p>
+        <div class="form-row">
+          <input type="text" id="rTicker" placeholder="Ticker" style="flex:0.3;">
+          <input type="text" id="rName" placeholder="Company name" style="flex:1;">
+          <button class="btn btn-primary btn-sm" onclick="startResearch()">Analyze</button>
+        </div>
+      </div>
+      <div id="researchFlow" style="display:none;">
+        <div class="card">
+          <h3 id="researchTitle">Step 1: Screening Check</h3>
+          <div id="researchBody"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" id="researchPrev" onclick="researchPrev()" style="display:none;">← Back</button>
+            <button class="btn btn-primary btn-sm" id="researchNext" onclick="researchNext()">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="tab-content" id="tab-checklist">
+      <div class="card">
+        <h3>✅ Pre-Trade Decision Checker</h3>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">Run your trade idea through this checklist before executing.</p>
+        <div class="form-row">
+          <input type="text" id="cTicker" placeholder="Ticker">
+          <select id="cDirection"><option value="buy">Buy</option><option value="sell">Sell</option></select>
+          <input type="number" id="cQty" placeholder="Quantity" min="1">
+          <input type="number" id="cPrice" placeholder="Est. price (₹)" step="0.01">
+          <input type="number" id="cStop" placeholder="Stop-loss (₹)" step="0.01">
+        </div>
+        <div class="form-row">
+          <textarea id="cThesis" placeholder="Your thesis (3-5 sentences)..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-height:60px;font-family:inherit;"></textarea>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="runChecklist()">Run Checklist →</button>
+        <div id="checklistResult" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="./index.html">← All Phases</a> · Invest Agent — Portfolio Co-Pilot
+  </div>
+</footer>
+
+<script>
+const KEY = 'invest-agent-data';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+}
+function saveData(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+function getDefaultData() {
+  return {
+    riskProfile: null,
+    targetAlloc: {},
+    holdings: []
+  };
+}
+
+// ---------- SETUP: Risk Assessment ----------
+const riskQuestions = [
+  { q: "How would you react if your portfolio dropped 20% in a month?", opts: ["Sell everything immediately", "Sell some to reduce risk", "Do nothing and wait", "Buy more — it's a sale"] },
+  { q: "What is your investment time horizon for this money?", opts: ["Less than 1 year", "1-3 years", "3-7 years", "7+ years"] },
+  { q: "Which best describes your investment knowledge?", opts: ["Beginner — never invested before", "Some knowledge — own a few funds", "Comfortable — understand stocks/bonds", "Experienced — trade options, etc."] },
+  { q: "What matters more to you?", opts: ["Not losing money", "Steady but modest returns", "Good returns with some risk", "Maximum returns, I can handle volatility"] },
+  { q: "What % of your monthly income can you comfortably invest?", opts: ["0-5%", "5-15%", "15-30%", "30%+"] }
+];
+
+const riskProfiles = [
+  { label: "Conservative", desc: "Capital preservation focus. Mostly bonds, FDs, and liquid funds. 20-30% in equities." },
+  { label: "Moderate-Conservative", desc: "Balanced with safety bias. 40-50% equities, rest in bonds and gold." },
+  { label: "Moderate", desc: "Growth-oriented with cushion. 60-70% equities, 20-30% bonds, 10% gold." },
+  { label: "Aggressive", desc: "Growth focused. 80-90% equities, 10-20% bonds/alternatives." }
+];
+
+const targetAllocs = {
+  "Conservative": { stocks: 25, bonds: 50, gold: 15, cash: 10 },
+  "Moderate-Conservative": { stocks: 45, bonds: 35, gold: 12, cash: 8 },
+  "Moderate": { stocks: 65, bonds: 25, gold: 10, cash: 0 },
+  "Aggressive": { stocks: 85, bonds: 10, gold: 5, cash: 0 }
+};
+
+let setupStep = 0, setupAnswers = [];
+
+function startSetup() {
+  setupStep = 0; setupAnswers = [];
+  const d = loadData();
+  if (!d.riskProfile) {
+    const hold = loadData();
+    if (!hold.holdings) { saveData(getDefaultData()); }
+  }
+  document.getElementById('setupPrompt').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  showSetupStep();
+}
+
+function showSetupStep() {
+  if (setupStep >= riskQuestions.length) return finishSetup();
+  const q = riskQuestions[setupStep];
+  const body = document.getElementById('setupPrompt');
+  body.style.display = 'block';
+  body.innerHTML = `
+    <h2>Question ${setupStep+1} of ${riskQuestions.length}</h2>
+    <p>${q.q}</p>
+    ${q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerSetup(${i})">${o}</button>`).join('')}
+  `;
+  document.getElementById('dashboardContent').style.display = 'none';
+}
+
+function answerSetup(idx) {
+  setupAnswers.push(idx);
+  setupStep++;
+  showSetupStep();
+}
+
+function finishSetup() {
+  const score = setupAnswers.reduce((a,b) => a + b, 0);
+  const maxScore = riskQuestions.length * 3;
+  const pct = score / maxScore;
+  let profile;
+  if (pct < 0.3) profile = riskProfiles[0];
+  else if (pct < 0.5) profile = riskProfiles[1];
+  else if (pct < 0.75) profile = riskProfiles[2];
+  else profile = riskProfiles[3];
+
+  const d = loadData();
+  d.riskProfile = profile;
+  d.targetAlloc = targetAllocs[profile.label];
+  saveData(d);
+  document.getElementById('setupPrompt').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  renderAll();
+}
+
+// ---------- HOLDINGS ----------
+function addHolding() {
+  const ticker = document.getElementById('hTicker').value.trim().toUpperCase();
+  const name = document.getElementById('hName').value.trim();
+  const qty = parseFloat(document.getElementById('hQty').value);
+  const buyPrice = parseFloat(document.getElementById('hPrice').value);
+  const curPrice = parseFloat(document.getElementById('hCurrent').value);
+  if (!ticker || !qty || !buyPrice) return alert('Fill ticker, quantity, and buy price.');
+  const d = loadData();
+  if (!d.holdings) d.holdings = [];
+  d.holdings.push({ id: Date.now(), ticker, name, qty, buyPrice, curPrice: curPrice || buyPrice });
+  saveData(d);
+  document.getElementById('hTicker').value = '';
+  document.getElementById('hName').value = '';
+  document.getElementById('hQty').value = '';
+  document.getElementById('hPrice').value = '';
+  document.getElementById('hCurrent').value = '';
+  renderAll();
+}
+
+function deleteHolding(id) {
+  const d = loadData();
+  d.holdings = d.holdings.filter(h => h.id !== id);
+  saveData(d);
+  renderAll();
+}
+
+function updatePrice(id) {
+  const d = loadData();
+  const h = d.holdings.find(x => x.id === id);
+  if (!h) return;
+  const p = prompt('Current price (₹):', h.curPrice);
+  if (p && !isNaN(p)) { h.curPrice = parseFloat(p); saveData(d); renderAll(); }
+}
+
+// ---------- TARGET ALLOC ----------
+function saveTargetAlloc() {
+  const d = loadData();
+  ['stocks','bonds','gold','cash'].forEach(k => {
+    const el = document.getElementById('ta_' + k);
+    if (el) d.targetAlloc[k] = parseFloat(el.value) || 0;
+  });
+  saveData(d);
+  renderAll();
+}
+
+// ---------- RENDER ----------
+const COLORS = ['#8B5CF6','#2ECC71','#F0B429','#4A90D9','#E74C3C','#1ABC9C'];
+
+function renderAll() {
+  const d = loadData();
+
+  // Risk badge
+  document.getElementById('riskBadge').textContent = d.riskProfile ? 'Risk: ' + d.riskProfile.label : 'Risk: --';
+  document.getElementById('holdingsBadge').textContent = (d.holdings || []).length + ' holdings';
+
+  // If no profile, show setup prompt
+  if (!d.riskProfile) {
+    document.getElementById('setupPrompt').style.display = 'block';
+    document.getElementById('dashboardContent').style.display = 'none';
+    renderHoldings();
+    renderAllocTab();
+    return;
+  }
+  document.getElementById('setupPrompt').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+
+  const holdings = d.holdings || [];
+  const totalInvested = holdings.reduce((s, h) => s + h.qty * h.buyPrice, 0);
+  const totalCurrent = holdings.reduce((s, h) => s + h.qty * h.curPrice, 0);
+  const gain = totalCurrent - totalInvested;
+  const gainPct = totalInvested > 0 ? (gain / totalInvested * 100) : 0;
+
+  document.getElementById('totalValue').textContent = '₹' + totalCurrent.toLocaleString('en-IN', {maximumFractionDigits:0});
+  document.getElementById('totalInvested').textContent = '₹' + totalInvested.toLocaleString('en-IN', {maximumFractionDigits:0});
+  const gainEl = document.getElementById('totalGain');
+  gainEl.textContent = (gain >= 0 ? '+' : '') + '₹' + gain.toLocaleString('en-IN', {maximumFractionDigits:0});
+  gainEl.className = 'num ' + (gain >= 0 ? 'green' : 'red');
+  const retEl = document.getElementById('returnPct');
+  retEl.textContent = (gainPct >= 0 ? '+' : '') + gainPct.toFixed(1) + '%';
+  retEl.className = 'num ' + (gainPct >= 0 ? 'green' : 'red');
+
+  renderAllocBar(holdings, totalCurrent);
+  renderRebalance(d, holdings);
+  renderRecentHoldings(holdings);
+  renderHoldings();
+  renderAllocTab();
+}
+
+function renderAllocBar(holdings, total) {
+  const bar = document.getElementById('allocBar');
+  const legend = document.getElementById('allocLegend');
+  if (!holdings.length || total === 0) {
+    bar.innerHTML = '<div style="background:#E0E0E0;width:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;">No holdings</div>';
+    legend.textContent = '';
+    return;
+  }
+  const sorted = [...holdings].sort((a,b) => b.qty * b.curPrice - a.qty * a.curPrice);
+  const top4 = sorted.slice(0, 4);
+  const other = sorted.slice(4);
+  const otherVal = other.reduce((s,h) => s + h.qty * h.curPrice, 0);
+  const segs = top4.map((h,i) => ({ label: h.ticker, val: h.qty * h.curPrice, color: COLORS[i % COLORS.length] }));
+  if (otherVal > 0) segs.push({ label: 'Others', val: otherVal, color: '#B0B0B0' });
+
+  bar.innerHTML = segs.map(s => {
+    const pct = (s.val / total * 100);
+    return `<div class="alloc-seg" style="width:${pct}%;background:${s.color};">${pct > 8 ? s.label : ''}</div>`;
+  }).join('');
+  legend.innerHTML = segs.map(s => {
+    const pct = (s.val / total * 100);
+    return `<span style="margin-right:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${s.color};margin-right:4px;"></span>${s.label} ${pct.toFixed(0)}%</span>`;
+  }).join('');
+}
+
+function renderRebalance(d, holdings) {
+  const card = document.getElementById('rebalanceCard');
+  const list = document.getElementById('rebalanceList');
+  const ta = d.targetAlloc || {};
+  if (!Object.keys(ta).length || !holdings.length) { card.style.display = 'none'; return; }
+
+  const total = holdings.reduce((s,h) => s + h.qty * h.curPrice, 0);
+  if (total === 0) { card.style.display = 'none'; return; }
+
+  // Map holdings to categories (simplified)
+  const allocMap = { stocks: 0, bonds: 0, gold: 0, cash: 0 };
+  // Simple heuristic: most user holdings will be stocks
+  // For accuracy we'd need a category per holding - keep it simple for v1
+  holdings.forEach(h => {
+    const t = h.ticker;
+    if (['GOLDBEES','GOLD'].includes(t) || t.includes('GOLD')) allocMap.gold += h.qty * h.curPrice;
+    else allocMap.stocks += h.qty * h.curPrice;
+  });
+
+  let html = '';
+  let needsRebalance = false;
+  Object.entries(ta).forEach(([k, target]) => {
+    const current = allocMap[k] || 0;
+    const currentPct = total > 0 ? (current / total * 100) : 0;
+    const diff = currentPct - target;
+    if (Math.abs(diff) > 5) needsRebalance = true;
+    html += `<div class="rebalance-row">
+      <span style="font-weight:600;text-transform:capitalize;">${k}</span>
+      <span>Target: ${target}%</span>
+      <span>Current: ${currentPct.toFixed(0)}%</span>
+      <span class="diff ${diff >= 0 ? 'pos' : 'neg'}">${diff >= 0 ? '+' : ''}${diff.toFixed(0)}%</span>
+    </div>`;
+  });
+  if (!needsRebalance) html = '<p style="font-size:13px;color:var(--green);">✅ Allocation is within tolerance. No rebalance needed.</p>';
+  list.innerHTML = html;
+  card.style.display = 'block';
+}
+
+function renderRecentHoldings(holdings) {
+  const el = document.getElementById('recentHoldings');
+  if (!holdings.length) { el.innerHTML = '<div class="empty-state">No holdings yet.</div>'; return; }
+  const sorted = [...holdings].sort((a,b) => b.id - a.id).slice(0, 5);
+  el.innerHTML = `<table>
+    <tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Value</th><th>Gain</th></tr>
+    ${sorted.map(h => {
+      const val = h.qty * h.curPrice;
+      const cost = h.qty * h.buyPrice;
+      const g = val - cost;
+      const gp = cost > 0 ? (g/cost*100) : 0;
+      return `<tr>
+        <td><span class="ticker">${h.ticker}</span></td>
+        <td>${h.qty}</td>
+        <td>₹${h.buyPrice.toFixed(2)}</td>
+        <td>₹${h.curPrice.toFixed(2)}</td>
+        <td>₹${val.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
+        <td style="color:${g >= 0 ? 'var(--green)' : 'var(--red)'};">${g >= 0 ? '+' : ''}₹${g.toLocaleString('en-IN', {maximumFractionDigits:0})} (${gp.toFixed(1)}%)</td>
+      </tr>`;
+    }).join('')}
+  </table>`;
+}
+
+function renderHoldings() {
+  const d = loadData();
+  const holdings = d.holdings || [];
+  const el = document.getElementById('holdingsTableWrap');
+  if (!holdings.length) { el.innerHTML = '<div class="empty-state">No holdings yet. Add your first one above.</div>'; return; }
+  el.innerHTML = `<table>
+    <tr><th>Ticker</th><th>Name</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Value</th><th>Gain</th><th>Actions</th></tr>
+    ${holdings.map(h => {
+      const val = h.qty * h.curPrice;
+      const cost = h.qty * h.buyPrice;
+      const g = val - cost;
+      const gp = cost > 0 ? (g/cost*100) : 0;
+      return `<tr>
+        <td><span class="ticker">${h.ticker}</span></td>
+        <td>${h.name || '-'}</td>
+        <td>${h.qty}</td>
+        <td>₹${h.buyPrice.toFixed(2)}</td>
+        <td>₹${h.curPrice.toFixed(2)} <button class="btn btn-sm btn-outline" onclick="updatePrice(${h.id})" style="padding:2px 6px;font-size:10px;">edit</button></td>
+        <td>₹${val.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
+        <td style="color:${g >= 0 ? 'var(--green)' : 'var(--red)'};">${g >= 0 ? '+' : ''}₹${g.toLocaleString('en-IN', {maximumFractionDigits:0})} (${gp.toFixed(1)}%)</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteHolding(${h.id})">×</button></td>
+      </tr>`;
+    }).join('')}
+  </table>`;
+}
+
+function renderAllocTab() {
+  const d = loadData();
+  const ta = d.targetAlloc || {};
+
+  // Target allocation form
+  const labels = { stocks: 'Stocks', bonds: 'Bonds', gold: 'Gold', cash: 'Cash' };
+  document.getElementById('targetAllocForm').innerHTML = Object.entries(labels).map(([k, label]) => {
+    const val = ta[k] || 0;
+    return `<div class="form-row" style="align-items:center;">
+      <label style="min-width:60px;font-size:13px;font-weight:500;">${label}</label>
+      <input type="number" id="ta_${k}" value="${val}" min="0" max="100" style="max-width:80px;">
+      <span style="font-size:12px;color:var(--gray);">%</span>
+    </div>`;
+  }).join('');
+
+  // Risk profile description
+  if (d.riskProfile) {
+    document.getElementById('riskDesc').textContent = d.riskProfile.label + ' — ' + d.riskProfile.desc;
+  }
+
+  // Comparison
+  const holdings = d.holdings || [];
+  const total = holdings.reduce((s,h) => s + h.qty * h.curPrice, 0);
+  const comp = document.getElementById('allocComparison');
+  if (!Object.keys(ta).length || !holdings.length) {
+    comp.innerHTML = '<div class="empty-state">Add holdings and set targets to see comparison.</div>'; return;
+  }
+
+  const currentMap = { stocks: 0, bonds: 0, gold: 0, cash: 0 };
+  holdings.forEach(h => {
+    const t = h.ticker;
+    if (['GOLDBEES','GOLD'].includes(t) || t.includes('GOLD')) currentMap.gold += h.qty * h.curPrice;
+    else currentMap.stocks += h.qty * h.curPrice;
+  });
+
+  comp.innerHTML = `<table>
+    <tr><th>Asset</th><th>Target</th><th>Current</th><th>Diff</th><th>Action</th></tr>
+    ${Object.entries(labels).map(([k, label]) => {
+      const tgt = ta[k] || 0;
+      const cur = total > 0 ? (currentMap[k] || 0) / total * 100 : 0;
+      const diff = cur - tgt;
+      const action = Math.abs(diff) > 5 ? (diff > 0 ? `Sell ${Math.abs(diff).toFixed(0)}%` : `Buy ${Math.abs(diff).toFixed(0)}%`) : 'OK';
+      return `<tr>
+        <td style="font-weight:500;">${label}</td>
+        <td>${tgt}%</td>
+        <td>${cur.toFixed(0)}%</td>
+        <td style="color:${diff >= 0 ? 'var(--green)' : 'var(--red)'};">${diff >= 0 ? '+' : ''}${diff.toFixed(0)}%</td>
+        <td style="font-size:12px;color:${action === 'OK' ? 'var(--green)' : 'var(--gray)'};">${action}</td>
+      </tr>`;
+    }).join('')}
+  </table>`;
+}
+
+// ---------- RESEARCH COPILOT ----------
+const researchSteps = [
+  {
+    title: "Step 1: Screening Check",
+    body: `<p style="font-size:13px;margin-bottom:10px;">Let's check basic screening metrics. Open <a href="https://www.screener.in" target="_blank">Screener.in</a> or <a href="https://finance.yahoo.com" target="_blank">Yahoo Finance</a> and look up:</p>
+    <ul style="font-size:13px;margin-left:18px;margin-bottom:10px;">
+      <li>Market Cap (large/mid/small?)</li>
+      <li>P/E Ratio (compare to industry)</li>
+      <li>Revenue Growth (3yr CAGR >10%?)</li>
+      <li>Debt-to-Equity (< 1?)</li>
+      <li>ROE (>15%?)</li>
+    </ul>
+    <p style="font-size:13px;color:var(--gray);">Enter notes below:</p>
+    <textarea id="rNotes1" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-height:50px;font-family:inherit;" placeholder="P/E is 25, industry avg is 22. Revenue growth 18%. D/E 0.3. ROE 22%. Market cap large."></textarea>`
+  },
+  {
+    title: "Step 2: Financial Health",
+    body: `<p style="font-size:13px;margin-bottom:10px;">Check the financial statements:</p>
+    <ul style="font-size:13px;margin-left:18px;margin-bottom:10px;">
+      <li>Operating Cash Flow > Net Income? (earnings quality)</li>
+      <li>Free Cash Flow positive?</li>
+      <li>Interest Coverage Ratio > 3?</li>
+      <li>Current Ratio > 1.5?</li>
+      <li>ROCE > 15%?</li>
+    </ul>
+    <textarea id="rNotes2" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-height:50px;font-family:inherit;" placeholder="OCF is 20% above NI — good quality. FCF positive. Interest coverage 8x."></textarea>`
+  },
+  {
+    title: "Step 3: Moat Analysis",
+    body: `<p style="font-size:13px;margin-bottom:10px;">Apply Porter's Five Forces mentally:</p>
+    <ul style="font-size:13px;margin-left:18px;margin-bottom:10px;">
+      <li>Barriers to entry (high/low?)</li>
+      <li>Supplier power (concentrated?)</li>
+      <li>Buyer power (many customers?)</li>
+      <li>Substitute threat (alternatives?)</li>
+      <li>Competitive rivalry (intense?)</li>
+    </ul>
+    <p style="font-size:13px;margin-bottom:6px;"><strong>What type of moat?</strong></p>
+    <select id="rMoat" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:100%;">
+      <option value="">Select...</option>
+      <option value="wide">Wide — brand, network, patents, or cost advantage</option>
+      <option value="narrow">Narrow — some advantage but contestable</option>
+      <option value="none">None — commodity business</option>
+    </select>`
+  },
+  {
+    title: "Step 4: Management & Governance",
+    body: `<p style="font-size:13px;margin-bottom:10px;">Evaluate the people running the company:</p>
+    <ul style="font-size:13px;margin-left:18px;margin-bottom:10px;">
+      <li>Promoter holding (high and stable?)</li>
+      <li>Related-party transactions (minimal?)</li>
+      <li>Capital allocation track record (good or wasteful?)</li>
+      <li>Insider buying or selling?</li>
+    </ul>
+    <p style="font-size:13px;margin-bottom:6px;"><strong>Verdict:</strong></p>
+    <select id="rMgt" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:100%;">
+      <option value="">Select...</option>
+      <option value="good">Good — trustworthy, aligned, competent</option>
+      <option value="okay">Okay — some concerns but not alarming</option>
+      <option value="poor">Poor — red flags, avoid</option>
+    </select>`
+  },
+  {
+    title: "Step 5: Thesis Builder",
+    body: `<p style="font-size:13px;margin-bottom:10px;">Summarize your investment thesis:</p>
+    <div class="form-row">
+      <input type="text" id="rTarget" placeholder="Target price (₹)" style="flex:1;">
+      <input type="text" id="rStop" placeholder="Stop-loss (₹)" style="flex:1;">
+    </div>
+    <textarea id="rThesis" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:13px;min-height:80px;font-family:inherit;" placeholder="Write your thesis in 3 sentences: What does the company do? Why will it grow? What's the catalyst?"></textarea>
+    <div style="margin-top:10px;padding:12px;background:#F5F0FF;border-radius:8px;font-size:13px;">
+      <strong>📋 Final Checklist:</strong><br>
+      <label style="display:block;margin-top:6px;"><input type="checkbox" id="rc1"> Business model I understand</label>
+      <label style="display:block;"><input type="checkbox" id="rc2"> Moat is durable (wide/narrow)</label>
+      <label style="display:block;"><input type="checkbox" id="rc3"> Financials are healthy</label>
+      <label style="display:block;"><input type="checkbox" id="rc4"> Management is trustworthy</label>
+      <label style="display:block;"><input type="checkbox" id="rc5"> Valuation is reasonable</label>
+      <label style="display:block;"><input type="checkbox" id="rc6"> I've written the risks</label>
+    </div>`
+  }
+];
+
+let researchStep = 0;
+let researchTicker = '';
+let researchName = '';
+
+function startResearch() {
+  researchTicker = document.getElementById('rTicker').value.trim().toUpperCase();
+  researchName = document.getElementById('rName').value.trim() || researchTicker;
+  if (!researchTicker) return alert('Enter a ticker.');
+  researchStep = 0;
+  document.getElementById('researchFlow').style.display = 'block';
+  renderResearchStep();
+}
+
+function renderResearchStep() {
+  const step = researchSteps[researchStep];
+  document.getElementById('researchTitle').textContent = step.title + ' — ' + researchTicker;
+  document.getElementById('researchBody').innerHTML = step.body;
+  document.getElementById('researchPrev').style.display = researchStep > 0 ? 'inline-block' : 'none';
+  document.getElementById('researchNext').textContent = researchStep < researchSteps.length - 1 ? 'Next →' : '✅ Complete Analysis';
+}
+
+function researchPrev() { if (researchStep > 0) { researchStep--; renderResearchStep(); } }
+function researchNext() {
+  if (researchStep < researchSteps.length - 1) {
+    researchStep++;
+    renderResearchStep();
+  } else {
+    // Save to research log
+    const d = loadData();
+    if (!d.researchLog) d.researchLog = [];
+    const notes = [];
+    for (let i = 1; i <= 2; i++) {
+      const el = document.getElementById('rNotes' + i);
+      notes.push(el ? el.value : '');
+    }
+    const moat = document.getElementById('rMoat');
+    const mgt = document.getElementById('rMgt');
+    const thesis = document.getElementById('rThesis');
+    const target = document.getElementById('rTarget');
+    const stop = document.getElementById('rStop');
+    d.researchLog.push({
+      ticker: researchTicker,
+      name: researchName,
+      date: new Date().toISOString(),
+      notes, moat: moat ? moat.value : '', mgt: mgt ? mgt.value : '',
+      thesis: thesis ? thesis.value : '',
+      target: target ? target.value : '',
+      stop: stop ? stop.value : '',
+      checks: [1,2,3,4,5,6].map(i => {
+        const el = document.getElementById('rc' + i);
+        return el ? el.checked : false;
+      })
+    });
+    saveData(d);
+    alert('Analysis saved!');
+    document.getElementById('researchFlow').style.display = 'none';
+    document.getElementById('rTicker').value = '';
+    document.getElementById('rName').value = '';
+  }
+}
+
+// ---------- PRE-TRADE CHECKLIST ----------
+function runChecklist() {
+  const ticker = document.getElementById('cTicker').value.trim().toUpperCase();
+  const direction = document.getElementById('cDirection').value;
+  const qty = parseFloat(document.getElementById('cQty').value);
+  const price = parseFloat(document.getElementById('cPrice').value);
+  const stop = parseFloat(document.getElementById('cStop').value);
+  const thesis = document.getElementById('cThesis').value.trim();
+  const el = document.getElementById('checklistResult');
+
+  if (!ticker || !qty || !price) {
+    el.innerHTML = '<div style="padding:12px;background:#F8D7DA;border-radius:8px;color:var(--red);font-size:13px;">❌ Fill ticker, quantity, and estimated price.</div>';
+    return;
+  }
+
+  const d = loadData();
+  const holdings = d.holdings || [];
+  const totalValue = holdings.reduce((s,h) => s + h.qty * h.curPrice, 0);
+
+  let checks = [];
+
+  // Thesis check
+  if (thesis.length < 30) checks.push({ pass: false, msg: "Thesis is too short or empty. Write 3-5 sentences explaining your reasoning." });
+  else checks.push({ pass: true, msg: "✅ Thesis is written." });
+
+  // Position size check
+  const tradeValue = qty * price;
+  const posPct = totalValue > 0 ? (tradeValue / totalValue * 100) : 100;
+  if (posPct > 20) checks.push({ pass: false, msg: `⚠️ This position would be ${posPct.toFixed(0)}% of your portfolio. Max 20% per position.` });
+  else if (posPct > 10) checks.push({ pass: true, msg: `✅ Position size (${posPct.toFixed(0)}%) is within limits.` });
+  else checks.push({ pass: true, msg: `✅ Position size (${posPct.toFixed(0)}%) is safe.` });
+
+  // Stop-loss check
+  if (!stop) checks.push({ pass: false, msg: "⚠️ No stop-loss set. Always set a stop before entering." });
+  else {
+    const lossPct = ((price - stop) / price * 100).toFixed(1);
+    checks.push({ pass: true, msg: `✅ Stop-loss set at ₹${stop} (${lossPct}% below entry).` });
+  }
+
+  // Bias check
+  if (direction === 'buy') {
+    checks.push({ pass: true, msg: "🤔 Check: Are you buying because of FOMO? Take 5 minutes and re-read your thesis." });
+  }
+
+  // Allocation check
+  const d2 = loadData();
+  if (d2.targetAlloc && Object.keys(d2.targetAlloc).length) {
+    const currentStockAlloc = holdings.reduce((s,h) => s + h.qty * h.curPrice, 0);
+    const targetStock = d2.targetAlloc.stocks || 100;
+    const newStockAlloc = currentStockAlloc + tradeValue;
+    const newTotal = totalValue + tradeValue;
+    const newPct = newTotal > 0 ? (newStockAlloc / newTotal * 100) : 100;
+    if (newPct > targetStock + 10) {
+      checks.push({ pass: false, msg: `⚠️ This trade would push stock allocation to ${newPct.toFixed(0)}% (target: ${targetStock}%). Consider reducing position size.` });
+    } else {
+      checks.push({ pass: true, msg: `✅ Stock allocation (${newPct.toFixed(0)}%) stays near target (${targetStock}%).` });
+    }
+  }
+
+  // Direction check
+  const existing = holdings.find(h => h.ticker === ticker);
+  if (direction === 'sell' && (!existing || existing.qty < qty)) {
+    checks.push({ pass: false, msg: `❌ You don't have ${qty} shares of ${ticker} to sell.` });
+  }
+
+  const passCount = checks.filter(c => c.pass).length;
+  const failCount = checks.filter(c => !c.pass).length;
+
+  let verdict, color;
+  if (failCount === 0) { verdict = '✅ GO — All checks passed'; color = 'var(--green)'; }
+  else if (failCount <= 2) { verdict = '⚠️ CAUTION — Review flagged items'; color = '#F0B429'; }
+  else { verdict = '❌ NO — Too many red flags'; color = 'var(--red)'; }
+
+  el.innerHTML = `
+    <div style="padding:16px;background:#F5F0FF;border-radius:8px;">
+      <h4 style="margin-bottom:10px;">Decision: <span style="color:${color};">${verdict}</span></h4>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:10px;">${passCount} passed · ${failCount} flagged</p>
+      ${checks.map(c => `<div style="font-size:13px;margin-bottom:4px;color:${c.pass ? 'var(--green)' : 'var(--red)'};">${c.msg}</div>`).join('')}
+      ${failCount === 0 ? `<button class="btn btn-primary btn-sm" onclick="logTrade()" style="margin-top:10px;">📝 Log Trade in Journal</button>` : ''}
+    </div>`;
+}
+
+function logTrade() {
+  const d = loadData();
+  if (!d.tradeLog) d.tradeLog = [];
+  d.tradeLog.push({
+    ticker: document.getElementById('cTicker').value.trim().toUpperCase(),
+    direction: document.getElementById('cDirection').value,
+    qty: parseFloat(document.getElementById('cQty').value),
+    price: parseFloat(document.getElementById('cPrice').value),
+    stop: parseFloat(document.getElementById('cStop').value),
+    thesis: document.getElementById('cThesis').value.trim(),
+    date: new Date().toISOString()
+  });
+  saveData(d);
+  document.getElementById('cTicker').value = '';
+  document.getElementById('cQty').value = '';
+  document.getElementById('cPrice').value = '';
+  document.getElementById('cStop').value = '';
+  document.getElementById('cThesis').value = '';
+  document.getElementById('checklistResult').innerHTML = '<div style="padding:12px;background:#D4EDDA;border-radius:8px;color:var(--green);font-size:13px;">✅ Trade logged in journal.</div>';
+}
+
+// ---------- TAB SWITCHING ----------
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- INIT ----------
+renderAll();
+</script>
+</body>
+</html>
