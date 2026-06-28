@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper Trading Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0D1117; --card: #161B22; --border: #30363D;
+  --text: #E6EDF3; --muted: #8B949E; --accent: #58A6FF;
+  --green: #3FB950; --red: #F85149; --gold: #D29922;
+  --font: 'Inter', -apple-system, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+header { border-bottom: 1px solid var(--border); padding: 16px 0; background: var(--card); }
+header .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+header h1 span { color: var(--accent); }
+header .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header-actions { display: flex; gap: 8px; }
+
+.account-bar {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 12px 0; display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px;
+}
+.account-bar .stat { display: flex; flex-direction: column; }
+.account-bar .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.account-bar .stat .value { font-size: 18px; font-weight: 700; }
+.account-bar .stat .value.positive { color: var(--green); }
+.account-bar .stat .value.negative { color: var(--red); }
+
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.tab-btn {
+  padding: 10px 20px; cursor: pointer; border: none; background: none;
+  color: var(--muted); font-size: 13px; font-weight: 500; font-family: var(--font);
+  border-bottom: 2px solid transparent; transition: 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.card h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 8px 10px; color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+tr:hover td { background: rgba(88,166,255,0.04); }
+td.ticker { font-weight: 600; color: var(--accent); }
+td.positive { color: var(--green); }
+td.negative { color: var(--red); }
+
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+.form-group input, .form-group select {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; color: var(--text); font-size: 13px; font-family: var(--font);
+  outline: none; min-width: 100px;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+.btn {
+  padding: 8px 20px; border-radius: 6px; border: none; font-size: 13px;
+  font-weight: 600; font-family: var(--font); cursor: pointer; transition: 0.15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #4090E8; }
+.btn-buy { background: var(--green); color: #fff; }
+.btn-buy:hover { opacity: 0.9; }
+.btn-sell { background: var(--red); color: #fff; }
+.btn-sell:hover { opacity: 0.9; }
+.btn-outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--text); color: var(--text); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.4; cursor: default; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+.stat-card .sublabel { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.chart-wrapper { height: 280px; position: relative; }
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 24px; font-size: 13px; font-weight: 500; z-index: 100;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4); display: none;
+  animation: fadeUp 0.3s ease; max-width: 90vw;
+}
+.toast.error { border-color: var(--red); }
+.toast.success { border-color: var(--green); }
+.toast.info { border-color: var(--accent); }
+@keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+.filter-input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; width: 200px; margin-bottom: 12px; }
+.filter-input:focus { border-color: var(--accent); }
+.table-wrap { overflow-x: auto; }
+
+@media (max-width: 768px) {
+  header .container { flex-direction: column; align-items: flex-start; }
+  .account-bar { gap: 12px; }
+  .form-row { flex-direction: column; }
+  .form-group input, .form-group select { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div>
+      <h1>Paper Trading <span>Simulator</span></h1>
+      <div class="sub">Practice trading with $100K virtual cash &bull; <span id="currentDay">Day 1</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline btn-sm" onclick="advanceDay()">Next Day &rarr;</button>
+      <button class="btn btn-outline btn-sm" onclick="resetGame()">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="account-bar">
+  <div class="container" style="display:flex;gap:24px;flex-wrap:wrap;">
+    <div class="stat"><span class="label">Cash</span><span class="value" id="cashDisplay">$100,000.00</span></div>
+    <div class="stat"><span class="label">Holdings Value</span><span class="value" id="holdingsValueDisplay">$0.00</span></div>
+    <div class="stat"><span class="label">Total Value</span><span class="value" id="totalValueDisplay">$100,000.00</span></div>
+    <div class="stat"><span class="label">Day Change</span><span class="value" id="dayChangeDisplay">$0.00 (0.00%)</span></div>
+    <div class="stat"><span class="label">Total Return</span><span class="value" id="totalReturnDisplay">$0.00 (0.00%)</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="trade">Trade</button>
+  <button class="tab-btn" data-tab="portfolio">Portfolio</button>
+  <button class="tab-btn" data-tab="history">History</button>
+</div>
+
+<div class="tab-content active" id="tab-dashboard">
+  <div class="stats-grid" id="dashStats">
+    <div class="stat-card"><div class="label">Account Value</div><div class="value" id="dashValue">$100,000</div><div class="sublabel" id="dashValueSub">starting capital</div></div>
+    <div class="stat-card"><div class="label">Cash</div><div class="value" id="dashCash">$100,000</div><div class="sublabel">available</div></div>
+    <div class="stat-card"><div class="label">Invested</div><div class="value" id="dashInvested">$0</div><div class="sublabel">in market</div></div>
+    <div class="stat-card"><div class="label">Total Return</div><div class="value" id="dashReturn">$0</div><div class="sublabel" id="dashReturnPct">0.00%</div></div>
+  </div>
+  <div class="card">
+    <h3>Equity Curve</h3>
+    <div class="chart-wrapper"><canvas id="equityChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Recent Trades</h3>
+    <div id="recentTrades"><div class="empty-state">No trades yet.</div></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-trade">
+  <div class="card">
+    <h3>Market Prices</h3>
+    <input type="text" class="filter-input" id="marketFilter" placeholder="Filter ticker or name..." oninput="renderMarket()">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ticker</th><th>Name</th><th>Price</th><th>Change</th><th>Action</th></tr></thead>
+        <tbody id="marketBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="max-width:480px;">
+    <h3>Place Order</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="tradeTicker">Ticker</label>
+        <input type="text" id="tradeTicker" placeholder="e.g. AAPL" style="text-transform:uppercase;" oninput="updateEstimate()">
+      </div>
+      <div class="form-group">
+        <label for="tradeSide">Side</label>
+        <select id="tradeSide" onchange="updateEstimate()"><option value="buy">Buy</option><option value="sell">Sell</option></select>
+      </div>
+      <div class="form-group">
+        <label for="tradeQty">Quantity</label>
+        <input type="number" id="tradeQty" min="1" value="1" oninput="updateEstimate()">
+      </div>
+      <div class="form-group" style="justify-content:flex-end;">
+        <button class="btn btn-buy" id="tradeBtn" onclick="executeTrade()">Buy</button>
+      </div>
+    </div>
+    <div id="estCost" class="stat" style="font-size:12px;color:var(--muted);margin-top:2px;">Est. cost: $0.00</div>
+    <div id="tradePrice" class="stat" style="font-size:12px;color:var(--muted);margin-top:0;">Current price: &mdash;</div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-portfolio">
+  <div class="card">
+    <h3>Holdings</h3>
+    <div id="portfolioBody"><div class="empty-state">No positions. Start trading!</div></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-history">
+  <div class="card">
+    <h3>Trade History</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Ticker</th><th>Side</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+    <div id="historyEmpty" class="empty-state" style="display:none;">No trades yet.</div>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STOCKS = [
+  { ticker: 'AAPL', name: 'Apple Inc.', price: 178.50, vol: 0.016 },
+  { ticker: 'MSFT', name: 'Microsoft Corp.', price: 405.20, vol: 0.014 },
+  { ticker: 'GOOGL', name: 'Alphabet Inc.', price: 142.80, vol: 0.015 },
+  { ticker: 'AMZN', name: 'Amazon.com Inc.', price: 178.30, vol: 0.018 },
+  { ticker: 'NVDA', name: 'NVIDIA Corp.', price: 880.00, vol: 0.025 },
+  { ticker: 'META', name: 'Meta Platforms Inc.', price: 475.60, vol: 0.020 },
+  { ticker: 'TSLA', name: 'Tesla Inc.', price: 245.00, vol: 0.030 },
+  { ticker: 'JPM', name: 'JPMorgan Chase & Co.', price: 183.40, vol: 0.012 },
+  { ticker: 'V', name: 'Visa Inc.', price: 275.20, vol: 0.011 },
+  { ticker: 'JNJ', name: 'Johnson & Johnson', price: 156.80, vol: 0.010 },
+  { ticker: 'WMT', name: 'Walmart Inc.', price: 172.30, vol: 0.010 },
+  { ticker: 'PG', name: 'Procter & Gamble Co.', price: 168.90, vol: 0.009 },
+  { ticker: 'XOM', name: 'Exxon Mobil Corp.', price: 115.40, vol: 0.013 },
+  { ticker: 'KO', name: 'Coca-Cola Co.', price: 62.50, vol: 0.009 },
+  { ticker: 'DIS', name: 'Walt Disney Co.', price: 112.30, vol: 0.016 },
+  { ticker: 'NFLX', name: 'Netflix Inc.', price: 560.00, vol: 0.019 },
+  { ticker: 'BA', name: 'Boeing Co.', price: 198.70, vol: 0.022 },
+  { ticker: 'AMD', name: 'Advanced Micro Devices', price: 178.40, vol: 0.024 },
+  { ticker: 'SPY', name: 'SPDR S&P 500 ETF', price: 478.50, vol: 0.008 },
+  { ticker: 'QQQ', name: 'Invesco QQQ ETF', price: 395.80, vol: 0.010 },
+];
+
+const STARTING_CASH = 100000;
+const STORAGE_KEY = 'paper-trader-state';
+
+let state = null;
+let equityChart = null;
+
+function defaultState() {
+  const prices = {};
+  const prevPrices = {};
+  const priceHistory = {};
+  for (const s of STOCKS) {
+    prices[s.ticker] = s.price;
+    prevPrices[s.ticker] = s.price;
+    priceHistory[s.ticker] = [s.price];
+  }
+  return {
+    cash: STARTING_CASH,
+    holdings: {},
+    trades: [],
+    day: 0,
+    prices,
+    prevPrices: { ...prices },
+    priceHistory,
+    valueHistory: [STARTING_CASH],
+    initialValue: STARTING_CASH
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      for (const s of STOCKS) {
+        if (parsed.prices[s.ticker] === undefined) parsed.prices[s.ticker] = s.price;
+        if (parsed.prevPrices[s.ticker] === undefined) parsed.prevPrices[s.ticker] = s.price;
+        if (!parsed.priceHistory[s.ticker]) parsed.priceHistory[s.ticker] = [s.price];
+      }
+      return parsed;
+    }
+  } catch (e) {}
+  return null;
+}
+
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function init() {
+  state = loadState() || defaultState();
+  saveState();
+  renderAll();
+}
+
+function randn() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+function getPrice(t) { return state.prices[t] || 0; }
+function getPrevPrice(t) { return state.prevPrices[t] || getPrice(t); }
+function getHolding(t) { return state.holdings[t] || { qty: 0, avgCost: 0 }; }
+
+function getHoldingsValue() {
+  let total = 0;
+  for (const t in state.holdings) total += state.holdings[t].qty * getPrice(t);
+  return total;
+}
+
+function getTotalValue() { return state.cash + getHoldingsValue(); }
+
+function getDayChange() {
+  let current = state.cash, previous = state.cash;
+  for (const t in state.holdings) {
+    current += state.holdings[t].qty * getPrice(t);
+    previous += state.holdings[t].qty * getPrevPrice(t);
+  }
+  return current - previous;
+}
+
+function simulatePrices() {
+  const newPrices = {};
+  const newPrevPrices = { ...state.prices };
+  for (const s of STOCKS) {
+    const old = state.prices[s.ticker] || s.price;
+    const drift = 0.0002;
+    const change = randn() * s.vol + drift;
+    let newP = old * Math.exp(change);
+    const maxMove = 0.08;
+    if (newP / old > 1 + maxMove) newP = old * (1 + maxMove);
+    if (newP / old < 1 - maxMove) newP = old * (1 - maxMove);
+    newP = Math.round(newP * 100) / 100;
+    if (newP <= 0.01) newP = 0.01;
+    newPrices[s.ticker] = newP;
+    if (!state.priceHistory[s.ticker]) state.priceHistory[s.ticker] = [];
+    state.priceHistory[s.ticker].push(newP);
+  }
+  state.prevPrices = newPrevPrices;
+  state.prices = newPrices;
+  state.day++;
+}
+
+function advanceDay() {
+  simulatePrices();
+  state.valueHistory.push(getTotalValue());
+  saveState();
+  renderAll();
+  showToast(`Day ${state.day} complete — market prices updated.`, 'info');
+}
+
+function executeTrade() {
+  const ticker = document.getElementById('tradeTicker').value.toUpperCase().trim();
+  const side = document.getElementById('tradeSide').value;
+  const qty = parseInt(document.getElementById('tradeQty').value);
+  if (!ticker || !state.prices[ticker]) return showToast('Unknown ticker.', 'error');
+  if (isNaN(qty) || qty < 1) return showToast('Quantity must be 1+.', 'error');
+  const price = getPrice(ticker);
+  const total = price * qty;
+  const holding = getHolding(ticker);
+  if (side === 'buy') {
+    if (total > state.cash) return showToast(`Need $${total.toFixed(2)} but have $${state.cash.toFixed(2)}.`, 'error');
+    state.cash -= total;
+    if (state.holdings[ticker]) {
+      const o = state.holdings[ticker];
+      o.avgCost = (o.avgCost * o.qty + price * qty) / (o.qty + qty);
+      o.qty += qty;
+    } else {
+      state.holdings[ticker] = { qty, avgCost: price };
+    }
+  } else {
+    if (!state.holdings[ticker] || state.holdings[ticker].qty < qty) return showToast(`You have ${holding.qty} shares.`, 'error');
+    state.cash += total;
+    state.holdings[ticker].qty -= qty;
+    if (state.holdings[ticker].qty <= 0) delete state.holdings[ticker];
+  }
+  state.trades.push({
+    date: new Date().toISOString(), ticker, side, qty,
+    price: Math.round(price * 100) / 100,
+    total: Math.round(total * 100) / 100,
+    day: state.day
+  });
+  saveState();
+  renderAll();
+  showToast(`${side === 'buy' ? 'Bought' : 'Sold'} ${qty} ${ticker} at $${price.toFixed(2)}`, 'success');
+  document.getElementById('tradeQty').value = 1;
+}
+
+function resetGame() {
+  if (confirm('Reset everything? Your portfolio and trade history will be cleared.')) {
+    state = defaultState();
+    saveState();
+    renderAll();
+    showToast('Reset to $100,000.', 'info');
+  }
+}
+
+function quickTrade(ticker, side) {
+  document.getElementById('tradeTicker').value = ticker;
+  document.getElementById('tradeSide').value = side;
+  document.querySelector('[data-tab="trade"]').click();
+  document.getElementById('tradeQty').focus();
+  updateEstimate();
+}
+
+function updateEstimate() {
+  const ticker = document.getElementById('tradeTicker').value.toUpperCase().trim();
+  const qty = parseInt(document.getElementById('tradeQty').value) || 0;
+  const price = state.prices[ticker];
+  const priceEl = document.getElementById('tradePrice');
+  const estEl = document.getElementById('estCost');
+  const btn = document.getElementById('tradeBtn');
+  if (price) {
+    const total = price * qty;
+    const side = document.getElementById('tradeSide').value;
+    priceEl.textContent = `Current price: $${fmt(price)}`;
+    estEl.textContent = `Est. ${side === 'buy' ? 'cost' : 'proceeds'}: $${fmt(total)}`;
+    btn.textContent = side === 'buy' ? 'Buy' : 'Sell';
+    btn.className = 'btn ' + (side === 'buy' ? 'btn-buy' : 'btn-sell');
+  } else {
+    priceEl.innerHTML = 'Current price: &mdash;';
+    estEl.textContent = 'Enter a valid ticker';
+  }
+}
+
+function fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+function renderAll() {
+  document.getElementById('currentDay').textContent = `Day ${state.day + 1}`;
+  renderAccountBar();
+  renderDashboard();
+  renderMarket();
+  renderPortfolio();
+  renderHistory();
+  updateEstimate();
+}
+
+function renderAccountBar() {
+  const hv = getHoldingsValue(), tv = getTotalValue();
+  const dc = getDayChange(), tr = tv - STARTING_CASH;
+  const trPct = ((tv / STARTING_CASH) - 1) * 100;
+  document.getElementById('cashDisplay').textContent = '$' + fmt(state.cash);
+  document.getElementById('holdingsValueDisplay').textContent = '$' + fmt(hv);
+  document.getElementById('totalValueDisplay').textContent = '$' + fmt(tv);
+  const dayEl = document.getElementById('dayChangeDisplay');
+  dayEl.textContent = (dc >= 0 ? '+' : '') + '$' + fmt(dc) + ' (' + (dc >= 0 ? '+' : '') + fmt(tv > 0 ? dc / (tv - dc) * 100 : 0) + '%)';
+  dayEl.className = 'value' + (dc >= 0 ? ' positive' : ' negative');
+  const trEl = document.getElementById('totalReturnDisplay');
+  trEl.textContent = (tr >= 0 ? '+' : '') + '$' + fmt(tr) + ' (' + (tr >= 0 ? '+' : '') + fmt(trPct) + '%)';
+  trEl.className = 'value' + (tr >= 0 ? ' positive' : ' negative');
+}
+
+function renderDashboard() {
+  const hv = getHoldingsValue(), tv = getTotalValue(), tr = tv - STARTING_CASH;
+  const trPct = ((tv / STARTING_CASH) - 1) * 100;
+  document.getElementById('dashCash').textContent = '$' + fmt(state.cash);
+  document.getElementById('dashValue').textContent = '$' + fmt(tv);
+  document.getElementById('dashInvested').textContent = '$' + fmt(hv);
+  const rEl = document.getElementById('dashReturn');
+  rEl.textContent = (tr >= 0 ? '+' : '') + '$' + fmt(tr);
+  rEl.className = 'value' + (tr >= 0 ? ' positive' : ' negative');
+  document.getElementById('dashReturnPct').textContent = (trPct >= 0 ? '+' : '') + fmt(trPct) + '%';
+  document.getElementById('dashValueSub').textContent = tr >= 0 ? 'up $' + fmt(tr) : 'down $' + fmt(Math.abs(tr));
+  const trades = state.trades;
+  const recentEl = document.getElementById('recentTrades');
+  if (trades.length === 0) {
+    recentEl.innerHTML = '<div class="empty-state">No trades yet. Go to the Trade tab to place your first trade.</div>';
+  } else {
+    const recent = trades.slice(-5).reverse();
+    let html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Ticker</th><th>Side</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>';
+    for (const t of recent) {
+      html += `<tr><td>${new Date(t.date).toLocaleDateString()}</td><td class="ticker">${t.ticker}</td><td style="color:${t.side === 'buy' ? 'var(--green)' : 'var(--red)'}">${t.side.toUpperCase()}</td><td>${t.qty}</td><td>$${fmt(t.price)}</td><td>$${fmt(t.total)}</td></tr>`;
+    }
+    html += '</tbody></table></div>';
+    recentEl.innerHTML = html;
+  }
+  renderEquityChart();
+}
+
+function renderEquityChart() {
+  const ctx = document.getElementById('equityChart').getContext('2d');
+  if (equityChart) equityChart.destroy();
+  const data = state.valueHistory;
+  const labels = data.map((_, i) => `Day ${i + 1}`);
+  equityChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ label: 'Portfolio Value', data, borderColor: '#58A6FF', backgroundColor: 'rgba(88,166,255,0.1)', fill: true, tension: 0.3, pointRadius: data.length > 30 ? 0 : 3, borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(48,54,61,0.5)' }, ticks: { color: '#8B949E', maxTicksLimit: 10 } }, y: { grid: { color: 'rgba(48,54,61,0.5)' }, ticks: { color: '#8B949E', callback: v => '$' + v.toLocaleString() } } }, interaction: { intersect: false, mode: 'index' } }
+  });
+}
+
+function renderMarket() {
+  const filter = (document.getElementById('marketFilter')?.value || '').toUpperCase();
+  const body = document.getElementById('marketBody');
+  let html = '';
+  for (const s of STOCKS) {
+    if (filter && !s.ticker.includes(filter) && !s.name.toUpperCase().includes(filter)) continue;
+    const price = getPrice(s.ticker);
+    const prev = getPrevPrice(s.ticker);
+    const chg = price - prev;
+    const chgPct = (chg / prev) * 100;
+    html += `<tr><td class="ticker">${s.ticker}</td><td>${s.name}</td><td>$${fmt(price)}</td><td class="${chg >= 0 ? 'positive' : 'negative'}">${chg >= 0 ? '+' : ''}$${fmt(Math.abs(chg))} (${chg >= 0 ? '+' : ''}${fmt(chgPct)}%)</td><td><button class="btn btn-sm btn-buy" onclick="quickTrade('${s.ticker}','buy')">Buy</button> <button class="btn btn-sm btn-sell" onclick="quickTrade('${s.ticker}','sell')">Sell</button></td></tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No matches.</td></tr>';
+}
+
+function renderPortfolio() {
+  const container = document.getElementById('portfolioBody');
+  const tickers = Object.keys(state.holdings);
+  if (tickers.length === 0) { container.innerHTML = '<div class="empty-state">No positions. Start trading!</div>'; return; }
+  let html = '<div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Market Value</th><th>P&L</th><th>P&L %</th></tr></thead><tbody>';
+  let totalPL = 0;
+  for (const t of tickers) {
+    const h = state.holdings[t];
+    const price = getPrice(t);
+    const mv = h.qty * price;
+    const cb = h.qty * h.avgCost;
+    const pl = mv - cb;
+    const plPct = ((price / h.avgCost) - 1) * 100;
+    totalPL += pl;
+    html += `<tr><td class="ticker">${t}</td><td>${h.qty}</td><td>$${fmt(h.avgCost)}</td><td>$${fmt(price)}</td><td>$${fmt(mv)}</td><td class="${pl >= 0 ? 'positive' : 'negative'}">${pl >= 0 ? '+' : ''}$${fmt(pl)}</td><td class="${pl >= 0 ? 'positive' : 'negative'}">${pl >= 0 ? '+' : ''}${fmt(plPct)}%</td></tr>`;
+  }
+  html += `<tr style="font-weight:600;border-top:2px solid var(--border);"><td colspan="4">Total</td><td>$${fmt(getHoldingsValue())}</td><td class="${totalPL >= 0 ? 'positive' : 'negative'}">${totalPL >= 0 ? '+' : ''}$${fmt(totalPL)}</td><td></td></tr></tbody></table></div>`;
+  container.innerHTML = html;
+}
+
+function renderHistory() {
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('historyEmpty');
+  if (state.trades.length === 0) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  let html = '';
+  for (const t of state.trades.slice().reverse()) {
+    const d = new Date(t.date);
+    html += `<tr><td>${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td class="ticker">${t.ticker}</td><td style="color:${t.side === 'buy' ? 'var(--green)' : 'var(--red)'}">${t.side.toUpperCase()}</td><td>${t.qty}</td><td>$${fmt(t.price)}</td><td>$${fmt(t.total)}</td></tr>`;
+  }
+  body.innerHTML = html;
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (type || 'info');
+  el.style.display = 'block';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+init();
+</script>
+</body>
+</html>
