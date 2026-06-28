@@ -23,6 +23,13 @@ Practice trading with $100K virtual money. Simulated market of 20 stocks with da
 - **Portfolio** — holdings with avg cost, market value, P&L
 - **Dashboard** — account stats, equity curve chart (Chart.js), recent trades
 - **History** — full trade log with timestamps
+- **Predict** — click ticker or Analyze button to open stock analysis modal with:
+  - **Technical indicators**: SMA (5, 20), RSI (14), linear regression trend
+  - **Buy/Sell/Hold signal** with confidence score and reasoning
+  - **Price chart** with SMA overlay
+  - **Forecast bars** — actual prices + 5-day linear regression forecast
+  - **Support & resistance** levels from recent price action
+  - Quick Buy/Sell from the analysis view
 - **Next Day** — advances the simulation
 - **localStorage** — persist portfolio across sessions
 
