@@ -108,7 +108,70 @@ td.negative { color: var(--red); }
 .filter-input:focus { border-color: var(--accent); }
 .table-wrap { overflow-x: auto; }
 
-@media (max-width: 768px) {
+.clickable { cursor: pointer; }
+.clickable:hover { text-decoration: underline; }
+
+/* Modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 200; justify-content: center; align-items: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  max-width: 720px; width: 100%; max-height: 90vh; overflow-y: auto;
+  padding: 24px; position: relative; animation: fadeUp 0.2s ease;
+}
+.modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; font-family: var(--font); }
+.modal-close:hover { color: var(--text); }
+.modal h2 { font-size: 18px; font-weight: 700; }
+.modal .subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.modal .subtitle .positive { color: var(--green); }
+.modal .subtitle .negative { color: var(--red); }
+
+.analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.analysis-grid .card { margin-bottom: 0; }
+
+.signal-box {
+  text-align: center; padding: 20px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg);
+}
+.signal-box .signal-label { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+.signal-box .signal-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.signal-box .signal-reason { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.signal-buy { color: var(--green); }
+.signal-sell { color: var(--red); }
+.signal-hold { color: var(--gold); }
+
+.indicator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.indicator-item {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+}
+.indicator-item .label { font-size: 11px; color: var(--muted); }
+.indicator-item .val { font-size: 14px; font-weight: 600; }
+.indicator-item .val.positive { color: var(--green); }
+.indicator-item .val.negative { color: var(--red); }
+.indicator-item .val.neutral { color: var(--gold); }
+
+.forecast-bar {
+  display: flex; gap: 4px; align-items: flex-end; height: 60px; margin-top: 8px;
+}
+.forecast-bar .bar {
+  flex: 1; border-radius: 3px 3px 0 0; min-height: 4px;
+  background: var(--accent); opacity: 0.6; transition: 0.2s;
+}
+.forecast-bar .bar.actual { opacity: 1; background: var(--accent); }
+.forecast-bar .bar.forecast { opacity: 0.5; background: var(--gold); }
+
+.analysis-actions { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+
+@media (max-width: 640px) {
+  .analysis-grid { grid-template-columns: 1fr; }
+  .indicator-grid { grid-template-columns: 1fr; }
+}
+
+
   header .container { flex-direction: column; align-items: flex-start; }
   .account-bar { gap: 12px; }
   .form-row { flex-direction: column; }
@@ -173,7 +236,7 @@ td.negative { color: var(--red); }
     <input type="text" class="filter-input" id="marketFilter" placeholder="Filter ticker or name..." oninput="renderMarket()">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Ticker</th><th>Name</th><th>Price</th><th>Change</th><th>Action</th></tr></thead>
+        <thead><tr><th>Ticker</th><th>Name</th><th>Price</th><th>Change</th><th>Trade</th><th>Predict</th></tr></thead>
         <tbody id="marketBody"></tbody>
       </table>
     </div>
@@ -225,6 +288,44 @@ td.negative { color: var(--red); }
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAnalysis()">&times;</button>
+    <h2 id="modalTitle">AAPL - Apple Inc.</h2>
+    <div class="subtitle" id="modalSubtitle">Price: $178.50 &bull; Day: +$2.40 (+1.36%)</div>
+
+    <div class="analysis-grid">
+      <div class="card" style="margin-bottom:0;">
+        <div class="signal-box" id="signalBox">
+          <div class="signal-label signal-hold" id="signalLabel">HOLD</div>
+          <div class="signal-sub" id="signalConfidence">Confidence: --%</div>
+          <div class="signal-reason" id="signalReason">Not enough data. Advance a few days.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <h3>Price History &amp; Forecast</h3>
+        <div class="chart-wrapper" style="height:160px;"><canvas id="stockChart"></canvas></div>
+        <div id="forecastBarContainer"></div>
+      </div>
+    </div>
+
+    <div class="indicator-grid" id="indicatorGrid">
+      <div class="indicator-item"><span class="label">SMA 5</span><span class="val" id="sma5">--</span></div>
+      <div class="indicator-item"><span class="label">SMA 20</span><span class="val" id="sma20">--</span></div>
+      <div class="indicator-item"><span class="label">RSI (14)</span><span class="val" id="rsiVal">--</span></div>
+      <div class="indicator-item"><span class="label">Trend</span><span class="val" id="trendVal">--</span></div>
+      <div class="indicator-item"><span class="label">Support</span><span class="val" id="supportVal">--</span></div>
+      <div class="indicator-item"><span class="label">Resistance</span><span class="val" id="resistanceVal">--</span></div>
+    </div>
+
+    <div class="analysis-actions">
+      <button class="btn btn-buy" id="modalBuyBtn">Buy</button>
+      <button class="btn btn-sell" id="modalSellBtn">Sell</button>
+      <button class="btn btn-outline" onclick="closeAnalysis()">Close</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const STOCKS = [
@@ -510,7 +611,7 @@ function renderMarket() {
     const prev = getPrevPrice(s.ticker);
     const chg = price - prev;
     const chgPct = (chg / prev) * 100;
-    html += `<tr><td class="ticker">${s.ticker}</td><td>${s.name}</td><td>$${fmt(price)}</td><td class="${chg >= 0 ? 'positive' : 'negative'}">${chg >= 0 ? '+' : ''}$${fmt(Math.abs(chg))} (${chg >= 0 ? '+' : ''}${fmt(chgPct)}%)</td><td><button class="btn btn-sm btn-buy" onclick="quickTrade('${s.ticker}','buy')">Buy</button> <button class="btn btn-sm btn-sell" onclick="quickTrade('${s.ticker}','sell')">Sell</button></td></tr>`;
+    html += `<tr><td class="ticker clickable" onclick="openAnalysis('${s.ticker}')">${s.ticker}</td><td>${s.name}</td><td>$${fmt(price)}</td><td class="${chg >= 0 ? 'positive' : 'negative'}">${chg >= 0 ? '+' : ''}$${fmt(Math.abs(chg))} (${chg >= 0 ? '+' : ''}${fmt(chgPct)}%)</td><td><button class="btn btn-sm btn-buy" onclick="quickTrade('${s.ticker}','buy')">Buy</button> <button class="btn btn-sm btn-sell" onclick="quickTrade('${s.ticker}','sell')">Sell</button></td><td><button class="btn btn-sm btn-outline" onclick="openAnalysis('${s.ticker}')">Analyze</button></td></tr>`;
   }
   body.innerHTML = html || '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No matches.</td></tr>';
 }
@@ -564,6 +665,238 @@ function showToast(msg, type) {
   el.style.display = 'block';
   clearTimeout(el._timer);
   el._timer = setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+// ==================== TECHNICAL INDICATORS & ANALYSIS ====================
+let stockChart = null;
+let _analysisTicker = null;
+
+function calcSMA(ticker, period) {
+  const hist = state.priceHistory[ticker];
+  if (!hist || hist.length < period) return null;
+  const slice = hist.slice(-period);
+  return slice.reduce((a, b) => a + b, 0) / slice.length;
+}
+
+function calcRSI(ticker, period) {
+  const hist = state.priceHistory[ticker];
+  if (!hist || hist.length < period + 1) return null;
+  const slice = hist.slice(-(period + 1));
+  let gains = 0, losses = 0;
+  for (let i = 1; i < slice.length; i++) {
+    const diff = slice[i] - slice[i - 1];
+    if (diff > 0) gains += diff;
+    else losses -= diff;
+  }
+  if (losses === 0) return 100;
+  const rs = gains / losses;
+  return 100 - (100 / (1 + rs));
+}
+
+function calcLinReg(ticker, periods) {
+  const hist = state.priceHistory[ticker];
+  if (!hist || hist.length < 2) return { slope: 0, intercept: 0, forecast: [] };
+  const slice = hist.slice(-periods);
+  const n = slice.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+  for (let i = 0; i < n; i++) {
+    sumX += i;
+    sumY += slice[i];
+    sumXY += i * slice[i];
+    sumX2 += i * i;
+  }
+  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  const forecast = [];
+  for (let i = 1; i <= 5; i++) {
+    forecast.push(intercept + slope * (n - 1 + i));
+  }
+  return { slope, intercept, forecast };
+}
+
+function findSupportResistance(ticker) {
+  const hist = state.priceHistory[ticker];
+  if (!hist || hist.length < 5) return { support: null, resistance: null };
+  const recent = hist.slice(-10);
+  const min = Math.min(...recent);
+  const max = Math.max(...recent);
+  const current = getPrice(ticker);
+  // Simple: support = recent low, resistance = recent high
+  return { support: min, resistance: max };
+}
+
+function generateSignal(ticker) {
+  const sma5 = calcSMA(ticker, 5);
+  const sma20 = calcSMA(ticker, 20);
+  const rsi = calcRSI(ticker, 14);
+  const lr = calcLinReg(ticker, 10);
+  const price = getPrice(ticker);
+
+  let score = 0;
+  const reasons = [];
+
+  // SMA crossover
+  if (sma5 !== null && sma20 !== null) {
+    if (sma5 > sma20) { score += 2; reasons.push('SMA5 > SMA20 (bullish)'); }
+    else { score -= 2; reasons.push('SMA5 < SMA20 (bearish)'); }
+  }
+
+  // RSI
+  if (rsi !== null) {
+    if (rsi > 70) { score -= 1; reasons.push('RSI overbought (' + rsi.toFixed(1) + ')'); }
+    else if (rsi < 30) { score += 1; reasons.push('RSI oversold (' + rsi.toFixed(1) + ')'); }
+    else reasons.push('RSI neutral (' + rsi.toFixed(1) + ')');
+  }
+
+  // Trend
+  if (lr.slope > 0) { score += 1; reasons.push('Uptrend (slope: ' + lr.slope.toFixed(4) + ')'); }
+  else if (lr.slope < 0) { score -= 1; reasons.push('Downtrend (slope: ' + lr.slope.toFixed(4) + ')'); }
+
+  // Price relative to SMA20
+  if (sma20 !== null) {
+    if (price > sma20 * 1.05) { score -= 1; reasons.push('Price far above SMA20 (pullback risk)'); }
+    else if (price < sma20 * 0.95) { score += 1; reasons.push('Price far below SMA20 (bounce potential)'); }
+  }
+
+  let signal, confidence;
+  if (score >= 2) { signal = 'BUY'; confidence = 50 + score * 8; }
+  else if (score <= -2) { signal = 'SELL'; confidence = 50 - score * 8; }
+  else { signal = 'HOLD'; confidence = 50; }
+
+  confidence = Math.min(95, Math.max(30, confidence));
+
+  return { signal, confidence: Math.round(confidence), reasons: reasons.slice(0, 3) };
+}
+
+function openAnalysis(ticker) {
+  _analysisTicker = ticker;
+  const stock = STOCKS.find(s => s.ticker === ticker);
+  const price = getPrice(ticker);
+  const prev = getPrevPrice(ticker);
+  const chg = price - prev;
+  const chgPct = (chg / prev) * 100;
+
+  document.getElementById('modalTitle').textContent = ticker + ' - ' + (stock ? stock.name : '');
+  document.getElementById('modalSubtitle').innerHTML = 'Price: <strong>$' + fmt(price) + '</strong> &bull; Day: <span class="' + (chg >= 0 ? 'positive' : 'negative') + '">' + (chg >= 0 ? '+' : '') + '$' + fmt(chg) + ' (' + (chg >= 0 ? '+' : '') + fmt(chgPct) + '%)</span>';
+
+  // Indicators
+  const sma5 = calcSMA(ticker, 5);
+  const sma20 = calcSMA(ticker, 20);
+  const rsi = calcRSI(ticker, 14);
+  const lr = calcLinReg(ticker, 10);
+  const sr = findSupportResistance(ticker);
+
+  document.getElementById('sma5').textContent = sma5 !== null ? '$' + fmt(sma5) : '--';
+  document.getElementById('sma20').textContent = sma20 !== null ? '$' + fmt(sma20) : '--';
+  const rsiEl = document.getElementById('rsiVal');
+  if (rsi !== null) {
+    rsiEl.textContent = rsi.toFixed(1);
+    rsiEl.className = 'val ' + (rsi > 70 ? 'negative' : rsi < 30 ? 'positive' : 'neutral');
+  } else {
+    rsiEl.textContent = '--';
+    rsiEl.className = 'val';
+  }
+  const trendEl = document.getElementById('trendVal');
+  if (lr.slope !== 0) {
+    trendEl.textContent = lr.slope > 0 ? 'Uptrend ↗' : 'Downtrend ↘';
+    trendEl.className = 'val ' + (lr.slope > 0 ? 'positive' : 'negative');
+  } else {
+    trendEl.textContent = '--';
+    trendEl.className = 'val';
+  }
+  document.getElementById('supportVal').textContent = sr.support !== null ? '$' + fmt(sr.support) : '--';
+  document.getElementById('resistanceVal').textContent = sr.resistance !== null ? '$' + fmt(sr.resistance) : '--';
+
+  // Signal
+  const sig = generateSignal(ticker);
+  const signalLabel = document.getElementById('signalLabel');
+  signalLabel.textContent = sig.signal;
+  signalLabel.className = 'signal-label signal-' + sig.signal.toLowerCase();
+  document.getElementById('signalConfidence').textContent = 'Confidence: ' + sig.confidence + '%';
+  document.getElementById('signalReason').textContent = sig.reasons.length > 0 ? sig.reasons.join('; ') : 'Not enough data. Advance a few days.';
+
+  // Price chart
+  renderStockChart(ticker);
+
+  // Forecast bar
+  const fbc = document.getElementById('forecastBarContainer');
+  if (lr.forecast.length > 0) {
+    const hist = state.priceHistory[ticker];
+    const last5 = hist.slice(-5);
+    const all = [...last5, ...lr.forecast];
+    const max = Math.max(...all) * 1.1;
+    const min = Math.min(...all) * 0.9;
+    let barHtml = '<div style="font-size:11px;color:var(--muted);margin-top:8px;margin-bottom:4px;">Actual &rarr; Forecast (next 5 days)</div><div class="forecast-bar">';
+    for (let i = 0; i < all.length; i++) {
+      const h = ((all[i] - min) / (max - min)) * 100;
+      const cls = i < 5 ? 'actual' : 'forecast';
+      barHtml += `<div class="bar ${cls}" style="height:${Math.max(h, 4)}%;" title="$${fmt(all[i])}"></div>`;
+    }
+    barHtml += '</div>';
+    fbc.innerHTML = barHtml;
+  } else {
+    fbc.innerHTML = '';
+  }
+
+  // Modal buttons
+  document.getElementById('modalBuyBtn').onclick = function() { closeAnalysis(); quickTrade(ticker, 'buy'); };
+  document.getElementById('modalSellBtn').onclick = function() { closeAnalysis(); quickTrade(ticker, 'sell'); };
+
+  document.getElementById('analysisModal').classList.add('open');
+}
+
+function closeAnalysis() {
+  document.getElementById('analysisModal').classList.remove('open');
+  if (stockChart) { stockChart.destroy(); stockChart = null; }
+}
+
+function renderStockChart(ticker) {
+  const ctx = document.getElementById('stockChart').getContext('2d');
+  if (stockChart) stockChart.destroy();
+
+  const hist = state.priceHistory[ticker];
+  if (!hist || hist.length < 2) return;
+
+  const maxPoints = 30;
+  const data = hist.length > maxPoints ? hist.slice(-maxPoints) : hist;
+  const labels = data.map((_, i) => `Day ${i + 1}`);
+
+  const sma5Data = [];
+  const sma20Data = [];
+  for (let i = 0; i < data.length; i++) {
+    const subHist = state.priceHistory[ticker].slice(-maxPoints).slice(0, i + 1);
+    if (subHist.length >= 5) {
+      sma5Data.push(subHist.slice(-5).reduce((a, b) => a + b, 0) / 5);
+    } else {
+      sma5Data.push(null);
+    }
+    if (subHist.length >= 20) {
+      sma20Data.push(subHist.slice(-20).reduce((a, b) => a + b, 0) / 20);
+    } else {
+      sma20Data.push(null);
+    }
+  }
+
+  stockChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Price', data, borderColor: '#58A6FF', backgroundColor: 'rgba(88,166,255,0.08)', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
+        { label: 'SMA 5', data: sma5Data, borderColor: '#3FB950', borderWidth: 1.5, pointRadius: 0, tension: 0.3, borderDash: [4, 3] },
+        { label: 'SMA 20', data: sma20Data, borderColor: '#D29922', borderWidth: 1.5, pointRadius: 0, tension: 0.3, borderDash: [4, 3] }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#8B949E', font: { size: 10 }, boxWidth: 12, padding: 8 } } },
+      scales: {
+        x: { grid: { color: 'rgba(48,54,61,0.3)' }, ticks: { color: '#8B949E', maxTicksLimit: 5, font: { size: 10 } } },
+        y: { grid: { color: 'rgba(48,54,61,0.3)' }, ticks: { color: '#8B949E', font: { size: 10 }, callback: v => '$' + v.toFixed(0) } }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
 }
 
 init();
